@@ -1,0 +1,8 @@
+<script id="gardens-page-garden-table-row-template" type="text/template">
+    <td><%- name %></td>
+    <td class="description">
+        <% _.each(blocks, function (block) { %>
+        <div><%- block.name %> (<%- block.bedCount %>)</div>
+        <% }); %>
+    </td>
+</script>

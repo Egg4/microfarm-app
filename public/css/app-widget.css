@@ -1,0 +1,59 @@
+/********************************/
+/*  Page                        */
+/********************************/
+.page-widget .page-body {
+    /*padding: 0 .5em;*/
+}
+
+/********************************/
+/*  Bar                         */
+/********************************/
+.bar-widget .ui-title {
+    margin: 0;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.bar-widget > .border-layout-widget > .right {
+    text-align: right;
+}
+
+/********************************/
+/*  Error-List                  */
+/********************************/
+.error-list-widget {
+    border: 1px solid red;
+    color: red;
+    background-color: mistyrose;
+    margin: .5em 0;
+    padding: .5em 1.5em;
+}
+
+.error-list-widget > .list-item-widget {
+    list-style-type: circle;
+    border: none;
+}
+
+/********************************/
+/*  Loader                      */
+/********************************/
+#loader > .layout-widget {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+#loader .label-widget,
+#loader .icon-widget,
+#loader .text {
+    display: block;
+}
+
+#loader .icon-widget {
+    font-size: 4em;
+}
+
+#loader .text {
+    margin-top: .5em;
+}

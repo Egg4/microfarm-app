@@ -1,0 +1,24 @@
+<script id="dashboard-page-task-table-row-template" type="text/template">
+    <td class="status">
+        <% if (status == 'planned') { %><i class="fa fa-calendar"></i><% } %>
+        <% if (status == 'in_progress') { %><i class="fa fa-clock-o"></i><% } %>
+        <% if (status == 'complete') { %><i class="fa fa-check"></i><% } %>
+    </td>
+    <td>
+        <div><%- category.name %></div>
+        <% if (provider) { %>
+        <div class="description"><%- provider.name %></div>
+        <% } %>
+        <% if (crop) { %>
+        <div class="description"><%- variety.common_name %></div>
+        <% } %>
+        <% if (pos) { %>
+        <div class="description"><%- pos.name %></div>
+        <% } %>
+    </td>
+    <td class="description">
+        <% if (work) { %>
+        <%- work.duration %> h/m
+        <% } %>
+    </td>
+</script>

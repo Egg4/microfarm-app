@@ -1,0 +1,217 @@
+.noselect :not(input):not(textarea) {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently */
+}
+
+.ui-input-text:focus,
+.ui-input-search:focus,
+.ui-focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/********************************/
+/*  Loader                      */
+/********************************/
+
+.loader {
+    font-size: 10px;
+    margin: 50px auto;
+    text-indent: -9999em;
+    width: 11em;
+    height: 11em;
+    border-radius: 50%;
+    background: #ffffff;
+    background: -moz-linear-gradient(left, #c0c0c0 10%, rgba(255, 255, 255, 0) 42%);
+    background: -webkit-linear-gradient(left, #c0c0c0 10%, rgba(255, 255, 255, 0) 42%);
+    background: -o-linear-gradient(left, #c0c0c0 10%, rgba(255, 255, 255, 0) 42%);
+    background: -ms-linear-gradient(left, #c0c0c0 10%, rgba(255, 255, 255, 0) 42%);
+    background: linear-gradient(to right, #c0c0c0 10%, rgba(255, 255, 255, 0) 42%);
+    position: relative;
+    -webkit-animation: spin 1.4s infinite linear;
+    animation: spin 1.4s infinite linear;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.loader:before {
+    width: 50%;
+    height: 50%;
+    background: #c0c0c0;
+    border-radius: 100% 0 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+}
+.loader:after {
+    background: #f9f9f9;
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    content: '';
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+/* Table */
+td.image,
+td .image {
+    background-size: cover;
+    width: 2.5em;
+}
+
+td.photo,
+td .photo {
+    background-size: cover;
+    width: 64px;
+    height: 48px;
+}
+
+td.description,
+td .description {
+    font-size: small;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+td.date,
+td .date {
+    white-space: nowrap;
+}
+
+/* Search Form */
+.search-form .widget .ui-input-search,
+.search-form .widget.ui-btn {
+    border-radius: 0;
+    border-bottom: none;
+}
+
+.search-form .widget .ui-input-search {
+    padding: 0 !important;
+    border-left: none;
+    border-right: none;
+}
+
+.search-form .widget.ui-btn {
+    background-color: #f6f6f6;
+    border-color: #ddd;
+    margin: 0px;
+    margin-top: .56em;
+    padding: 1.05em 0em;
+    width: 2.5em;
+    height: 0.1em;
+}
+
+.search-form .widget.ui-btn:after {
+    margin: -0.8em 0.3em;
+}
+
+.search-form .form-group-widget[type=horizontal] .widget:first-child {
+    border-left: none;
+}
+
+.search-form .form-group-widget[type=horizontal] .widget:last-child {
+    border-right: none;
+}
+
+/* Model body */
+.model-body {
+    border-bottom: solid 1px #ddd;
+}
+
+.model-body table {
+    border-spacing: 0;
+    width: 100%;
+}
+
+.model-body .image {
+    position: relative;
+    background-size: cover;
+    width: 100px;
+    height: 100px;
+}
+
+.model-body .content {
+    padding: 0.5em;
+}
+
+.model-body .content .title {
+    font-weight: bold;
+    font-size: 1em;
+    text-shadow: 0 1px 0 #fff;
+    white-space: nowrap;
+}
+
+.model-body .content .description {
+    font-size: small;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+/* Menu Panel */
+#menu-panel {
+    background-color: #f9f9f9;
+    width: auto;
+}
+
+#menu-panel .navigation-widget .ui-grid-solo:first-child .button-widget {
+    border-top: none;
+}
+
+/* Home page */
+#home-page h1 {
+    margin-left: 30%;
+    margin-right: 30%;
+    text-align: center;
+}
+
+/* Login page */
+#login-page>.body-widget {
+    max-width: 350px;
+    padding: 0.5em 1em;
+    margin: auto;
+}
+
+/* Dashboard page */
+#dashboard-page #date-form .form-group-widget[type=horizontal] .widget,
+#dashboard-page #date-form .form-group-widget[type=horizontal] .ui-input-text {
+    border-radius: 0;
+    border-top: none;
+}
+
+#dashboard-page #date-form .form-group-widget[type=horizontal] .widget:first-child {
+    border-left: none;
+}
+
+#dashboard-page #date-form .form-group-widget[type=horizontal] .widget:last-child {
+    border-right: none;
+}

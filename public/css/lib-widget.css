@@ -1,0 +1,336 @@
+/********************************/
+/*  BorderLayout                */
+/********************************/
+.border-layout-widget {
+    display: grid;
+    grid-template-areas: "top top top" "left center right" "bottom bottom bottom";
+}
+
+.border-layout-widget > .top {grid-area: top;}
+.border-layout-widget > .left {grid-area: left;}
+.border-layout-widget > .center {grid-area: center;}
+.border-layout-widget > .right {grid-area: right;}
+.border-layout-widget > .bottom {grid-area: bottom;}
+
+/********************************/
+/*  FlowLayout                  */
+/********************************/
+.flow-layout-widget > .widget {
+    display: inline-block;
+}
+
+/********************************/
+/*  TableLayout                 */
+/********************************/
+.table-layout-widget {
+    width: 100%;
+}
+
+/********************************/
+/*  Navigation                  */
+/********************************/
+.navigation-widget > .layout-widget > div > .button-widget {
+    border-left: none;
+    border-top: none;
+    margin: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+.navigation-widget > .grid-layout-widget.ui-grid-solo > .ui-block-a > .button-widget,
+.navigation-widget > .grid-layout-widget.ui-grid-a > .ui-block-b > .button-widget,
+.navigation-widget > .grid-layout-widget.ui-grid-b > .ui-block-c > .button-widget,
+.navigation-widget > .grid-layout-widget.ui-grid-c > .ui-block-d > .button-widget,
+.navigation-widget > .grid-layout-widget.ui-grid-d > .ui-block-e > .button-widget {
+    border-right: none;
+}
+
+/********************************/
+/*  Loader                      */
+/********************************/
+.loader-widget {
+    position: absolute;
+    background-color: rgba(0, 0, 0, .3);
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+}
+
+/********************************/
+/*  List                        */
+/********************************/
+.list-widget {
+    margin: 0;
+    padding: 0;
+}
+
+/********************************/
+/*  ListItem                    */
+/********************************/
+.list-item-widget {
+    list-style-type: none;
+}
+
+.list-item-widget > .button-widget {
+    border-left: none;
+    border-top: none;
+    border-right: none;
+    margin: 0;
+    font-weight: inherit;
+}
+
+/********************************/
+/*  Button                      */
+/********************************/
+.button-widget .label-widget {
+    display: inline-block;
+    width: 100%;
+}
+
+.button-widget.ui-btn-icon-left::after,
+.button-widget.ui-btn-icon-right::after,
+.button-widget.ui-btn-icon-top::after,
+.button-widget.ui-btn-icon-bottom::after {
+    background: none;
+}
+
+.button-widget.ui-btn-icon-notext .fa-icon-widget,
+.button-widget.ui-btn-icon-left .fa-icon-widget,
+.button-widget.ui-btn-icon-right .fa-icon-widget,
+.button-widget.ui-btn-icon-top .fa-icon-widget,
+.button-widget.ui-btn-icon-bottom .fa-icon-widget {
+    position: absolute;
+    text-align: center;
+    width: 1.25em;
+    z-index: 10;
+}
+
+.button-widget.ui-btn-icon-notext .fa-icon-widget,
+.button-widget.ui-btn-icon-left .fa-icon-widget,
+.button-widget.ui-btn-icon-right .fa-icon-widget {
+    top: 50%;
+    margin-top: -0.5em;
+}
+
+.button-widget.ui-btn-icon-notext .fa-icon-widget {
+    left: 4px;
+    text-indent: 0px;
+    color: #fff;
+}
+
+.button-widget.ui-btn-icon-left .fa-icon-widget {
+    left: 10px;
+}
+
+.button-widget.ui-btn-icon-right .fa-icon-widget {
+    right: 10px;
+}
+
+.button-widget.ui-btn-icon-top .fa-icon-widget,
+.button-widget.ui-btn-icon-bottom .fa-icon-widget {
+    left: 50%;
+    margin-left: -0.625em;
+    font-size: 1.5em;
+}
+
+.button-widget.ui-btn-icon-top .label-widget .text,
+.button-widget.ui-btn-icon-bottom .label-widget .text {
+    font-size: .6em;
+}
+
+.button-widget.ui-btn-icon-top .fa-icon-widget {
+    top: 14px;
+}
+
+.button-widget.ui-btn-icon-bottom .fa-icon-widget {
+    bottom: 14px;
+}
+
+/*--------------------------------------------OLD DEFINITION ----------------------------------------------*/
+
+
+/********************************/
+/*  Form                        */
+/********************************/
+.form-widget .ui-input-text,
+.form-widget .ui-input-search {
+    box-shadow: none;
+}
+
+.form-widget .ui-select .ui-btn {
+    font-weight: normal;
+}
+
+.form-widget .has-error {
+    border-color: red !important;
+}
+
+.photo-form-element-widget .container {
+    border-radius: 0.3125em;
+    border: solid 1px #ddd;
+}
+
+.input-hidden-form-element-widget .ui-input-text {
+    border-width: 0;
+    margin: 0;
+}
+
+.checkbox-form-element-widget label {
+    background-color: #ffffff !important;
+    font-weight: normal;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.form-group-widget[type=horizontal] {
+    display: flex;
+    margin: -0.5em 0;
+}
+
+.form-group-widget[type=horizontal] .form-element-widget .ui-input-text,
+.form-group-widget[type=horizontal] .form-element-widget .ui-input-search {
+    padding: .22em 0em;
+}
+
+.form-group-widget[type=horizontal] .button-widget {
+    padding-left: 0em;
+    padding-right: 0em;
+    font-weight: normal;
+}
+
+.form-group-widget[type=horizontal] .form-element-widget:not(:last-child) .ui-input-text,
+.form-group-widget[type=horizontal] .form-element-widget:not(:last-child) .ui-input-search,
+.form-group-widget[type=horizontal] .form-element-widget:not(:last-child) .ui-select .ui-btn,
+.form-group-widget[type=horizontal] .widget:not(:last-child).button-widget {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.form-group-widget[type=horizontal] .form-element-widget:not(:first-child) .ui-input-text,
+.form-group-widget[type=horizontal] .form-element-widget:not(:first-child) .ui-input-search,
+.form-group-widget[type=horizontal] .form-element-widget:not(:first-child) .ui-select .ui-btn,
+.form-group-widget[type=horizontal] .widget:not(:first-child).button-widget {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-group-widget[type=vertical] .checkbox-form-element-widget:not(:last-child) .ui-checkbox {
+    margin-bottom: 0;
+}
+
+.form-group-widget[type=vertical] .checkbox-form-element-widget:not(:last-child) label {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.form-group-widget[type=vertical] .checkbox-form-element-widget:not(:first-child) .ui-checkbox {
+    margin-top: 0;
+}
+
+.form-group-widget[type=vertical] .checkbox-form-element-widget:not(:first-child) label {
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/********************************/
+/*  Dialog                      */
+/********************************/
+.dialog-widget {
+    min-width: 290px;
+}
+
+.dialog-widget>.body-widget {
+    margin: 0.3125em;
+}
+
+/********************************/
+/*  Table                       */
+/********************************/
+.table-widget {
+    border-bottom: 1px solid #ddd;
+}
+
+.table-widget .header-bar-widget {
+    border-top: none;
+}
+
+.table-widget .header-bar-widget .ui-title {
+    margin-left: 0.5em;
+    text-align: left;
+}
+
+.table-widget .footer-bar-widget {
+    border-bottom: none;
+}
+
+.table-widget .ui-input-search {
+    box-shadow: none;
+    margin: 0em;
+    border-width: 0;
+    border-radius: 0;
+    border-bottom-width: 1px;
+}
+
+.table-widget th {
+    text-align: center;
+}
+
+.table-widget td,
+.table-widget th {
+    display: table-cell !important;
+    vertical-align: middle;
+}
+
+.table-widget thead tr,
+.table-widget tr:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}
+
+.table-widget th:not(:first-child),
+.table-widget td:not(:first-child) {
+    border-left: 1px solid #ddd;
+}
+
+/********************************/
+/*  Menu                        */
+/********************************/
+.menu-widget {
+    min-width: 290px;
+}
+
+.menu-widget .ui-listview>li>a.ui-btn {
+    background-color: transparent;
+    border-radius: 0;
+    font-weight: normal;
+}
+
+.menu-widget .ui-listview>li.ui-first-child>a.ui-btn {
+    border-top: none;
+}
+
+.menu-widget .ui-listview>li.ui-last-child>a.ui-btn {
+    border-bottom: none;
+}
+
+/********************************/
+/*  Panel                       */
+/********************************/
+.panel-widget {
+    z-index: 2000;
+}
+
+.panel-widget.panel-widget-fullscreen {
+    width: 100%;
+    box-shadow: none;
+}
+
+.panel-widget .ui-panel-inner {
+    padding: 0;
+}
+
+.ui-panel-dismiss-open {
+    right: 0 !important;
+}

@@ -1,0 +1,13 @@
+<script id="product-page-output-table-row-template" type="text/template">
+    <td class="description"><%- date %></td>
+    <td>
+        <div><%- category.name %></div>
+        <div class="description">
+            <% if (provider) { %><%- provider.name %><% } %>
+            <% if (crop) { %><%- variety.common_name %><% } %>
+            <% if (pos) { %><%- pos.name %><% } %>
+        </div>
+        <div class="description">Lot: <%- lot %></div>
+    </td>
+    <td class="description"><%- quantity %> <%- product.quantity_unit %></td>
+</script>

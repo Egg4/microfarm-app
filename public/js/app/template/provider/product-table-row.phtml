@@ -1,0 +1,10 @@
+<script id="provider-page-product-table-row-template" type="text/template">
+    <td>
+        <div><%- name %></div>
+        <div class="description"><%- category.name %></div>
+    </td>
+    <td class="description">
+        <% if (inputNum > 0) { %><div><i class="fa fa-sign-in"></i> <%- inputNum %></div><% } %>
+        <% if (outputNum > 0) { %><div><i class="fa fa-sign-out"></i> <%- outputNum %></div><% } %>
+    </td>
+</script>
