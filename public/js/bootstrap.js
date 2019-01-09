@@ -59,10 +59,6 @@ require([
         $.mobile.hashListeningEnabled = false;
         $.event.special.tap.emitTapOnTaphold = true;
         $.event.special.tap.tapholdThreshold = 400;
-        // Modify Jquery mobile
-        $.mobile.filterable.prototype.setInput = function(selector) {
-            this._setInput(selector);
-        };
     });
 
     $('#home-page').on('pageinit', function () {

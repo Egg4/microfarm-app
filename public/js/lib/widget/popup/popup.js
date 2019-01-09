@@ -3,45 +3,25 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/widget',
-    'view/widget/bar/header-bar',
-    'view/widget/bar/grid-bar',
-], function ($, _, Widget, Header, GridBar) {
+    'lib/widget/widget',
+], function ($, _, Widget) {
 
     return Widget.extend({
-        tagName: 'div',
 
         initialize: function (options) {
             Widget.prototype.initialize.call(this, options);
 
-            $.extend(true, this, {
-                header: new Header({title: options.title || 'Title'}),
-                body: false,
-                buttonBar: new GridBar({items: options.buttons || {}}),
-                footer: false,
+            var defaults = {
+                layout: false,
                 theme: 'a',
                 overlayTheme: 'b',
                 transition: 'pop',
                 positionTo: 'windows',
                 shadow: true,
-                opened: false,
-            }, _.pick(options, 'header', 'body', 'buttonBar', 'footer', 'theme', 'overlayTheme', 'transition', 'positionTo', 'shadow'));
+            };
+            $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
-            $(this.el).addClass('dialog-widget');
-
-            if (this.header) {
-                $(this.el).append(this.header.el);
-            }
-            if (this.body) {
-                $(this.el).append(this.body.el);
-            }
-            if (this.buttonBar) {
-                $(this.el).append(this.buttonBar.el);
-            }
-            if (this.footer) {
-                $(this.el).append(this.footer.el);
-            }
-
+            $(this.el).addClass('popup-widget');
             $('body').append(this.el);
 
             $(this.el).popup({
@@ -65,21 +45,22 @@ define([
             });
         },
 
-        render: function (options) {
-            Widget.prototype.render.call(this, options);
+        render: function () {
+            Widget.prototype.render.call(this);
 
-            options = options || {};
-            if (this.header && options.title) {
-                this.header.render({
-                    title: options.title,
-                });
-            }
+            var layout = _.isFunction(this.layout) ? this.layout() : this.layout;
+            $(this.el).html(layout.el);
+            layout.render();
+
+            $(this.el).popup({
+                enhanced: true,
+            });
         },
 
         open: function () {
             this.opened = true;
             this.deferredOpen = $.Deferred();
-            $(this.el).popup('open').enhanceWithin();
+            $(this.el).popup('open')
             return this.deferredOpen.promise();
         },
 
@@ -90,7 +71,7 @@ define([
         },
 
         isOpened: function () {
-            return this.opened;
+            return this.opened || false;
         },
     });
 });

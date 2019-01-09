@@ -3,104 +3,54 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/widget',
-    'view/widget/form/element/input-search-form-element',
-], function ($, _, Widget, InputSearch) {
+    'lib/widget/widget',
+], function ($, _, Widget) {
 
     return Widget.extend({
-        tagName: 'div',
+        tagName: 'table',
 
         initialize: function (options) {
             Widget.prototype.initialize.call(this, options);
 
-            $.extend(true, this, {
-                header: false,
-                headRow: false,
-                bodyRow: false,
-                footRow: false,
-                footer: false,
-                data: this.data.bind(this),
-                filterable: false,
-                filterInput: false,
-            }, _.pick(options, 'header', 'headRow', 'bodyRow', 'footRow', 'footer', 'data', 'filterable', 'filterInput'));
+            var defaults = {
+                filterId: false,
+                rows: [],
+            };
+            $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
             $(this.el).addClass('table-widget');
+            $(this.el).table();
 
-            if (this.header) {
-                $(this.el).append(this.header.el);
-            }
-            $(this.el).append('<table><thead></thead><tbody></tbody><tfoot></tfoot></table>');
-            if (this.filterable) {
-                this.$('table').attr('data-filter', 'true');
-            }
-            if (this.filterInput) {
-                if (this.filterInput instanceof InputSearch) {
-                    this.$('table').attr('data-input', true);
-                    this.filterInput.on('keyup', this.filter.bind(this));
-                }
-                else {
-                    this.$('table').attr('data-input', this.filterInput);
-                }
-            }
-            this.$('table').table();
-
-            if (this.footer) {
-                $(this.el).append(this.footer.el);
+            if (this.filterId) {
+                $(this.el).attr('data-filter', 'true');
+                $(this.el).attr('data-input', '#' + this.filterId);
+                $(this.el).filterable();
             }
         },
 
-        filter: function() {
-            this.$('table').filterable('setInput', '#' + this.filterInput.getElementId());
-            this.$('table').filterable('refresh');
-        },
+        render: function () {
+            Widget.prototype.render.call(this);
 
-        data: function () {
-            return [];
-        },
-
-        renderHead: function () {
-            var headRow = new this.headRow();
-            headRow.render();
-            this.$('thead').html(headRow.el);
-        },
-
-        renderBody: function (data) {
-            this.$('tbody').empty();
-            _.each(data, function(item) {
-                this.appendBodyRow(item);
+            $(this.el).empty();
+            var rows = _.isFunction(this.rows) ? this.rows() : this.rows;
+            _.each(rows, function(row) {
+                row.render();
+                $(this.el).append(row.el);
             }.bind(this));
-        },
 
-        appendBodyRow: function (data) {
-            var bodyRow = new this.bodyRow({table: this});
-            bodyRow.render({data: data});
-            this.$('tbody').append(bodyRow.el);
-        },
+            $(this.el).table({
+                enhanced: true,
+            });
 
-        renderFoot: function () {
-            var footRow = new this.footRow();
-            footRow.render();
-            this.$('tfoot').html(footRow.el);
-        },
-
-        render: function (options) {
-            Widget.prototype.render.call(this, options);
-
-            options = options || {};
-            if (this.headRow) {
-                this.renderHead();
-            }
-            if (this.bodyRow) {
-                this.renderBody(this.data(options.data, options.navigationKey));
-            }
-            if (this.footRow) {
-                this.renderFoot();
-            }
-
-            if (this.filterable) {
-                if (this.filterInput instanceof InputSearch) {
-                    this.filter();
-                }
+            if (this.filterId) {
+                $(this.el).filterable({
+                    enhanced: true,
+                    input: '#' + this.filterId,
+                    filter: function() {
+                        window.scrollTo(0, 0);
+                    },
+                });
+                $(this.el).filterable('refresh');
             }
         },
     });

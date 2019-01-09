@@ -1,8 +1,28 @@
 /********************************/
-/*  Page                        */
+/*  Dialog                      */
 /********************************/
-.page-widget .page-body {
-    /*padding: 0 .5em;*/
+.dialog > .layout-widget > .form-widget {
+    padding: 0 .5em;
+}
+
+/********************************/
+/*  Popup                       */
+/********************************/
+.popup-widget .body {
+    padding: .5em;
+}
+
+.popup-widget .list-item-widget {
+    list-style-type: circle;
+    margin-left: 1em;
+}
+
+.popup-widget .buttons div:first-child .button-widget {
+    margin-left: .5em;
+}
+
+.popup-widget .buttons div:last-child .button-widget {
+    margin-right: .5em;
 }
 
 /********************************/
@@ -13,12 +33,24 @@
     text-shadow: 0 1px 0 #fff;
 }
 
+.bar-widget > .border-layout-widget > .left {
+    margin-left: .5em;
+    text-align: left;
+}
+
 .bar-widget > .border-layout-widget > .right {
+    margin-right: .5em;
     text-align: right;
 }
 
+.bar-widget > .grid-layout-widget .button-widget {
+    font-size: inherit;
+    display: inherit;
+    vertical-align: inherit;
+}
+
 /********************************/
-/*  Error-List                  */
+/*  ErrorList                   */
 /********************************/
 .error-list-widget {
     border: 1px solid red;
@@ -31,6 +63,20 @@
 .error-list-widget > .list-item-widget {
     list-style-type: circle;
     border: none;
+}
+
+/********************************/
+/*  SearchForm                  */
+/********************************/
+.search-form .widget .ui-input-search,
+.search-form .widget.ui-btn {
+    border-radius: 0;
+    border-top: none;
+    border-left: none;
+}
+
+.search-form .form-group-widget[type=horizontal] > .button-widget:last-child {
+    border-right: none;
 }
 
 /********************************/

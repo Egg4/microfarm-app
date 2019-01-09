@@ -3,51 +3,54 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/form/model-form',
-    'view/widget/form/group/form-group',
-    'view/widget/form/element/input-hidden-form-element',
-    'view/widget/form/element/select-form-element',
-    'view/widget/form/element/input-text-form-element',
-    'view/widget/form/element/checkbox-form-element',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputText, Checkbox) {
+    'app/widget/form/model-form',
+    'lib/widget/form/group/form-group',
+    'lib/widget/form/element/input-hidden-form-element',
+    'lib/widget/form/element/select-form-element',
+    'lib/widget/form/element/input-text-form-element',
+    'lib/widget/form/element/checkbox-form-element',
+    'lib/widget/form/label/form-label',
+], function ($, _, Form, FormGroup, InputHidden, Select, InputText, Checkbox, FormLabel) {
 
     return Form.extend({
 
-        initialize: function (options) {
-            Form.prototype.initialize.call(this, $.extend(true, {
+        initialize: function () {
+            Form.prototype.initialize.call(this, {
                 id: 'variety-form',
                 collection: app.collections.get('variety'),
                 formGroup: new FormGroup({
-                    items: {
-                        id: new InputHidden({
+                    items: [
+                        new InputHidden({
                             name: 'id',
                             required: false,
                         }),
-                        entity_id: new InputHidden({
+                        new InputHidden({
                             name: 'entity_id',
                         }),
-                        plant_id: new Select({
+                        new Select({
                             name: 'plant_id',
                             optgroup: true,
                             cast: 'integer',
                             data: this.buildPlantData.bind(this),
                         }),
-                        name: new InputText({
+                        new InputText({
                             name: 'name',
-                            placeholder: 'Nom',
+                            placeholder: polyglot.t('form.placeholder.name'),
                         }),
-                        formGroup: new FormGroup({
-                            items: {
-                                active: new Checkbox({
+                        new FormGroup({
+                            items: [
+                                new Checkbox({
                                     name: 'active',
-                                    label: 'Actif',
+                                    label: new FormLabel({
+                                        text: polyglot.t('form.placeholder.active'),
+                                    }),
                                     cast: 'boolean',
                                 }),
-                            },
+                            ],
                         }),
-                    },
+                    ],
                 }),
-            }, options));
+            });
         },
 
         buildPlantData: function () {

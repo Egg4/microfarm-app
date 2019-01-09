@@ -18,15 +18,19 @@ define([
 
             $(this.el).addClass('page-widget');
             $('body').append(this.el);
+            $(this.el).page();
         },
 
         render: function () {
-            $(this.el).page();
             Widget.prototype.render.call(this);
 
             var layout = _.isFunction(this.layout) ? this.layout() : this.layout;
             $(this.el).html(layout.el);
             layout.render();
+
+            $(this.el).page({
+                enhanced: true,
+            });
         },
     });
 });

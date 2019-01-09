@@ -17,17 +17,31 @@ define([
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
-            this.cancelButton = new Button({
+            Dialog.prototype.initialize.call(this, $.extend(true, {
+                body: this.form,
+                buttons: [
+                    this.buildCancelButton(),
+                    this.buildSaveButton(),
+                ],
+            }, options));
+
+            $(this.el).addClass('model-dialog');
+        },
+
+        buildCancelButton: function () {
+            return new Button({
                 label: new Label({
                     text: polyglot.t('model-dialog.button.cancel'),
                     icon: new Icon({name: 'times'}),
                 }),
                 events: {
-                    click: this.hide.bind(this),
+                    click: this.close.bind(this),
                 },
             });
+        },
 
-            this.saveButton = new Button({
+        buildSaveButton: function () {
+            return new Button({
                 label: new Label({
                     text: polyglot.t('model-dialog.button.save'),
                     icon: new Icon({name: 'check'}),
@@ -37,34 +51,29 @@ define([
                     click: this.save.bind(this),
                 },
             });
-
-            Dialog.prototype.initialize.call(this, $.extend(true, {
-                content: this.form,
-                buttons: [
-                    this.cancelButton,
-                    this.saveButton,
-                ],
-            }, options));
         },
 
         save: function() {
-            this.cancelButton.state = 'disabled';
-            this.saveButton.state = 'disabled';
-            this.cancelButton.render();
-            this.saveButton.render();
+            var cancelButton = this.buttons[0],
+                saveButton = this.buttons[1];
+
+            cancelButton.state = 'disabled';
+            saveButton.state = 'disabled';
+            cancelButton.render();
+            saveButton.render();
             app.loader.show();
 
             this.form.submit()
-                .done(function() {
-                    this.hide();
+                .done(function(data) {
+                    this.close();
                 }.bind(this))
                 .always(function() {
-                    this.cancelButton.state = 'enabled';
-                    this.saveButton.state = 'enabled';
-                    this.cancelButton.render();
-                    this.saveButton.render();
+                    cancelButton.state = 'enabled';
+                    saveButton.state = 'enabled';
+                    cancelButton.render();
+                    saveButton.render();
                     app.loader.hide();
-                }.bind(this));
+                });
         },
     });
 });

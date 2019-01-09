@@ -43,8 +43,7 @@ define([
                                         iconAlign: 'top',
                                         events: {
                                             click: function () {
-                                                //app.router.navigate('varieties');
-                                                app.dialogs.get('article').show();
+                                                app.router.navigate('varieties');
                                             },
                                         },
                                     }),
@@ -56,7 +55,22 @@ define([
                                         iconAlign: 'top',
                                         events: {
                                             click: function () {
-                                                app.router.navigate('articles');
+                                                //app.router.navigate('articles');
+                                                var dialog = app.dialogs.get('article');
+                                                dialog.setData({
+                                                    title: polyglot.t('model-dialog.title.edit', {
+                                                        model: polyglot.t('model.name.article').toLowerCase(),
+                                                    }),
+                                                    icon: new Icon({name: 'pencil-alt'}),
+                                                });
+                                                dialog.form.setData({
+                                                    entity_id: 1,
+                                                    active: true,
+                                                });
+                                                dialog.form.setVisible({
+
+                                                });
+                                                dialog.open();
                                             },
                                         },
                                     }),
@@ -68,7 +82,17 @@ define([
                                         iconAlign: 'top',
                                         events: {
                                             click: function () {
-                                                app.router.navigate('zones');
+                                                //app.router.navigate('zones');
+                                                var popup = app.popups.get('confirm');
+                                                popup.setData({
+                                                    title: 'Confirmation',
+                                                    message: 'As-tu vu le zizi ?',
+                                                });
+                                                popup.open().done(function () {
+                                                    console.log('done');
+                                                }).fail(function () {
+                                                    console.log('fail');
+                                                });
                                             },
                                         },
                                     }),

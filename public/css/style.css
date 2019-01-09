@@ -108,40 +108,7 @@ td .date {
     white-space: nowrap;
 }
 
-/* Search Form */
-.search-form .widget .ui-input-search,
-.search-form .widget.ui-btn {
-    border-radius: 0;
-    border-bottom: none;
-}
 
-.search-form .widget .ui-input-search {
-    padding: 0 !important;
-    border-left: none;
-    border-right: none;
-}
-
-.search-form .widget.ui-btn {
-    background-color: #f6f6f6;
-    border-color: #ddd;
-    margin: 0px;
-    margin-top: .56em;
-    padding: 1.05em 0em;
-    width: 2.5em;
-    height: 0.1em;
-}
-
-.search-form .widget.ui-btn:after {
-    margin: -0.8em 0.3em;
-}
-
-.search-form .form-group-widget[type=horizontal] .widget:first-child {
-    border-left: none;
-}
-
-.search-form .form-group-widget[type=horizontal] .widget:last-child {
-    border-right: none;
-}
 
 /* Model body */
 .model-body {

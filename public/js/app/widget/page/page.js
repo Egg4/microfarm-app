@@ -17,23 +17,26 @@ define([
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
+            Page.prototype.initialize.call(this, $.extend(true, {
+                layout: this.buildLayout(),
+            }, options));
+        },
+
+        buildLayout: function () {
             var items = [];
             if (this.header) {
-                $(this.header.el).addClass('page-header');
                 items.push(this.header);
             }
             if (this.body) {
-                $(this.body.el).addClass('page-body');
                 items.push(this.body);
             }
             if (this.footer) {
-                $(this.footer.el).addClass('page-footer');
                 items.push(this.footer);
             }
 
-            Page.prototype.initialize.call(this, $.extend(true, {
-                layout: new StackLayout({items: items}),
-            }, options));
+            return new StackLayout({
+                items: items,
+            });
         },
     });
 });

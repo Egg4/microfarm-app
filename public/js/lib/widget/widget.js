@@ -28,6 +28,12 @@ define([
             $(this.el).addClass('widget');
         },
 
+        setData: function (data) {
+            if (_.isObject(data)) {
+                $.extend(true, this, data);
+            }
+        },
+
         render: function () {
             this.delegateEvents(this.events);
         },

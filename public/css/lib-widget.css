@@ -146,9 +146,6 @@
     bottom: 14px;
 }
 
-/*--------------------------------------------OLD DEFINITION ----------------------------------------------*/
-
-
 /********************************/
 /*  Form                        */
 /********************************/
@@ -189,13 +186,19 @@
 
 .form-group-widget[type=horizontal] .form-element-widget .ui-input-text,
 .form-group-widget[type=horizontal] .form-element-widget .ui-input-search {
-    padding: .22em 0em;
+    padding: .25em 0em;
 }
 
 .form-group-widget[type=horizontal] .button-widget {
     padding-left: 0em;
     padding-right: 0em;
     font-weight: normal;
+    border-radius: .3125em;
+    padding: .475em;
+}
+
+.form-group-widget[type=horizontal] .button-widget .icon-widget {
+    left: .7em;
 }
 
 .form-group-widget[type=horizontal] .form-element-widget:not(:last-child) .ui-input-text,
@@ -236,63 +239,30 @@
 }
 
 /********************************/
-/*  Dialog                      */
-/********************************/
-.dialog-widget {
-    min-width: 290px;
-}
-
-.dialog-widget>.body-widget {
-    margin: 0.3125em;
-}
-
-/********************************/
 /*  Table                       */
 /********************************/
-.table-widget {
+.table-widget tr {
     border-bottom: 1px solid #ddd;
 }
 
-.table-widget .header-bar-widget {
-    border-top: none;
-}
-
-.table-widget .header-bar-widget .ui-title {
-    margin-left: 0.5em;
-    text-align: left;
-}
-
-.table-widget .footer-bar-widget {
-    border-bottom: none;
-}
-
-.table-widget .ui-input-search {
-    box-shadow: none;
-    margin: 0em;
-    border-width: 0;
-    border-radius: 0;
-    border-bottom-width: 1px;
-}
-
-.table-widget th {
-    text-align: center;
-}
-
-.table-widget td,
-.table-widget th {
+.table-widget td {
     display: table-cell !important;
     vertical-align: middle;
 }
 
-.table-widget thead tr,
-.table-widget tr:not(:last-child) {
-    border-bottom: 1px solid #ddd;
-}
-
-.table-widget th:not(:first-child),
 .table-widget td:not(:first-child) {
     border-left: 1px solid #ddd;
 }
+
+/********************************/
+/*  Popup                       */
+/********************************/
+.popup-widget {
+    min-width: 290px;
+}
+
+/*--------------------------------------------OLD DEFINITION ----------------------------------------------*/
+
 
 /********************************/
 /*  Menu                        */

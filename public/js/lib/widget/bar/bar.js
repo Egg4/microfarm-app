@@ -24,17 +24,23 @@ define([
         },
 
         render: function () {
+            Widget.prototype.render.call(this);
+
             $(this.el).attr('data-role', this.role);
-            $(this.el).attr('data-position', this.position);
+            if (this.position) {
+                $(this.el).attr('data-position', this.position);
+            }
+            else {
+                $(this.el).removeAttr('data-position');
+            }
             $(this.el).attr('data-tap-toggle', this.tapToggle);
             $(this.el).attr('data-theme', this.theme);
-
-            $(this.el).toolbar();
-            Widget.prototype.render.call(this);
 
             var layout = _.isFunction(this.layout) ? this.layout() : this.layout;
             $(this.el).html(layout.el);
             layout.render();
+
+            $(this.el).toolbar();
         },
     });
 });

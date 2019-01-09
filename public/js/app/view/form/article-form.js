@@ -11,11 +11,11 @@ define([
     'lib/widget/form/element/input-number-form-element',
     'lib/widget/form/element/checkbox-form-element',
     'lib/widget/form/label/form-label',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputText, InputNumber, Checkbox, Label) {
+], function ($, _, Form, FormGroup, InputHidden, Select, InputText, InputNumber, Checkbox, FormLabel) {
 
     return Form.extend({
 
-        initialize: function (options) {
+        initialize: function () {
             Form.prototype.initialize.call(this, {
                 id: 'article-form',
                 collection: app.collections.get('article'),
@@ -77,7 +77,9 @@ define([
                             items: [
                                 new Checkbox({
                                     name: 'active',
-                                    label: new Label({text: 'Actif'}),
+                                    label: new FormLabel({
+                                        text: polyglot.t('form.placeholder.active'),
+                                    }),
                                     cast: 'boolean',
                                 }),
                              ],
@@ -88,10 +90,11 @@ define([
         },
 
         buildOrganizationData: function () {
+            var entity = app.collections.get('entity').at(0);
             var data = [{
                 optgroup: '-',
                 value: null,
-                label: 'None',
+                label: entity.getDisplayName(),
             }];
             var organizations = app.collections.get('organization').where({
                 supplier: true,

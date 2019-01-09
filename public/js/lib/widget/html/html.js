@@ -17,7 +17,9 @@ define([
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
-            this.template = _.template(this.template);
+            if (_.isString(this.template)) {
+                this.template = _.template(this.template);
+            };
             $(this.el).addClass('html-widget');
         },
 

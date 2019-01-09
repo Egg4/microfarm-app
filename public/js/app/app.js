@@ -7,10 +7,7 @@ define([
     'app/container/schema-container',
     'app/container/collection-container',
     'app/container/dialog-container',
-    /*
-    'app/container/menu-container',
-    'app/container/panel-container',
-    */
+    'app/container/popup-container',
     'app/container/page-container',
     'app/widget/loader/loader',
     'lib/http/client',
@@ -21,10 +18,7 @@ define([
              SchemaContainer,
              CollectionContainer,
              DialogContainer,
-             /*
-             MenuContainer,
-             PanelContainer,
-             */
+             PopupContainer,
              PageContainer,
              Loader,
              Client,
@@ -61,8 +55,7 @@ define([
             this.dialogs = new DialogContainer({
                 schemas: this.schemas,
             });
-            //this.menus = new MenuContainer();
-            //this.panels = new PanelContainer();
+            this.popups = new PopupContainer();
             this.pages = new PageContainer({
                 schemas: this.schemas,
                 router: this.router,
@@ -85,11 +78,13 @@ define([
                 this.router.navigate('login');
             }
             else {
-                this.dialogs.closeAll().done(function() {
-                    this.dialogs.get('error').show({
-                        title: 'Error',
+                this.popups.closeAll().done(function() {
+                    var errorPopup = app.popups.get('error');
+                    errorPopup.setData({
+                        title: 'Erreurs',
                         errors: errors,
                     });
+                    errorPopup.open();
                 }.bind(this));
             }
         },

@@ -24,6 +24,7 @@ define([
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
             $(this.el).addClass('button-widget');
+            $(this.el).button();
         },
 
         render: function () {
