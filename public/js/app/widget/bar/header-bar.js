@@ -71,7 +71,7 @@ define([
                 }),
                 events: {
                     click: function() {
-                        this.menu.show();
+                        this.menu.open();
                     }.bind(this),
                 },
             });

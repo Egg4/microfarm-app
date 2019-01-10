@@ -144,16 +144,6 @@ td .date {
     white-space: nowrap;
 }
 
-/* Menu Panel */
-#menu-panel {
-    background-color: #f9f9f9;
-    width: auto;
-}
-
-#menu-panel .navigation-widget .ui-grid-solo:first-child .button-widget {
-    border-top: none;
-}
-
 /* Home page */
 #home-page h1 {
     margin-left: 30%;

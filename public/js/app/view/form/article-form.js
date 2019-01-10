@@ -30,10 +30,16 @@ define([
                         }),
                         new Select({
                             name: 'organization_id',
+                            defaultValue: 0,
                             optgroup: true,
                             nullable: true,
                             cast: 'integer',
                             data: this.buildOrganizationData.bind(this),
+                            validator: function (value) {
+                                if (!_.isNull(value) && value <= 0) {
+                                    return 'Invalid';
+                                }
+                            },
                         }),
                         new Select({
                             name: 'category_id',

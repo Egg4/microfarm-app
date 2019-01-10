@@ -1,4 +1,13 @@
 /********************************/
+/*  Table                       */
+/********************************/
+.table-widget tr.separator {
+    background-color: #ededed;
+    cursor: inherit;
+    font-weight: 700;
+}
+
+/********************************/
 /*  Dialog                      */
 /********************************/
 .dialog > .layout-widget > .form-widget {
@@ -12,9 +21,8 @@
     padding: .5em;
 }
 
-.popup-widget .list-item-widget {
-    list-style-type: circle;
-    margin-left: 1em;
+.popup-widget .body.list-widget {
+    padding: 0;
 }
 
 .popup-widget .buttons div:first-child .button-widget {
@@ -23,6 +31,18 @@
 
 .popup-widget .buttons div:last-child .button-widget {
     margin-right: .5em;
+}
+
+/********************************/
+/*  ErrorPopup                  */
+/********************************/
+#error-popup .body.list-widget {
+    padding: .5em;
+}
+
+#error-popup .list-item-widget {
+    list-style-type: circle;
+    margin-left: 1em;
 }
 
 /********************************/

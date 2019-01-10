@@ -4,6 +4,8 @@ define([], function () {
     return {
         'loader.default-text': 'Chargement',
 
+        'main-menu-panel.button.logout': 'Déconnexion',
+
         'login-page.title': 'Connexion',
         'login-page.button.submit': 'Connexion',
         'authentication-page.title': 'Fermes',
@@ -23,9 +25,13 @@ define([], function () {
         'model-dialog.button.cancel': 'Annuler',
         'model-dialog.button.save': 'Enregistrer',
 
+        'model-menu-popup.button.edit': 'Editer',
+        'model-menu-popup.button.delete': 'Supprimer',
+
         'error-popup.button.close': 'Fermer',
         'confirm-popup.button.yes': 'Oui',
         'confirm-popup.button.no': 'Non',
+        'delete-popup.body.message': 'Voulez-vous vraiment supprimer "%{name}" ?',
         'delete-popup.checkbox.label': 'Confirmer la suppression',
 
         'form.field.name': 'Nom',

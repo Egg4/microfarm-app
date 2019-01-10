@@ -25,13 +25,13 @@ define([
             Widget.prototype.render.call(this);
 
             $(this.el).empty();
-            if (this.icon) {
-                var icon = _.isFunction(this.icon) ? this.icon() : this.icon;
+            var icon = _.isFunction(this.icon) ? this.icon() : this.icon;
+            if (icon) {
                 $(this.el).append(icon.el);
                 icon.render();
             }
-            if (this.text) {
-                var text = _.isFunction(this.text) ? this.text() : this.text;
+            var text = _.isFunction(this.text) ? this.text() : this.text;
+            if (text) {
                 $(this.el).append('<span class="text"> ' + text + '</span>');
             }
         },

@@ -18,6 +18,7 @@ define([
                 transition: 'pop',
                 positionTo: 'windows',
                 shadow: true,
+                dismissible: false,
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
@@ -30,7 +31,7 @@ define([
                 transition: this.transition,
                 positionTo: this.positionTo,
                 shadow: this.shadow,
-                dismissible: false,
+                dismissible: this.dismissible,
                 afteropen: function() {
                     if (this.deferredOpen) {
                         this.deferredOpen.resolve();

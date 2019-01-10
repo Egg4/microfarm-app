@@ -5,10 +5,9 @@ define([
     'underscore',
     'lib/widget/popup/popup',
     'app/widget/bar/header-bar',
-    'app/widget/bar/footer-bar',
     'lib/widget/layout/stack-layout',
     'lib/widget/layout/grid-layout',
-], function ($, _, Popup, Header, Footer, StackLayout, GridLayout) {
+], function ($, _, Popup, Header, StackLayout, GridLayout) {
 
     return Popup.extend({
 
@@ -29,12 +28,14 @@ define([
         },
 
         buildLayout: function () {
+            var items = [];
+            items.push(this.buildHeader());
+            items.push(this.body);
+            if (this.buttons.length > 0) {
+                items.push(this.buildButtons());
+            }
             return new StackLayout({
-                items: [
-                    this.buildHeader(),
-                    this.body,
-                    this.buildButtons(),
-                ],
+                items: items,
             });
         },
 

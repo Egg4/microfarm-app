@@ -4,13 +4,15 @@ define([
     'jquery',
     'underscore',
     'lib/container/container',
-    'app/widget/popup/error-popup',
-    'app/widget/popup/confirm-popup',
-    'app/widget/popup/delete-popup',
+    'app/view/popup/error-popup',
+    'app/view/popup/confirm-popup',
+    'app/view/popup/delete-popup',
+    'app/widget/popup/menu-popup',
 ], function ($, _, Container,
              ErrorPopup,
              ConfirmPopup,
-             DeletePopup
+             DeletePopup,
+             MenuPopup
 ) {
 
     return Container.extend({
@@ -25,6 +27,9 @@ define([
                 },
                 delete: function () {
                     return new DeletePopup();
+                },
+                menu: function () {
+                    return new MenuPopup();
                 },
             });
         },

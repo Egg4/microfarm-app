@@ -3,44 +3,27 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/widget',
+    'lib/widget/widget',
 ], function ($, _, Widget) {
 
     return Widget.extend({
-        tagName: 'div',
 
         initialize: function (options) {
             Widget.prototype.initialize.call(this, options);
 
-            $.extend(true, this, {
+            var defaults = {
+                layout: false,
                 position: 'left',
                 positionFixed: true,
-                fullscreen: false,
-                display: 'reveal',
+                display: 'overlay',
                 dismissible: false,
-                animate: false,
+                animate: true,
                 swipeClose: false,
                 theme: 'a',
-                header: false,
-                body: false,
-                footer: false,
-            }, _.pick(options, 'position', 'positionFixed', 'fullscreen', 'display', 'dismissible', 'animate', 'swipeClose', 'theme', 'header', 'body', 'footer'));
+            };
+            $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
             $(this.el).addClass('panel-widget');
-            if (this.fullscreen) {
-                $(this.el).addClass('panel-widget-fullscreen');
-            }
-
-            if (this.header) {
-                $(this.el).append(this.header.el);
-            }
-            if (this.body) {
-                $(this.el).append(this.body.el);
-            }
-            if (this.footer) {
-                $(this.el).append(this.footer.el);
-            }
-
             $('body').append(this.el);
 
             $(this.el).panel({
@@ -57,6 +40,7 @@ define([
                     }
                 }.bind(this),
                 close: function() {
+                    this.opened = false;
                     if (this.deferredClose) {
                         this.deferredClose.resolve();
                     }
@@ -64,14 +48,22 @@ define([
             });
         },
 
-        show: function () {
-            this.render();
-            this.open();
+        render: function () {
+            Widget.prototype.render.call(this);
+
+            var layout = _.isFunction(this.layout) ? this.layout() : this.layout;
+            $(this.el).html(layout.el);
+            layout.render();
+
+            $(this.el).panel({
+                enhanced: true,
+            });
         },
 
         open: function () {
+            this.opened = true;
             this.deferredOpen = $.Deferred();
-            $(this.el).panel('open').enhanceWithin();
+            $(this.el).panel('open');
             return this.deferredOpen.promise();
         },
 
@@ -79,6 +71,10 @@ define([
             this.deferredClose = $.Deferred();
             $(this.el).panel('close');
             return this.deferredClose.promise();
+        },
+
+        isOpened: function () {
+            return this.opened || false;
         },
     });
 });

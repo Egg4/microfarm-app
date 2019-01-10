@@ -27,7 +27,7 @@ define([
                     title: polyglot.t('entity-page.title'),
                     icon: new Icon({name: 'home'}),
                     back: true,
-                    menu: false,
+                    menu: app.panels.get('main-menu'),
                 }),
                 body: new StackLayout({
                     items: [
@@ -65,6 +65,7 @@ define([
                                                 });
                                                 dialog.form.setData({
                                                     entity_id: 1,
+                                                    //organization_id: null,
                                                     active: true,
                                                 });
                                                 dialog.form.setVisible({
@@ -82,17 +83,7 @@ define([
                                         iconAlign: 'top',
                                         events: {
                                             click: function () {
-                                                //app.router.navigate('zones');
-                                                var popup = app.popups.get('confirm');
-                                                popup.setData({
-                                                    title: 'Confirmation',
-                                                    message: 'As-tu vu le zizi ?',
-                                                });
-                                                popup.open().done(function () {
-                                                    console.log('done');
-                                                }).fail(function () {
-                                                    console.log('fail');
-                                                });
+                                                app.router.navigate('zones');
                                             },
                                         },
                                     }),

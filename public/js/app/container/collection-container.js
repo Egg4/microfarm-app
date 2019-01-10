@@ -15,7 +15,7 @@ define([
                 if (schema.collection) {
                     this.set(key, function () {
                         return new schema.collection.class(null, {
-                            modelName: schema.model.name || key,
+                            modelName: key,
                             model: schema.model.class.extend({
                                 displayName: schema.model.displayName || 'id',
                             }),

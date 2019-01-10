@@ -3,20 +3,22 @@
 define([
     'jquery',
     'underscore',
-    'app/widget/popup/confirm-popup',
+    'app/view/popup/confirm-popup',
     'lib/widget/layout/stack-layout',
     'lib/widget/html/html',
     'lib/widget/form/form',
     'lib/widget/form/group/form-group',
     'lib/widget/form/element/checkbox-form-element',
     'lib/widget/form/label/form-label',
-], function ($, _, Popup, StackLayout, Html, Form, FormGroup, Checkbox, FormLabel) {
+    'lib/widget/icon/fa-icon',
+], function ($, _, Popup, StackLayout, Html, Form, FormGroup, Checkbox, FormLabel, Icon) {
 
     return Popup.extend({
 
         initialize: function (options) {
             Popup.prototype.initialize.call(this, $.extend(true, {
                 id: 'delete-popup',
+                icon: new Icon({name: 'trash-alt'}),
                 body: this.buildBody(),
             }, options));
         },

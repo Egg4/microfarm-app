@@ -30,13 +30,16 @@ define([
         },
 
         sortBy: function(attribute) {
-            return _.sortBy(this.models, function(model) {
-                var value = model.get(attribute);
-                if (_.isString(value)) {
-                    return value.removeDiacritics().toLowerCase();
-                }
-                return value;
-            });
+            if (_.isString(attribute)) {
+                return _.sortBy(this.models, function(model) {
+                    var value = model.get(attribute);
+                    if (_.isString(value)) {
+                        return value.removeDiacritics().toLowerCase();
+                    }
+                    return value;
+                });
+            }
+            return Backbone.Collection.prototype.sortBy.call(this, attribute);
         },
 
         isUnique: function(data, attributes) {

@@ -8,6 +8,7 @@ define([
     'app/container/collection-container',
     'app/container/dialog-container',
     'app/container/popup-container',
+    'app/container/panel-container',
     'app/container/page-container',
     'app/widget/loader/loader',
     'lib/http/client',
@@ -19,6 +20,7 @@ define([
              CollectionContainer,
              DialogContainer,
              PopupContainer,
+             PanelContainer,
              PageContainer,
              Loader,
              Client,
@@ -56,6 +58,7 @@ define([
                 schemas: this.schemas,
             });
             this.popups = new PopupContainer();
+            this.panels = new PanelContainer();
             this.pages = new PageContainer({
                 schemas: this.schemas,
                 router: this.router,

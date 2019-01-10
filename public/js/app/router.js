@@ -9,7 +9,6 @@ define([
     return Backbone.Router.extend({
         routes: {
             '': 'home',
-            'logout': 'logout',
         },
         defaultRoute: 'entity',
 
@@ -30,7 +29,7 @@ define([
                 this.navigate();
                 return false;
             }
-            if (_.contains(['login', 'logout', 'authentication'], name) || app.collections.fetched()) {
+            if (_.contains(['login', 'authentication'], name) || app.collections.fetched()) {
                 if (app.pages.has(name)) {
                     var page = app.pages.get(name);
                     if (page[callback]) page[callback].apply(page, args);
@@ -66,13 +65,6 @@ define([
             if (app.collections.fetched()) {
                 this.navigate(this.defaultRoute);
             }
-        },
-
-        logout: function () {
-            app.authentication.logout().done(function() {
-                app.collections.resetAll();
-                this.navigate('login');
-            }.bind(this));
         },
 
         changePage: function (page) {
