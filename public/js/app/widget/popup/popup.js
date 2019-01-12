@@ -43,10 +43,10 @@ define([
             return new Header({
                 position: false,
                 title: function () {
-                    return this.title;
+                    return _.isFunction(this.title) ? this.title() : this.title;
                 }.bind(this),
                 icon: function () {
-                    return this.icon;
+                    return _.isFunction(this.icon) ? this.icon() : this.icon;
                 }.bind(this),
             });
         },

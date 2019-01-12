@@ -6,7 +6,10 @@ define([
     'lib/schema/schema',
     'lib/model/model',
     'lib/collection/collection',
-], function ($, _, Schema, Model, Collection) {
+    'app/view/form/organization-form',
+    'app/widget/dialog/model-dialog',
+    'app/view/page/organization-page',
+], function ($, _, Schema, Model, Collection, Form, Dialog, Page) {
 
     return Schema.extend({
 
@@ -20,6 +23,18 @@ define([
                     class: Collection,
                     uniqueAttributes: ['name'],
                     comparator: 'name',
+                },
+                form: {
+                    class: Form,
+                },
+                dialog: {
+                    class: Dialog,
+                },
+                page: {
+                    class: Page,
+                    routes: [{
+                        pattern: 'organization/:id',
+                    }],
                 },
             });
         },

@@ -11,7 +11,6 @@ define([
             mime: 'application/json',
             //encoding: 'gzip',
             timeout: 20000,
-            mutex: false,
         },
         authorization: {
             family: {view: '*'},

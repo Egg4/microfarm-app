@@ -16,7 +16,7 @@ define([
             var defaults = {
                 min: false,
                 max: false,
-                step: false,
+                step: 'any',
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 

@@ -73,8 +73,8 @@ define([
                                     data: [
                                         {value: 0, label: '0%'},
                                         {value: 0.055, label: '5.5%'},
-                                        {value: 0.1, label: '10%'},
-                                        {value: 0.2, label: '20%'},
+                                        {value: 0.100, label: '10%'},
+                                        {value: 0.200, label: '20%'},
                                     ],
                                 }),
                             ],
@@ -96,12 +96,7 @@ define([
         },
 
         buildOrganizationData: function () {
-            var entity = app.collections.get('entity').at(0);
-            var data = [{
-                optgroup: '-',
-                value: null,
-                label: entity.getDisplayName(),
-            }];
+            var data = [];
             var organizations = app.collections.get('organization').where({
                 supplier: true,
             });

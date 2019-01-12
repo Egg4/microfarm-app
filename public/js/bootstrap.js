@@ -43,16 +43,7 @@ require.config({
 
 require([
     'jquery',
-    'underscore',
-    'backbone',
-    'app/app',
-    'app/polyglot/fr',
-    'lib/common',
-    'polyglot',
-], function ($, _, Backbone, App, polyglotFr) {
-
-    window.polyglot = new Polyglot({phrases: polyglotFr});
-
+], function ($) {
     $(document).on('mobileinit', function () {
         // Disable Jquery mobile links for the benefit of Backbone router
         $.mobile.linkBindingEnabled = false;
@@ -60,10 +51,19 @@ require([
         $.event.special.tap.emitTapOnTaphold = true;
         $.event.special.tap.tapholdThreshold = 400;
     });
+});
 
-    $('#home-page').on('pageinit', function () {
-        new App().run();
-    });
-
-    require(['jquery.mobile', 'jquery.mobile.datepicker']);
+require([
+    'jquery',
+    'underscore',
+    'backbone',
+    'app/app',
+    'app/polyglot/fr',
+    'lib/common',
+    'polyglot',
+    'jquery.mobile',
+    'jquery.mobile.datepicker',
+], function ($, _, Backbone, App, polyglotFr) {
+    window.polyglot = new Polyglot({phrases: polyglotFr});
+    new App().run();
 });

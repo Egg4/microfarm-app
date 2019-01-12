@@ -65,7 +65,7 @@ define([
 
             this.form.submit()
                 .done(function(data) {
-                    this.close();
+                    this.close(data);
                 }.bind(this))
                 .always(function() {
                     cancelButton.state = 'enabled';

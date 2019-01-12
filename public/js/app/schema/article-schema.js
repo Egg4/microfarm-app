@@ -38,9 +38,9 @@ define([
                 */
                 page: {
                     class: Page,
-                    route: {
+                    routes: [{
                         pattern: 'article/:id',
-                    },
+                    }],
                 },
             });
         },

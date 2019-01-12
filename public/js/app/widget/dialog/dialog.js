@@ -64,14 +64,14 @@ define([
             return this.deferred.promise();
         },
 
-        close: function () {
+        close: function (data) {
             $.mobile.changePage(this.previousPageEl , {
                 reverse: false,
                 changeHash: false,
                 transition: 'none',
             });
             window.scrollTo(0, 0);
-            this.deferred.resolve();
+            this.deferred.resolve(data);
         },
     });
 });

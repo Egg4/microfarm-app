@@ -32,7 +32,7 @@ define([
             }
             var text = _.isFunction(this.text) ? this.text() : this.text;
             if (text) {
-                $(this.el).append('<span class="text"> ' + text + '</span>');
+                $(this.el).append('<span class="text">' + text + '</span>');
             }
         },
     });

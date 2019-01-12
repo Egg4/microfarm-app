@@ -17,6 +17,9 @@ define([
                 position: 'right',
                 items: [
                     this.buildEntityButton(),
+                    this.buildSuppliersButton(),
+                    this.buildCropsButton(),
+                    this.buildClientsButton(),
                     this.buildLogoutButton(),
                 ],
             }, options));
@@ -37,6 +40,51 @@ define([
             });
         },
 
+        buildSuppliersButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('suppliers-page.title'),
+                    icon: new Icon({name: 'truck'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        this.redirect('suppliers');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildCropsButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('crops-page.title'),
+                    icon: new Icon({name: 'leaf'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        this.redirect('crops');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildClientsButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('clients-page.title'),
+                    icon: new Icon({name: 'store-alt'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        this.redirect('clients');
+                    }.bind(this),
+                },
+            });
+        },
+
         buildLogoutButton: function () {
             return new Button({
                 label: new Label({
@@ -46,16 +94,21 @@ define([
                 iconAlign: 'top',
                 events: {
                     click: function () {
-                        var promises = [
-                            this.close(),
-                            app.authentication.logout(),
-                        ];
-                        app.loader.show();
-                        $.when.apply($, promises).done(function() {
-                            app.collections.resetAll();
-                            app.router.navigate('login');
-                        }).always(function () {
-                            app.loader.hide();
+                        this.close();
+                        var popup = app.popups.get('confirm');
+                        popup.setData({
+                            title: polyglot.t('main-menu-panel.button.logout'),
+                            icon: new Icon({name: 'sign-out-alt'}),
+                            message: polyglot.t('confirm-popup.logout.message'),
+                        });
+                        popup.open().done(function () {
+                            app.loader.show();
+                            app.authentication.logout().done(function () {
+                                app.collections.resetAll();
+                                app.router.navigate('login');
+                            }).always(function () {
+                                app.loader.hide();
+                            });
                         });
                     }.bind(this),
                 },

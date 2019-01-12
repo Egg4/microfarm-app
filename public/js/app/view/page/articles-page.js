@@ -3,69 +3,91 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/page/page',
-    'view/widget/body/body',
-    'factory/header-factory',
-    'factory/form-factory',
-    'factory/model-table-factory',
-], function ($, _, Page, Body, HeaderFactory, FormFactory, ModelTableFactory) {
+    'app/widget/page/model-list-page',
+    'app/widget/bar/header-bar',
+    'lib/widget/icon/fa-icon',
+], function ($, _, Page, Header, Icon) {
 
     return Page.extend({
 
         initialize: function () {
-            var searchForm = FormFactory.create('search', {modelName: 'article'});
-
             Page.prototype.initialize.call(this, {
                 id: 'articles-page',
-                header: HeaderFactory.create('main', {
-                    title: '<i class="fa fa-pagelines"></i> Articles',
-                    items: {
-                        searchForm: searchForm,
-                    },
-                }),
-                body: new Body({
-                    items: {
-                        articleTable: this.createArticleTable(searchForm),
-                    },
-                }),
+                collection: app.collections.get('article'),
+                separatorRowTemplate: _.template('<td colspan="2"><%- separator %></td>'),
+                modelRowTemplate: _.template($('#articles-page-article-table-row-template').html()),
+            });
+
+            this.listenTo(this.collection, 'update', this.render);
+        },
+
+        buildHeader: function (searchForm) {
+            return new Header({
+                title: function () {
+                    var name = '';
+                    if (_.isNull(this.filter.organization_id)) {
+                        name = app.collections.get('entity').get(app.authentication.getEntityId()).getDisplayName();
+                    } else {
+                        name = app.collections.get('organization').get(this.filter.organization_id).getDisplayName();
+                    }
+                    return polyglot.t('articles-page.title') + ' - ' + name;
+                }.bind(this),
+                icon: new Icon({name: 'shopping-cart'}),
+                back: true,
+                menu: app.panels.get('main-menu'),
+                bottom: searchForm,
             });
         },
 
-        createArticleTable: function (searchForm) {
-            return ModelTableFactory.create('article', {
-                header: false,
-                filterable: true,
-                filterInput: searchForm.formGroup.items.search,
-                addButton: searchForm.formGroup.items.add,
-                tableData: function (organization) {
-                    return app.collections.get('article').where({
-                        organization_id: !_.isNull(organization) ? organization.get('id') : null,
-                    });
-                },
-                rowTemplate: _.template($('#articles-page-article-table-row-template').html()),
-                rowData: function (article) {
-                    return $.extend(article.toJSON(), {
-
-                    });
-                },
-                listenToCollections: ['article'],
-                formData: function (organization) {
-                    return {
-                        entity_id: app.collections.get('entity').at(0).get('id'),
-                        organization_id: !_.isNull(organization) ? organization.get('id') : null,
-                        active: true,
-                    };
-                },
+        buildRows: function () {
+            var articles = app.collections.get('article').where(this.filter);
+            articles = _.sortBy(articles, function (article) {
+                return (article.find('category').getDisplayName() + article.getDisplayName()).removeDiacritics();
             });
+            var rowGroups = _.groupBy(articles, function (article) {
+                return article.find('category').getDisplayName();
+            });
+            var rows = [];
+            _.each(rowGroups, function (articles, name) {
+                rows = _.union(rows, this.buildRowGroup(name, articles));
+            }.bind(this));
+
+            return rows;
         },
 
-        render: function (options) {
-            Page.prototype.render.call(this, options);
+        buildModelRowData: function (article) {
+            return article.toJSON();
+        },
 
-            this.header.items.searchForm.render();
-            this.body.items.articleTable.render({
-                parentModel: options.organization,
-            });
+        navigateToModelPage: function (article) {
+            //app.router.navigate('article/' + article.get('id'));
+        },
+
+        getModelFormData: function () {
+            return {
+                entity_id: this.filter.entity_id,
+                organization_id: this.filter.organization_id,
+                active: true,
+            };
+        },
+
+        getModelFormVisible: function () {
+            return {
+                organization_id: false,
+                category_id: true,
+                name: true,
+                quantity_unit_id: true,
+                default_unit_price: true,
+                default_tax: true,
+                active: true,
+            };
+        },
+
+        setData: function (organization_id) {
+            this.filter = {
+                entity_id: app.authentication.getEntityId(),
+                organization_id: !_.isNull(organization_id) ? parseInt(organization_id) : null,
+            };
         },
     });
 });

@@ -4,7 +4,7 @@ define([
     'jquery',
     'underscore',
     'lib/schema/schema',
-    'app/view/page/login-page',
+    'app/view/page/articles-page',
 ], function ($, _, Schema, Page) {
 
     return Schema.extend({
@@ -14,7 +14,9 @@ define([
                 page: {
                     class: Page,
                     routes: [{
-                        pattern: 'login',
+                        pattern: 'entity/articles',
+                    }, {
+                        pattern: 'organization/:id/articles',
                     }],
                 },
             });

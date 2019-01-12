@@ -24,9 +24,9 @@ define([
                 },
                 page: {
                     class: Page,
-                    route: {
+                    routes: [{
                         pattern: 'entity',
-                    },
+                    }],
                 },
             });
         },

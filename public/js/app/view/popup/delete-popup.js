@@ -16,8 +16,16 @@ define([
     return Popup.extend({
 
         initialize: function (options) {
+            var defaults = {
+                model: false,
+            };
+            $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
+
             Popup.prototype.initialize.call(this, $.extend(true, {
                 id: 'delete-popup',
+                title: function () {
+                    return this.model.getDisplayName();
+                }.bind(this),
                 icon: new Icon({name: 'trash-alt'}),
                 body: this.buildBody(),
             }, options));
@@ -66,7 +74,9 @@ define([
             var html = this.getHtml(),
                 form = this.getForm();
             html.data = {
-                message: this.message,
+                message: polyglot.t('delete-popup.body.message', {
+                    name: this.model.getDisplayName(),
+                }),
             };
             form.setData({
                 confirm: false,
@@ -79,10 +89,31 @@ define([
                 confirm = form.getElement('confirm').getValue();
 
             if (confirm) {
-                this.close().done(function() {
-                    this.deferred.resolve();
-                }.bind(this));
+                app.loader.show();
+                var promises = [
+                    this.close(),
+                    this.deleteModel(),
+                ];
+                $.when.apply($, promises)
+                    .done(function() {
+                        this.deferred.resolve();
+                    }.bind(this))
+                    .fail(function() {
+                        this.deferred.reject();
+                    }.bind(this))
+                    .always(function() {
+                        app.loader.hide();
+                    });
             }
+        },
+
+        deleteModel: function() {
+            var deferred = $.Deferred();
+            this.model.destroy({
+                success: deferred.resolve,
+                error: deferred.reject,
+            });
+            return deferred.promise();
         },
     });
 });

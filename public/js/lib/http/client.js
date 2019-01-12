@@ -98,7 +98,7 @@ define([
                 method: request.type,
                 url: request.url,
                 data: request.data,
-            }).done(request.success);
+            }).done(request.success).fail(request.error);
         },
     });
 });

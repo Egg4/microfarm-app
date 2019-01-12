@@ -78,7 +78,6 @@ function includeTemplates($dir, $extension = 'phtml') {
 
         <div id="home-page" data-role="page">
             <h1>Micro Farm</h1>
-            <div class="loader">Loading...</div>
         </div>
 
         <!-- Templates -->

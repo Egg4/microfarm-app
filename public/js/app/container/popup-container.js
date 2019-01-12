@@ -7,7 +7,7 @@ define([
     'app/view/popup/error-popup',
     'app/view/popup/confirm-popup',
     'app/view/popup/delete-popup',
-    'app/widget/popup/menu-popup',
+    'app/view/popup/menu-popup',
 ], function ($, _, Container,
              ErrorPopup,
              ConfirmPopup,

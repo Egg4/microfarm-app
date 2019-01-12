@@ -3,64 +3,71 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/form/model-form',
-    'view/widget/form/group/form-group',
-    'view/widget/form/element/input-hidden-form-element',
-    'view/widget/form/element/select-form-element',
-    'view/widget/form/element/input-text-form-element',
-    'view/widget/form/element/input-number-form-element',
-    'view/widget/form/element/checkbox-form-element',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputText, InputNumber, Checkbox) {
+    'app/widget/form/model-form',
+    'lib/widget/form/group/form-group',
+    'lib/widget/form/element/input-hidden-form-element',
+    'lib/widget/form/element/select-form-element',
+    'lib/widget/form/element/input-text-form-element',
+    'lib/widget/form/element/input-number-form-element',
+    'lib/widget/form/element/checkbox-form-element',
+    'lib/widget/form/label/form-label',
+], function ($, _, Form, FormGroup, InputHidden, Select, InputText, InputNumber, Checkbox, FormLabel) {
 
     return Form.extend({
 
-        initialize: function (options) {
-            Form.prototype.initialize.call(this, $.extend(true, {
+        initialize: function () {
+            Form.prototype.initialize.call(this, {
                 id: 'organization-form',
                 collection: app.collections.get('organization'),
                 formGroup: new FormGroup({
-                    items: {
-                        id: new InputHidden({
+                    items: [
+                        new InputHidden({
                             name: 'id',
                             required: false,
                         }),
-                        entity_id: new InputHidden({
+                        new InputHidden({
                             name: 'entity_id',
                         }),
-                        name: new InputText({
+                        new InputText({
                             name: 'name',
-                            placeholder: 'Name',
+                            placeholder: polyglot.t('form.placeholder.name'),
                         }),
-                        number: new InputText({
+                        new InputText({
                             name: 'number',
-                            placeholder: 'Number',
+                            placeholder: polyglot.t('form.placeholder.number'),
                             required: false,
                         }),
-                        formGroup: new FormGroup({
-                            items: {
-                                supplier: new Checkbox({
+                        new FormGroup({
+                            items: [
+                                new Checkbox({
                                     name: 'supplier',
-                                    label: 'Fournisseur',
+                                    label: new FormLabel({
+                                        text: polyglot.t('form.placeholder.supplier'),
+                                    }),
                                     cast: 'boolean',
                                 }),
-                                client: new Checkbox({
+                                new Checkbox({
                                     name: 'client',
-                                    label: 'Client',
+                                    label: new FormLabel({
+                                        text: polyglot.t('form.placeholder.client'),
+                                    }),
                                     cast: 'boolean',
                                 }),
-                            },
+                            ],
                         }),
-                    },
+                    ],
                 }),
-            }, options));
+            });
         },
 
-        validate: function (data) {
-            var errors = [];
+        validator: function (data) {
+            var errors = Form.prototype.validator.call(this, data);
             if (!data.supplier && !data.client) {
                 errors.push({
                     attributes: ['supplier', 'client'],
-                    message: 'Choose at least one option',
+                    message: polyglot.t('form.validator.at-least-one-option-required', {
+                        field: polyglot.t('form.placeholder.supplier') + ', ' + polyglot.t('form.placeholder.client'),
+                    }),
                 });
             }
             return errors;

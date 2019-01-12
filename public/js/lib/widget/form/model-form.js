@@ -42,12 +42,14 @@ define([
             var model = parseInt(data.id) ? this.collection.get(data.id) : new this.collection.model(_.omit(data, 'id'));
             if (model.isNew()) {
                 this.collection.create(model, {
-                    success: deferred.resolve
+                    success: deferred.resolve,
+                    error: deferred.reject,
                 });
             }
             else {
                 model.save(data, {
-                    success: deferred.resolve
+                    success: deferred.resolve,
+                    error: deferred.reject,
                 });
             }
 

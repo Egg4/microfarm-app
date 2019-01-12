@@ -3,92 +3,128 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/page/page',
-    'view/widget/body/body',
-    'factory/header-factory',
-    'view/widget/navigation/navigation',
-], function ($, _, Page, Body, HeaderFactory, Navigation) {
+    'app/widget/page/model-list-page',
+    'app/widget/bar/header-bar',
+    'lib/widget/layout/stack-layout',
+    'lib/widget/navigation/navigation',
+    'lib/widget/layout/grid-layout',
+    'lib/widget/html/html',
+    'lib/widget/button/button',
+    'lib/widget/label/label',
+    'lib/widget/icon/fa-icon',
+], function ($, _, Page, Header, StackLayout, Navigation, GridLayout, Html, Button, Label, Icon) {
 
     return Page.extend({
 
         initialize: function () {
             Page.prototype.initialize.call(this, {
                 id: 'organization-page',
-                header: HeaderFactory.create('main', {
-                    title: 'Organization',
-                    icon: 'building',
-                }),
-                body: new Body({
-                    items: {
-                        navigation: this.buildNavigation(),
-                        modelBody: new Body({
-                            className: 'model-body',
-                            template: _.template($('#organization-page-model-body-template').html()),
-                            events: {
-                                taphold: this.onHoldModelBody.bind(this),
-                            },
-                        }),
-                    },
-                }),
             });
+        },
 
-            this.listenTo(app.collections.get('organization'), 'update', this.render);
+        buildHeader: function () {
+            return new Header({
+                title: function () {
+                    return this.model.getDisplayName();
+                }.bind(this),
+                icon: function () {
+                    return this.model.get('supplier') ? new Icon({name: 'truck'}) : new Icon({name: 'store-alt'});
+                }.bind(this),
+                back: true,
+                menu: app.panels.get('main-menu'),
+            });
+        },
+
+        buildBody: function () {
+            return new StackLayout({
+                items: [
+                    this.buildNavigation(),
+                    this.buildModelHtml(),
+                ],
+            });
         },
 
         buildNavigation: function () {
             return new Navigation({
-                rows: [{
-                    varieties: {
-                        text: 'Articles',
-                        icon: 'shopping-cart',
-                        iconAlign: 'top',
-                        events: {
-                            click: function() {
-                                return app.router.navigate('articles');
-                            },
-                        },
-                    },
-                    purchases: {
-                        text: 'Achats',
-                        icon: 'money-bill-alt',
-                        iconAlign: 'top',
-                        events: {
-                            click: function() {
-                                //return app.router.navigate('tasks');
-                            },
-                        },
-                    },
-                    sales: {
-                        text: 'Ventes',
-                        icon: 'balance-scale',
-                        iconAlign: 'top',
-                        events: {
-                            click: function() {
-                                //return app.router.navigate('tasks');
-                            },
-                        },
-                    },
-                }],
+                layout: function () {
+                    var items = [];
+                    if (this.model.get('supplier')) {
+                        items.push(this.buildArticlesButton());
+                        items.push(this.buildPurchasesButton());
+                    }
+                    if (this.model.get('client')) {
+                        items.push(this.buildSalesButton());
+                    }
+                    return new GridLayout({
+                        column: items.length,
+                        items: items,
+                    })
+                }.bind(this),
             });
         },
 
-        render: function (options) {
-            options = options || {};
-            this.organization = options.organization || this.organization;
-
-            Page.prototype.render.call(this, options);
-
-            this.header.render();
-            this.body.items.modelBody.render(this.organization.toJSON());
-        },
-
-        onHoldModelBody: function () {
-            app.dialogs.get('organization').show({
-                title: 'Edit ' + this.organization.getDisplayName(),
-                form: {
-                    data: this.organization.toJSON(),
+        buildArticlesButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('organization-page.button.articles'),
+                    icon: new Icon({name: 'shopping-cart'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('organization/' + this.model.get('id') + '/articles');
+                    }.bind(this),
                 },
             });
+        },
+
+        buildPurchasesButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('organization-page.button.purchases'),
+                    icon: new Icon({name: 'money-bill-alt'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        //app.router.navigate('organization/' + this.model.get('id') + '/purchases');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildSalesButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('organization-page.button.sales'),
+                    icon: new Icon({name: 'balance-scale'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        //app.router.navigate('organization/' + this.model.get('id') + '/sales');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildModelHtml: function () {
+            return new Html({
+                template: $('#organization-page-model-template').html(),
+                data: function () {
+                    return this.buildModelHtmlData();
+                }.bind(this),
+            });
+        },
+
+        buildModelHtmlData: function () {
+            return this.model.toJSON();
+        },
+
+        setData: function (id) {
+            if (this.model) this.stopListening(this.model);
+            this.model = app.collections.get('organization').get(id);
+            this.listenTo(this.model, 'update', this.render);
         },
     });
 });

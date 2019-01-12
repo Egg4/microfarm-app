@@ -46,6 +46,18 @@ define([
             return !_.isNull(this.storage.getItem(this.namespace + '.key'));
         },
 
+        getUserId: function () {
+            if (!this.isSet()) return null;
+            var data = this.getData();
+            return data.user.id;
+        },
+
+        getEntityId: function () {
+            if (!this.isSet()) return null;
+            var data = this.getData();
+            return _.isUndefined(data.user_role) ? null : data.user_role.entity_id;
+        },
+
         getRole: function () {
             if (!this.isSet()) return null;
             var data = this.getData();

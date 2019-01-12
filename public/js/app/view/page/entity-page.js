@@ -38,7 +38,7 @@ define([
                                     new Button({
                                         label: new Label({
                                             text: polyglot.t('entity-page.button.varieties'),
-                                            icon: new Icon({name: 'leaf'}),
+                                            icon: new Icon({name: 'dna'}),
                                         }),
                                         iconAlign: 'top',
                                         events: {
@@ -55,23 +55,7 @@ define([
                                         iconAlign: 'top',
                                         events: {
                                             click: function () {
-                                                //app.router.navigate('articles');
-                                                var dialog = app.dialogs.get('article');
-                                                dialog.setData({
-                                                    title: polyglot.t('model-dialog.title.edit', {
-                                                        model: polyglot.t('model.name.article').toLowerCase(),
-                                                    }),
-                                                    icon: new Icon({name: 'pencil-alt'}),
-                                                });
-                                                dialog.form.setData({
-                                                    entity_id: 1,
-                                                    //organization_id: null,
-                                                    active: true,
-                                                });
-                                                dialog.form.setVisible({
-
-                                                });
-                                                dialog.open();
+                                                app.router.navigate('entity/articles');
                                             },
                                         },
                                     }),
@@ -91,14 +75,71 @@ define([
                             }),
                         }),
                         this.entityHtml,
+                        new GridLayout({
+                            css: {
+                                'text-align': 'center',
+                                'font-size': '2em',
+                            },
+                            column: 5,
+                            items: [
+                                new Icon({name: 'hammer'}),
+                                new Icon({name: 'screwdriver'}),
+                                new Icon({name: 'wrench'}),
+                                new Icon({name: 'thermometer-half'}),
+                                new Icon({name: 'sitemap'}),
+                                new Icon({name: 'leaf'}),
+                                new Icon({name: 'seedling'}),
+                                new Icon({name: 'cannabis'}),
+                                new Icon({name: 'apple-alt'}),
+                                new Icon({name: 'lemon'}),
+                                new Icon({name: 'eye'}),
+                                new Icon({name: 'book'}),
+                                new Icon({name: 'tree'}),
+                                new Icon({name: 'bug'}),
+                                new Icon({name: 'crow'}),
+                                new Icon({name: 'frog'}),
+                                new Icon({name: 'spider'}),
+                                new Icon({name: 'feather-alt'}),
+                                new Icon({name: 'project-diagram'}),
+                                new Icon({name: 'clipboard-list'}),
+                                new Icon({name: 'dna'}),
+                                new Icon({name: 'balance-scale'}),
+                                new Icon({name: 'barcode'}),
+                                new Icon({name: 'qrcode'}),
+                                new Icon({name: 'bong'}),
+                                new Icon({name: 'skull-crossbones'}),
+                                new Icon({name: 'flask'}),
+                                new Icon({name: 'fill-drip'}),
+                                new Icon({name: 'box-open'}),
+                                new Icon({name: 'briefcase-medical'}),
+                                new Icon({name: 'medkit'}),
+                                new Icon({name: 'first-aid'}),
+                                new Icon({name: 'certificate'}),
+                                new Icon({name: 'cloud-sun-rain'}),
+                                new Icon({name: 'cog'}),
+                                new Icon({name: 'database'}),
+                                new Icon({name: 'cubes'}),
+                                new Icon({name: 'dice-d6'}),
+                                new Icon({name: 'dolly'}),
+                                new Icon({name: 'file-invoice-dollar'}),
+                                new Icon({name: 'layer-group'}),
+                                new Icon({name: 'parachute-box'}),
+                                new Icon({name: 'shopping-bag'}),
+                                new Icon({name: 'shopping-basket'}),
+                                new Icon({name: 'shopping-cart'}),
+                            ],
+                        }),
                     ],
                 }),
             });
         },
 
         setData: function () {
-            this.entity = app.collections.get('entity').at(0);
-            this.entityHtml.data = this.entity.toJSON();
+            var entityId = app.authentication.getEntityId();
+            this.entity = app.collections.get('entity').get(entityId);
+            this.entityHtml.setData({
+                data: this.entity.toJSON(),
+            });
         },
     });
 });

@@ -13,9 +13,9 @@ define([
             Schema.prototype.initialize.call(this, {
                 page: {
                     class: Page,
-                    route: {
+                    routes: [{
                         pattern: 'authentication',
-                    },
+                    }],
                 },
             });
         },

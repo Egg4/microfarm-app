@@ -44,17 +44,9 @@ define([
             }
         },
 
-        navigate: function (hash, params) {
+        navigate: function (hash) {
             hash = hash || '';
-            var location = '/#'+ hash;
-            if (params) {
-                var searchParams = new URLSearchParams();
-                _.each(params, function (value, key) {
-                    searchParams.set(key, value);
-                });
-                location += '?' + searchParams.toString();
-            }
-            window.location = location;
+            window.location = '/#'+ hash;
         },
 
         back: function () {
