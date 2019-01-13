@@ -43,7 +43,7 @@ define([
                 this.element.on('change', function(event) {
                     event.stopPropagation();
                     this.value = this.element.prop('checked');
-                    this.trigger('change');
+                    $(this.el).trigger('change');
                 }.bind(this));
                 this.element.checkboxradio();
             }

@@ -20,19 +20,19 @@ define([
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
             $(this.el).addClass('form-group-widget');
-            $(this.el).attr('type', this.type);
-
-            _.each(this.items, function(item) {
-                $(this.el).append(item.el);
-            }.bind(this));
         },
 
         render: function () {
             Widget.prototype.render.call(this);
 
+            $(this.el).removeAttr('type');
+            $(this.el).attr('type', this.type);
+
+            $(this.el).empty();
             _.each(this.items, function(item) {
+                $(this.el).append(item.el);
                 item.render();
-            });
+            }.bind(this));
         },
 
         getElements: function () {

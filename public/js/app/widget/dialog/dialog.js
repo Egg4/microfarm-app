@@ -30,8 +30,12 @@ define([
 
         buildHeader: function () {
             return new Header({
-                title: this.title,
-                icon: this.icon,
+                title: function () {
+                    return this.title;
+                }.bind(this),
+                icon: function () {
+                    return this.icon;
+                }.bind(this),
             });
         },
 
@@ -44,16 +48,8 @@ define([
             });
         },
 
-        render: function () {
-            this.header.title = this.title;
-            this.header.icon = this.icon;
-            Page.prototype.render.call(this);
-        },
-
-        open: function (data) {
-            this.setData(data);
+        open: function () {
             this.render();
-            this.deferred = $.Deferred();
             this.previousPageEl = $.mobile.activePage;
             $.mobile.changePage($(this.el) , {
                 reverse: false,
@@ -61,17 +57,15 @@ define([
                 transition: 'none',
             });
             window.scrollTo(0, 0);
-            return this.deferred.promise();
         },
 
-        close: function (data) {
+        close: function () {
             $.mobile.changePage(this.previousPageEl , {
                 reverse: false,
                 changeHash: false,
                 transition: 'none',
             });
             window.scrollTo(0, 0);
-            this.deferred.resolve(data);
         },
     });
 });

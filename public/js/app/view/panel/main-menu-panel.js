@@ -17,8 +17,8 @@ define([
                 position: 'right',
                 items: [
                     this.buildEntityButton(),
-                    this.buildSuppliersButton(),
                     this.buildCropsButton(),
+                    this.buildSuppliersButton(),
                     this.buildClientsButton(),
                     this.buildLogoutButton(),
                 ],
@@ -40,21 +40,6 @@ define([
             });
         },
 
-        buildSuppliersButton: function () {
-            return new Button({
-                label: new Label({
-                    text: polyglot.t('suppliers-page.title'),
-                    icon: new Icon({name: 'truck'}),
-                }),
-                iconAlign: 'top',
-                events: {
-                    click: function () {
-                        this.redirect('suppliers');
-                    }.bind(this),
-                },
-            });
-        },
-
         buildCropsButton: function () {
             return new Button({
                 label: new Label({
@@ -65,6 +50,21 @@ define([
                 events: {
                     click: function () {
                         this.redirect('crops');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildSuppliersButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('suppliers-page.title'),
+                    icon: new Icon({name: 'truck'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        this.redirect('suppliers');
                     }.bind(this),
                 },
             });
@@ -92,6 +92,7 @@ define([
                     icon: new Icon({name: 'sign-out-alt'}),
                 }),
                 iconAlign: 'top',
+                theme: 'b',
                 events: {
                     click: function () {
                         this.close();

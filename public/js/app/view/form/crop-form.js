@@ -3,69 +3,139 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/form/model-form',
-    'view/widget/form/group/form-group',
-    'view/widget/form/element/input-hidden-form-element',
-    'view/widget/form/element/select-form-element',
-    'view/widget/form/element/input-number-form-element',
-    'view/widget/form/element/textarea-form-element',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputNumber, Textarea) {
+    'app/widget/form/model-form',
+    'lib/widget/form/group/form-group',
+    'lib/widget/form/element/input-hidden-form-element',
+    'lib/widget/form/element/select-form-element',
+    'lib/widget/form/element/input-number-form-element',
+    'lib/widget/button/button',
+    'lib/widget/label/label',
+    'lib/widget/icon/fa-icon',
+], function ($, _, Form, FormGroup, InputHidden, Select, InputNumber, Button, Label, Icon) {
 
     return Form.extend({
 
-        initialize: function (options) {
-            Form.prototype.initialize.call(this, $.extend(true, {
+        initialize: function () {
+            Form.prototype.initialize.call(this, {
                 id: 'crop-form',
                 collection: app.collections.get('crop'),
                 formGroup: new FormGroup({
-                    items: {
-                        id: new InputHidden({
+                    items: [
+                        new InputHidden({
                             name: 'id',
+                            required: false,
                         }),
-                        garden_id: new InputHidden({
-                            name: 'garden_id',
+                        new InputHidden({
+                            name: 'entity_id',
                         }),
-                        variety_id: new Select({
-                            name: 'variety_id',
-                            optgroup: true,
-                            data: this.getVarietyData.bind(this),
-                            validator: function (value) {
-                                if (value.length == 0) {
-                                    return 'Invalid variety';
-                                }
-                            },
-                        }),
-                        status: new Select({
-                            name: 'status',
-                            defaultValue: 'planned',
-                            data: [
-                                {value: 'planned', label: 'Planned'},
-                                {value: 'in_progress', label: 'In progress'},
-                                {value: 'complete', label: 'Complete'},
+                        new FormGroup({
+                            type: 'horizontal',
+                            items: [
+                                new Select({
+                                    name: 'article_id',
+                                    optgroup: true,
+                                    cast: 'integer',
+                                    css: {flex: '1'},
+                                    data: this.buildArticleData.bind(this),
+                                    events: {
+                                        change: this.buildNumberValue.bind(this),
+                                    },
+                                }),
+                                new Button({
+                                    label: new Label({
+                                        icon: new Icon({name: 'plus'}),
+                                    }),
+                                    events: {
+                                        click: this.openArticleCreationDialog.bind(this),
+                                    },
+                                }),
                             ],
                         }),
-                        description: new Textarea({
-                            name: 'description',
-                            nullable: true,
-                            placeholder: 'Description',
+                        new InputNumber({
+                            name: 'number',
+                            placeholder: polyglot.t('form.placeholder.number'),
+                            min: 1,
+                            defaultValue: 1,
+                            cast: 'integer',
                         }),
-                    },
+                    ],
                 }),
-            }, options));
+            });
         },
 
-        getVarietyData: function () {
-            var data = [];
-            app.collections.get('variety').each(function(variety) {
-                var species = variety.find('species');
-                var genus = species.find('genus');
+        buildArticleData: function () {
+            var data = [],
+                harvestCategory = this.getharvestCategory();
+
+            var articles = app.collections.get('article').where({
+                organization_id: null,
+                category_id: harvestCategory.get('id'),
+            });
+            _.each(articles, function(article) {
                 data.push({
-                    optgroup: genus.getDisplayName() + ' ' + species.getDisplayName(),
-                    value: variety.get('id'),
-                    label: variety.getDisplayName(),
+                    optgroup: article.getDisplayName().charAt(0).removeDiacritics().toUpperCase(),
+                    value: article.get('id'),
+                    label: article.getDisplayName(),
                 });
             });
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
+        },
+
+        buildNumberValue: function () {
+            var article_id = this.getElement('article_id').getValue();
+            if (article_id) {
+                var crops = app.collections.get('crop').where({
+                    article_id: article_id,
+                });
+                var max = 0;
+                _.each(crops, function(crop) {
+                    max = Math.max(max, crop.get('number'));
+                });
+                this.getElement('number').setValue(max + 1);
+            }
+        },
+
+        openArticleCreationDialog: function () {
+            var dialog = app.dialogs.get('article'),
+                harvestCategory = this.getharvestCategory();
+
+            dialog.setData({
+                title: polyglot.t('model-dialog.title.create', {
+                    model: polyglot.t('model.name.article').toLowerCase(),
+                }),
+                icon: new Icon({name: 'plus'}),
+            });
+            dialog.form.setData({
+                entity_id: this.getElement('entity_id').getValue(),
+                organization_id: null,
+                category_id: harvestCategory.get('id'),
+                active: true,
+            });
+            dialog.form.setVisible({
+                organization_id: false,
+                category_id: false,
+                name: true,
+                quantity_unit_id: true,
+                default_unit_price: true,
+                default_tax: true,
+                active: false,
+            });
+            dialog.open().done(function (article) {
+                this.getElement('article_id').setValue(article.get('id'));
+                this.getElement('article_id').render();
+                this.buildNumberValue();
+            }.bind(this));
+        },
+
+        getharvestCategory: function () {
+            var rootCategory = _.first(app.collections.get('category').where({
+                parent_id: null,
+                key: 'article_category_id',
+            }));
+            return _.first(app.collections.get('category').where({
+                parent_id: rootCategory.get('id'),
+                key: 'harvest',
+            }));
         },
     });
 });

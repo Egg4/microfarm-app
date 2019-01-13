@@ -62,7 +62,7 @@ define([
                 this.element.on('change', function(event) {
                     event.stopPropagation();
                     this.value = this.element.val();
-                    this.trigger('change');
+                    $(this.el).trigger('change');
                 }.bind(this));
                 this.element.selectmenu();
             }

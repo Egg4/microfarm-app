@@ -50,12 +50,12 @@ define([
                 this.element.on('keyup', function(event) {
                     event.stopPropagation();
                     this.value = this.element.val();
-                    this.trigger('keyup');
+                    $(this.el).trigger('keyup');
                 }.bind(this));
                 this.element.on('change', function(event) {
                     event.stopPropagation();
                     this.value = this.element.val();
-                    this.trigger('change');
+                    $(this.el).trigger('change');
                 }.bind(this));
                 this.element.textinput();
             }

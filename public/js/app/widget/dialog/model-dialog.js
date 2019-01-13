@@ -35,7 +35,7 @@ define([
                     icon: new Icon({name: 'times'}),
                 }),
                 events: {
-                    click: this.close.bind(this),
+                    click: this.onCancel.bind(this),
                 },
             });
         },
@@ -48,12 +48,23 @@ define([
                 }),
                 theme: 'b',
                 events: {
-                    click: this.save.bind(this),
+                    click: this.onSave.bind(this),
                 },
             });
         },
 
-        save: function() {
+        open: function () {
+            this.deferred = $.Deferred();
+            Dialog.prototype.open.call(this);
+            return this.deferred.promise();
+        },
+
+        onCancel: function () {
+            this.close();
+            this.deferred.reject();
+        },
+
+        onSave: function() {
             var cancelButton = this.buttons[0],
                 saveButton = this.buttons[1];
 
@@ -65,7 +76,8 @@ define([
 
             this.form.submit()
                 .done(function(data) {
-                    this.close(data);
+                    this.close();
+                    this.deferred.resolve(data);
                 }.bind(this))
                 .always(function() {
                     cancelButton.state = 'enabled';

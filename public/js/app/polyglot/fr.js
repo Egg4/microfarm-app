@@ -10,6 +10,7 @@ define([], function () {
         'article-page.title': 'Article',
         'articles-page.title': 'Articles',
         'clients-page.title': 'Clients',
+        'crop-page.title': 'Culture',
         'crops-page.title': 'Cultures',
         'dashboard-page.title': 'Tableau de bord',
         'entity-page.title': 'Ferme',
@@ -26,6 +27,7 @@ define([], function () {
 
         // Model
         'model.name.article': 'Article',
+        'model.name.crop': 'Culture',
         'model.name.organization': 'Organisation',
         'model.name.variety': 'Variété',
 

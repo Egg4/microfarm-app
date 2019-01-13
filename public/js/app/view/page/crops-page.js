@@ -3,89 +3,77 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/page/page',
-    'view/widget/body/body',
-    'factory/header-factory',
-    'factory/form-factory',
-    'factory/model-table-factory',
-], function ($, _, Page, Body, HeaderFactory, FormFactory, ModelTableFactory) {
+    'app/widget/page/model-list-page',
+    'app/widget/bar/header-bar',
+    'lib/widget/icon/fa-icon',
+], function ($, _, Page, Header, Icon) {
 
     return Page.extend({
 
         initialize: function () {
-            var searchForm = FormFactory.create('search', {modelName: 'crop'});
-
             Page.prototype.initialize.call(this, {
                 id: 'crops-page',
-                header: HeaderFactory.create('main', {
-                    title: '<i class="fa fa-crop"></i> Crops',
-                    items: {
-                        searchForm: searchForm,
-                    },
-                }),
-                body: new Body({
-                    items: {
-                        cropTable: this.createCropTable(searchForm),
-                    },
-                }),
+                collection: app.collections.get('crop'),
+                separatorRowTemplate: _.template('<td colspan="1"><%- separator %></td>'),
+                modelRowTemplate: _.template($('#crops-page-crop-table-row-template').html()),
             });
 
-            $(this.el).on('swipeleft', function () {
-                app.panels.get('menu').show();
+            this.listenTo(this.collection, 'update', this.render);
+        },
+
+        buildHeader: function (searchForm) {
+            return new Header({
+                title: polyglot.t('crops-page.title'),
+                icon: new Icon({name: 'leaf'}),
+                back: true,
+                menu: app.panels.get('main-menu'),
+                bottom: searchForm,
             });
         },
 
-        createCropTable: function (searchForm) {
-            return ModelTableFactory.create('crop', {
-                header: false,
-                filterable: true,
-                filterInput: searchForm.formGroup.items.search,
-                addButton: searchForm.formGroup.items.add,
-                tableData: function (garden) {
-                    return garden.findAll('crop');
-                },
-                rowTemplate: _.template($('#crops-page-crop-table-row-template').html()),
-                rowData: function (crop) {
-                    var implantations = [];
-                    _.each(crop.findAll('implantation'), function (implantation) {
-                        var bed = implantation.find('bed');
-                        implantations.push($.extend(implantation.toJSON(), {
-                            bed: bed.toJSON(),
-                            block: bed.find('block').toJSON(),
-                        }));
-                    });
-                    return $.extend(crop.toJSON(), {
-                        variety: crop.find('variety').toJSON(),
-                        species: crop.find('variety').find('species').toJSON(),
-                        implantations: implantations,
-                        implantationNum: implantations.length,
-                        taskNum: crop.findAll('task').length,
-                        snapshotNum: crop.findAll('snapshot').length,
-                    });
-                },
-                listenToCollections: ['crop', 'variety', 'bed', 'block', 'task', 'snapshot'],
-                formData: function (garden) {
-                    return {
-                        garden_id: garden.get('id'),
-                    };
-                },
-                formVisibility: function () {
-                    return {
-                        garden_id: false,
-                    };
-                },
+        buildRows: function () {
+            var crops = app.collections.get('crop').sortBy(function (crop) {
+                return crop.getDisplayName().removeDiacritics();
+            });
+            var rowGroups = _.groupBy(crops, function (crop) {
+                return crop.getDisplayName().charAt(0).removeDiacritics().toUpperCase();
+            });
+            var rows = [];
+            _.each(rowGroups, function (crops, name) {
+                rows = _.union(rows, this.buildRowGroup(name, crops));
+            }.bind(this));
+
+            return rows;
+        },
+
+        buildModelRowData: function (crop) {
+            var article = crop.find('article');
+            return $.extend(crop.toJSON(), {
+                article: article.toJSON(),
             });
         },
 
-        render: function (options) {
-            this.garden = options.garden;
+        navigateToModelPage: function (crop) {
+            //app.router.navigate('crop/' + crop.get('id'));
+        },
 
-            Page.prototype.render.call(this, options);
+        getModelFormData: function () {
+            return {
+                entity_id: this.filter.entity_id,
+            };
+        },
 
-            this.header.items.searchForm.render();
-            this.body.items.cropTable.render({
-                parentModel: this.garden,
-            });
+        getModelFormVisible: function () {
+            return {
+                article_id: true,
+                number: true,
+            };
+        },
+
+        setData: function () {
+            this.filter = {
+                entity_id: app.authentication.getEntityId(),
+            };
         },
     });
 });
