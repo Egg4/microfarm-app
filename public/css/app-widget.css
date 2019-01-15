@@ -62,8 +62,16 @@
     text-align: left;
 }
 
+.bar-widget > .border-layout-widget > .left > .ui-title {
+    text-align: left;
+}
+
 .bar-widget > .border-layout-widget > .right {
     margin-right: .5em;
+    text-align: right;
+}
+
+.bar-widget > .border-layout-widget > .right > .ui-title {
     text-align: right;
 }
 

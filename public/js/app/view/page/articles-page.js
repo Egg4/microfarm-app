@@ -14,7 +14,7 @@ define([
             Page.prototype.initialize.call(this, {
                 id: 'articles-page',
                 collection: app.collections.get('article'),
-                separatorRowTemplate: _.template('<td colspan="2"><%- separator %></td>'),
+                separatorRowTemplate: _.template('<td colspan="3"><%- separator %></td>'),
                 modelRowTemplate: _.template($('#articles-page-article-table-row-template').html()),
             });
 
@@ -56,7 +56,12 @@ define([
         },
 
         buildModelRowData: function (article) {
-            return article.toJSON();
+            var quantityUnitCategory = article.find('category', {
+                selfAttribute: 'quantity_unit_id',
+            });
+            return $.extend(article.toJSON(), {
+                quantityUnitCategory: quantityUnitCategory.toJSON(),
+            });
         },
 
         navigateToModelPage: function (article) {

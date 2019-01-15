@@ -3,220 +3,130 @@
 define([
     'jquery',
     'underscore',
-    'view/widget/form/model-form',
-    'view/widget/form/group/form-group',
-    'view/widget/form/element/input-hidden-form-element',
-    'view/widget/form/element/select-form-element',
-    'view/widget/form/element/input-date-form-element',
-    'view/widget/form/element/input-number-form-element',
-    'view/widget/form/element/textarea-form-element',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputDate, InputNumber, Textarea) {
+    'app/widget/form/model-form',
+    'lib/widget/form/group/form-group',
+    'lib/widget/form/element/input-hidden-form-element',
+    'lib/widget/form/element/select-form-element',
+    'lib/widget/form/element/input-date-form-element',
+    'lib/widget/form/element/input-time-form-element',
+    'lib/widget/form/element/textarea-form-element',
+    'lib/widget/form/element/checkbox-form-element',
+    'lib/widget/form/label/form-label',
+], function ($, _, Form, FormGroup, InputHidden, Select, InputDate, InputTime, Textarea, Checkbox, FormLabel) {
 
     return Form.extend({
 
-        initialize: function (options) {
-            Form.prototype.initialize.call(this, $.extend(true, {
+        initialize: function () {
+            Form.prototype.initialize.call(this, {
                 id: 'task-form',
                 collection: app.collections.get('task'),
                 formGroup: new FormGroup({
-                    items: {
-                        id: new InputHidden({
+                    items: [
+                        new InputHidden({
                             name: 'id',
+                            required: false,
                         }),
-                        garden_id: new InputHidden({
-                            name: 'garden_id',
+                        new InputHidden({
+                            name: 'entity_id',
                         }),
-                        provider_id: new Select({
-                            name: 'provider_id',
-                            nullable: true,
-                            data: this.getProviderData.bind(this),
-                            events: {
-                                change: this.onProviderChange.bind(this),
-                            },
-                        }),
-                        crop_id: new Select({
+                        new Select({
                             name: 'crop_id',
+                            optgroup: true,
                             nullable: true,
-                            data: this.getCropData.bind(this),
-                            events: {
-                                change: this.onCropChange.bind(this),
-                            },
+                            cast: 'integer',
+                            data: this.buildCropData.bind(this),
                         }),
-                        pos_id: new Select({
-                            name: 'pos_id',
+                        new InputHidden({
+                            name: 'output_id',
                             nullable: true,
-                            data: this.getPosData.bind(this),
-                            events: {
-                                change: this.onPosChange.bind(this),
-                            },
                         }),
-                        category_id: new Select({
+                        new InputHidden({
+                            name: 'organization_id',
+                            nullable: true,
+                        }),
+                        new Select({
                             name: 'category_id',
                             optgroup: true,
-                            data: this.getCategoryData.bind(this),
-                            validator: function (value) {
-                                if (value.length == 0) {
-                                    return 'Invalid category';
-                                }
-                            },
+                            cast: 'integer',
+                            data: this.buildCategoryData.bind(this),
                         }),
-                        planned_date: new InputDate({
-                            name: 'planned_date',
-                            placeholder: 'Planned date',
-                            validator: function (value) {
-                                if (value.length == 0) {
-                                    return 'Invalid planned date';
-                                }
-                            },
-                        }),
-                        status: new Select({
-                            name: 'status',
-                            defaultValue: 'planned',
-                            data: [
-                                {value: 'planned', label: 'Planned'},
-                                {value: 'in_progress', label: 'In progress'},
-                                {value: 'complete', label: 'Complete'},
+                        new FormGroup({
+                            type: 'horizontal',
+                            items: [
+                                new InputDate({
+                                    name: 'date',
+                                    css: {flex: '1'},
+                                    placeholder: polyglot.t('form.placeholder.date'),
+                                }),
+                                new Select({
+                                    name: 'time',
+                                    css: {width: '8em'},
+                                    data: this.buildTimeData.bind(this),
+                                }),
                             ],
                         }),
-                        description: new Textarea({
+                        new Textarea({
                             name: 'description',
-                            placeholder: 'Description',
+                            placeholder: polyglot.t('form.placeholder.description'),
                             nullable: true,
                         }),
-                    },
+                        new FormGroup({
+                            items: [
+                                new Checkbox({
+                                    name: 'done',
+                                    label: new FormLabel({
+                                        text: polyglot.t('form.placeholder.done'),
+                                    }),
+                                    cast: 'boolean',
+                                }),
+                             ],
+                        }),
+                    ],
                 }),
-            }, options));
-        },
-
-        getProviderData: function () {
-            var data = [{
-                value: '',
-                label: 'None',
-            }];
-            app.collections.get('provider').each(function (provider) {
-                data.push({
-                    value: provider.get('id'),
-                    label: provider.getDisplayName(),
-                });
             });
-            return data;
         },
 
-        getCropData: function () {
-            var data = [{
-                value: '',
-                label: 'None',
-            }];
-            app.collections.get('crop').each(function (crop) {
-                data.push({
+        buildCropData: function () {
+            var data = app.collections.get('crop').map(function(crop) {
+                return {
+                    optgroup: crop.getDisplayName().charAt(0).removeDiacritics().toUpperCase(),
                     value: crop.get('id'),
-                    label: crop.getDisplayName() + ' (' + crop.get('status') + ')',
-                });
+                    label: crop.getDisplayName(),
+                };
             });
-            return _.sortBy(data, 'optgroup');
+            return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
         },
 
-        getPosData: function () {
-            var data = [{
-                value: '',
-                label: 'None',
-            }];
-            app.collections.get('pos').each(function (pos) {
-                data.push({
-                    value: pos.get('id'),
-                    label: pos.getDisplayName(),
-                });
-            });
-            return data;
-        },
+        buildCategoryData: function () {
+            var rootCategory = _.first(app.collections.get('category').where({
+                parent_id: null,
+                key: 'task_category_id',
+            }));
+            var cropProductionCategory = _.first(app.collections.get('category').where({
+                parent_id: rootCategory.get('id'),
+                key: 'crop_production',
+            }));
 
-        getCategoryData: function () {
             var data = [];
-            var provider_id = this.getElement('provider_id').getValue();
-            var crop_id = this.getElement('crop_id').getValue();
-            var pos_id = this.getElement('pos_id').getValue();
-            var categories = [];
-            if (provider_id !== null) {
-                categories = app.collections.get('category').where({
-                    model: 'task',
-                    root: 'purchasing',
-                });
-            }
-            if (crop_id !== null) {
-                categories = app.collections.get('category').where({
-                    model: 'task',
-                    root: 'cultivation',
-                });
-            }
-            if (pos_id !== null) {
-                categories = app.collections.get('category').where({
-                    model: 'task',
-                    root: 'marketing',
-                });
-            }
-            _.each(categories, function (category) {
-                data.push({
-                    optgroup: category.get('group'),
-                    value: category.get('id'),
-                    label: category.getDisplayName(),
+            _.each(cropProductionCategory.findAll('category', {refAttribute: 'parent_id'}), function(parentCategory) {
+                _.each(parentCategory.findAll('category', {refAttribute: 'parent_id'}), function(category) {
+                    data.push({
+                        optgroup: parentCategory.getDisplayName(),
+                        value: category.get('id'),
+                        label: category.getDisplayName(),
+                    });
                 });
             });
             return _.groupBy(data, 'optgroup');
         },
 
-        onProviderChange: function () {
-            this.renderCropSelect();
-            this.renderPosSelect();
-            this.renderCategorySelect();
-        },
-
-        onCropChange: function () {
-            this.renderProviderSelect();
-            this.renderPosSelect();
-            this.renderCategorySelect();
-        },
-
-        onPosChange: function () {
-            this.renderProviderSelect();
-            this.renderCropSelect();
-            this.renderCategorySelect();
-        },
-
-        renderProviderSelect: function () {
-            this.getElement('provider_id').setValue('');
-            this.getElement('provider_id').render();
-        },
-
-        renderCropSelect: function () {
-            this.getElement('crop_id').setValue('');
-            this.getElement('crop_id').render();
-        },
-
-        renderPosSelect: function () {
-            this.getElement('pos_id').setValue('');
-            this.getElement('pos_id').render();
-        },
-
-        renderCategorySelect: function () {
-            this.getElement('category_id').setValue('');
-            this.getElement('category_id').render();
-        },
-
-        validate: function (data) {
-            var errors = [];
-            if (!this.collection.checksUniqueKey(data, ['provider_id', 'crop_id', 'pos_id', 'category_id', 'planned_date'])) {
-                errors.push({
-                    attributes: ['provider_id', 'crop_id', 'pos_id', 'category_id', 'planned_date'],
-                    message: 'This task already exists',
-                });
-            }
-            if (data.provider_id == null && data.crop_id == null && data.pos_id == null) {
-                errors.push({
-                    attributes: ['provider_id', 'crop_id', 'pos_id'],
-                    message: 'Provider & crop & pos cannot be null',
-                });
-            }
-            return errors;
+        buildTimeData: function () {
+            return _.map(_.range(6, 24, 1), function (index) {
+                return {
+                    value: index.pad(2) + ':00:00',
+                    label: index.pad(2) + ':00',
+                };
+            });
         },
     });
 });

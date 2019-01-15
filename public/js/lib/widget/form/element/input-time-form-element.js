@@ -10,7 +10,7 @@ define([
 
         initialize: function (options) {
             InputFormElement.prototype.initialize.call(this, $.extend(true, {
-                type: 'date',
+                type: 'time',
             }, options));
 
             var defaults = {

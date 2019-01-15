@@ -19,8 +19,10 @@ define([
                 collection: {
                     class: Collection,
                     uniqueAttributes: ['parent_id', 'key'],
-                    comparator: function () {
-                        return this.get('parent_id') + this.get('key');
+                    comparator: function (category) {
+                        var parentId = _.isNull(category.get('parent_id')) ? 0 : category.get('parent_id');
+                        var sort = category.get('sort');
+                        return parentId.pad(4) + '-' + sort.pad(4);
                     },
                 },
             });

@@ -19,6 +19,7 @@ define([
     'app/schema/plant-schema',
     'app/schema/role-schema',
     'app/schema/species-schema',
+    'app/schema/task-schema',
     'app/schema/user_role-schema',
     'app/schema/varieties-schema',
     'app/schema/variety-schema',
@@ -38,6 +39,7 @@ define([
              PlantSchema,
              RoleSchema,
              SpeciesSchema,
+             TaskSchema,
              UserRoleSchema,
              VarietiesSchema,
              VarietySchema
@@ -62,6 +64,7 @@ define([
                 plant: new PlantSchema(),
                 role: new RoleSchema(),
                 species: new SpeciesSchema(),
+                task: new TaskSchema(),
                 user_role: new UserRoleSchema(),
                 varieties: new VarietiesSchema(),
                 variety: new VarietySchema(),

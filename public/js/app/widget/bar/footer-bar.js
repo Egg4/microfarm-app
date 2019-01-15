@@ -14,7 +14,7 @@ define([
                 position: 'fixed',
             }, options));
 
-            $(this.el).addClass('footer');
+            $(this.el).addClass('footer-bar');
         },
     });
 });

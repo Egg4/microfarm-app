@@ -1,8 +1,13 @@
 <script id="articles-page-article-table-row-template" type="text/template">
+    <td class="title"><%- name %></td>
+    <td class="description"><%- default_unit_price %> &euro; / <%- quantityUnitCategory.value %></td>
     <td>
-        <% if (active) { %><i class="fa fa-check"></i><% } %>
-    </td>
-    <td>
-        <div><%- name %></div>
+        <div class="right">
+            <% if (active) { %>
+            <i class="fas fa-check"></i>
+            <% } else { %>
+            <i class="fas fa-check fa-disabled"></i>
+            <% } %>
+        </div>
     </td>
 </script>

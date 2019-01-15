@@ -38,6 +38,7 @@ define([
 
         setValue: function (value) {
             FormElement.prototype.setValue.call(this, value);
+            this.value = (this.nullable && _.isNull(value)) ? '' : value;
             this.element.val(this.value);
         },
 

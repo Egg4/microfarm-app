@@ -133,6 +133,11 @@ define([
         return re.test(String(this).toLowerCase());
     };
 
+    String.prototype.dateFormat = function(format) {
+        var date = Date.parse(this, 'yy-mm-dd');
+        return date.format(format);
+    };
+
     Date.parse = function(string, format) {
         return $.datepicker.parseDate(format, string);
     };
@@ -153,6 +158,12 @@ define([
         var date2 = new Date(year, month, day, 12, 0, 0); // noon on input date
         var diff = Math.round((date2 - date1) / 864e5);
         return diff + 1;
+    };
+
+    Number.prototype.pad = function(size) {
+        var string = String(this);
+        while (string.length < (size || 2)) {string = "0" + string;}
+        return string;
     };
 
     Number.prototype.toAlpha = function() {

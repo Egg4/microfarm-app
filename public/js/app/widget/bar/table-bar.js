@@ -15,28 +15,20 @@ define([
 
         initialize: function (options) {
             var defaults = {
-                top: false,
                 title: '',
                 icon: false,
-                back: false,
-                menu: false,
-                bottom: false,
+                onCreationClick: this.onCreationClick.bind(this),
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
             Bar.prototype.initialize.call(this, $.extend(true, {
-                role: 'header',
-                position: 'fixed',
                 layout: new BorderLayout({
-                    top: this.top,
-                    left: this.back ? this.buildBackButton() : false,
-                    center: this.buildLabel(),
-                    right: this.menu ? this.buildMenuButton() : false,
-                    bottom: this.bottom,
+                    left: this.buildLabel(),
+                    right: this.buildCreationButton(),
                 }),
             }, options));
 
-            $(this.el).addClass('header-bar');
+            $(this.el).addClass('table-bar');
         },
 
         buildLabel: function () {
@@ -51,30 +43,19 @@ define([
             });
         },
 
-        buildBackButton: function () {
+        buildCreationButton: function () {
             return new Button({
                 label: new Label({
-                    icon: new Icon({name: 'long-arrow-alt-left'}),
+                    icon: new Icon({name: 'plus'}),
                 }),
                 events: {
-                    click: function() {
-                        app.router.back();
-                    },
+                    click: this.onCreationClick,
                 },
             });
         },
 
-        buildMenuButton: function () {
-            return new Button({
-                label: new Label({
-                    icon: new Icon({name: 'ellipsis-v'}),
-                }),
-                events: {
-                    click: function() {
-                        this.menu.open();
-                    }.bind(this),
-                },
-            });
+        onCreationClick: function () {
+
         },
     });
 });

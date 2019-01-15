@@ -54,7 +54,7 @@ define([
         },
 
         navigateToModelPage: function (crop) {
-            //app.router.navigate('crop/' + crop.get('id'));
+            app.router.navigate('crop/' + crop.get('id'));
         },
 
         getModelFormData: function () {

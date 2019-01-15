@@ -1,9 +1,15 @@
 <script id="varieties-page-variety-table-row-template" type="text/template">
     <td>
-        <% if (active) { %><i class="fa fa-check"></i><% } %>
-    </td>
-    <td>
         <div><%- plant.name %> <%- name %></div>
         <div class="description"><%- family.name %> - <%- genus.name %> <%- species.name %></div>
+    </td>
+    <td>
+        <div class="right">
+            <% if (active) { %>
+            <i class="fas fa-check"></i>
+            <% } else { %>
+            <i class="fas fa-check fa-disabled"></i>
+            <% } %>
+        </div>
     </td>
 </script>

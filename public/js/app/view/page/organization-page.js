@@ -3,7 +3,7 @@
 define([
     'jquery',
     'underscore',
-    'app/widget/page/model-list-page',
+    'app/widget/page/model-view-page',
     'app/widget/bar/header-bar',
     'lib/widget/layout/stack-layout',
     'lib/widget/navigation/navigation',

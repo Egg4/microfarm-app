@@ -29,7 +29,7 @@
 /********************************/
 /*  Navigation                  */
 /********************************/
-.navigation-widget > .layout-widget > div > .button-widget {
+.navigation-widget > .layout-widget .button-widget {
     border-left: none;
     border-top: none;
     margin: 0;
@@ -94,6 +94,14 @@
     width: 100%;
 }
 
+.button-widget.ui-btn-icon-top {
+    padding-top: 2.1em;
+}
+
+.button-widget.ui-btn-icon-bottom {
+    padding-bottom: 2.1em;
+}
+
 .button-widget.ui-btn-icon-left::after,
 .button-widget.ui-btn-icon-right::after,
 .button-widget.ui-btn-icon-top::after,
@@ -137,12 +145,13 @@
 .button-widget.ui-btn-icon-bottom .fa-icon-widget {
     left: 50%;
     margin-left: -0.625em;
-    font-size: 1.5em;
+    font-size: 1.3em;
 }
 
 .button-widget.ui-btn-icon-top .label-widget .text,
 .button-widget.ui-btn-icon-bottom .label-widget .text {
     font-size: .6em;
+    font-weight: 100;
 }
 
 .button-widget.ui-btn-icon-top .fa-icon-widget {
