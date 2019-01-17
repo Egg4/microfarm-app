@@ -16,6 +16,7 @@ define([
                 id: 'main-menu-panel',
                 position: 'right',
                 items: [
+                    this.buildPlannerButton(),
                     this.buildEntityButton(),
                     this.buildCropsButton(),
                     this.buildSuppliersButton(),
@@ -25,10 +26,25 @@ define([
             }, options));
         },
 
+        buildPlannerButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('main-menu-panel.button.planner'),
+                    icon: new Icon({name: 'calendar-alt'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        this.redirect('planner');
+                    }.bind(this),
+                },
+            });
+        },
+
         buildEntityButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('entity-page.title'),
+                    text: polyglot.t('main-menu-panel.button.entity'),
                     icon: new Icon({name: 'home'}),
                 }),
                 iconAlign: 'top',
@@ -43,7 +59,7 @@ define([
         buildCropsButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('crops-page.title'),
+                    text: polyglot.t('main-menu-panel.button.crops'),
                     icon: new Icon({name: 'leaf'}),
                 }),
                 iconAlign: 'top',
@@ -58,7 +74,7 @@ define([
         buildSuppliersButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('suppliers-page.title'),
+                    text: polyglot.t('main-menu-panel.button.suppliers'),
                     icon: new Icon({name: 'truck'}),
                 }),
                 iconAlign: 'top',
@@ -73,7 +89,7 @@ define([
         buildClientsButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('clients-page.title'),
+                    text: polyglot.t('main-menu-panel.button.clients'),
                     icon: new Icon({name: 'store-alt'}),
                 }),
                 iconAlign: 'top',

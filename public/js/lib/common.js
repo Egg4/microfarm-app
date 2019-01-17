@@ -150,7 +150,7 @@ define([
         return Date.format(this, format);
     };
 
-    Date.prototype.dayOfYear = function() {
+    Date.prototype.getDayOfYear = function() {
         var year = this.getFullYear();
         var month = this.getMonth();
         var day = this.getDate();
@@ -158,6 +158,26 @@ define([
         var date2 = new Date(year, month, day, 12, 0, 0); // noon on input date
         var diff = Math.round((date2 - date1) / 864e5);
         return diff + 1;
+    };
+
+    Date.prototype.getWeekOfYear = function() {
+        return $.datepicker.iso8601Week(this);
+    };
+
+    Date.getWeekMonday = function(week, year) {
+        var date = new Date(year, 0, 1);
+        date.setDate((week - 1) * 7);
+        return date;
+    };
+
+    Date.getWeekSunday = function(week, year) {
+        var date = Date.getWeekMonday(week, year);
+        date.setDate(date.getDate() + 6);
+        return date;
+    };
+
+    Date.prototype.addDays = function(x) {
+        this.setTime(this.getTime() + x * 864e5);
     };
 
     Number.prototype.pad = function(size) {

@@ -7,28 +7,26 @@ define([
 ], function ($, _, Widget) {
 
     return Widget.extend({
-        tagName: 'ul',
+        tagName: 'td',
 
         initialize: function (options) {
             Widget.prototype.initialize.call(this, options);
 
             var defaults = {
-                items: [],
+                content: false,
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
-            $(this.el).addClass('list-widget');
+            $(this.el).addClass('table-cell-widget');
         },
 
         render: function () {
             Widget.prototype.render.call(this);
 
             $(this.el).empty();
-            var items = _.isFunction(this.items) ? this.items() : this.items;
-            _.each(items, function (item) {
-                $(this.el).append(item.el);
-                item.render();
-            }.bind(this));
+            var content = _.isFunction(this.content) ? this.content() : this.content;
+            $(this.el).append(content.el);
+            content.render();
         },
     });
 });

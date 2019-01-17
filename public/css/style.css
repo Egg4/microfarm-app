@@ -14,11 +14,11 @@
     box-shadow: none !important;
 }
 
-/* Table */
-tr.disabled {
+.disabled {
     opacity: 0.3;
 }
 
+/* Table */
 td .image {
     background-size: cover;
     width: 2.5em;

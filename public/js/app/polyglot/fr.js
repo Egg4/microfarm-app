@@ -3,6 +3,11 @@
 define([], function () {
     return {
         'loader.default-text': 'Chargement',
+        'main-menu-panel.button.planner': 'Calendrier',
+        'main-menu-panel.button.entity': 'Ferme',
+        'main-menu-panel.button.crops': 'Cultures',
+        'main-menu-panel.button.suppliers': 'Fournisseurs',
+        'main-menu-panel.button.clients': 'Clients',
         'main-menu-panel.button.logout': 'Déconnexion',
 
         // Page
@@ -23,6 +28,7 @@ define([], function () {
         'organization-page.button.articles': 'Articles',
         'organization-page.button.purchases': 'Achats',
         'organization-page.button.sales': 'Ventes',
+        'planner-page.title': 'S%{week}',
         'suppliers-page.title': 'Fournisseurs',
         'varieties-page.title': 'Variétés',
 

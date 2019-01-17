@@ -34,8 +34,8 @@ define([
             $(this.el).empty();
             var rows = _.isFunction(this.rows) ? this.rows() : this.rows;
             _.each(rows, function(row) {
-                row.render();
                 $(this.el).append(row.el);
+                row.render();
             }.bind(this));
 
             $(this.el).table({
