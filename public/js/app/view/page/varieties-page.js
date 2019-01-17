@@ -13,40 +13,47 @@ define([
         initialize: function () {
             Page.prototype.initialize.call(this, {
                 id: 'varieties-page',
-                collection: app.collections.get('variety'),
-                separatorRowTemplate: _.template('<td colspan="2"><%- separator %></td>'),
-                modelRowTemplate: _.template($('#varieties-page-variety-table-row-template').html()),
-            });
-
-            this.listenTo(this.collection, 'update', this.render);
-        },
-
-        buildHeader: function (searchForm) {
-            return new Header({
                 title: polyglot.t('varieties-page.title'),
                 icon: new Icon({name: 'dna'}),
-                back: true,
-                menu: app.panels.get('main-menu'),
-                bottom: searchForm,
+                collection: app.collections.get('variety'),
+                tableOptions: {
+                    models: this.buildVarieties.bind(this),
+                    groupedModels: this.buildGroupedVarieties.bind(this),
+                    modelRow: {
+                        options: this.buildVarietyRowOptions.bind(this),
+                        template: _.template($('#varieties-page-variety-table-row-template').html()),
+                        data: this.buildVarietyRowData.bind(this),
+                        events: {
+                            click: false,
+                        },
+                    },
+                    modelForm: {
+                        data: this.buildVarietyFormData.bind(this),
+                        visible: this.buildVarietyFormVisible.bind(this),
+                    },
+                },
             });
         },
 
-        buildRows: function () {
-            var varieties = app.collections.get('variety').sortBy(function (variety) {
+        buildVarieties: function () {
+            return this.collection.sortBy(function (variety) {
                 return variety.getDisplayName().removeDiacritics();
             });
-            var rowGroups = _.groupBy(varieties, function (variety) {
-                return variety.getDisplayName().charAt(0).removeDiacritics().toUpperCase();
-            });
-            var rows = [];
-            _.each(rowGroups, function (varieties, name) {
-                rows = _.union(rows, this.buildRowGroup(name, varieties));
-            }.bind(this));
-
-            return rows;
         },
 
-        buildModelRowData: function (variety) {
+        buildGroupedVarieties: function (varieties) {
+            return _.groupBy(varieties, function (variety) {
+                return variety.getDisplayName().charAt(0).removeDiacritics().toUpperCase();
+            });
+        },
+
+        buildVarietyRowOptions: function (variety) {
+            return {
+                className: variety.get('active') ? '' : 'disabled',
+            };
+        },
+
+        buildVarietyRowData: function (variety) {
             var plant = variety.find('plant'),
                 species = plant.find('species'),
                 genus = species.find('genus'),
@@ -59,24 +66,18 @@ define([
             });
         },
 
-        getModelFormData: function () {
+        buildVarietyFormData: function () {
             return {
-                entity_id: this.filter.entity_id,
+                entity_id: app.authentication.getEntityId(),
                 active: true,
             };
         },
 
-        getModelFormVisible: function () {
+        buildVarietyFormVisible: function () {
             return {
                 plant_id: true,
                 name: true,
                 active: true,
-            };
-        },
-
-        setData: function () {
-            this.filter = {
-                entity_id: app.authentication.getEntityId(),
             };
         },
     });

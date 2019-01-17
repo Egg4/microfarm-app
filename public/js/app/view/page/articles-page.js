@@ -13,49 +13,59 @@ define([
         initialize: function () {
             Page.prototype.initialize.call(this, {
                 id: 'articles-page',
-                collection: app.collections.get('article'),
-                separatorRowTemplate: _.template('<td colspan="3"><%- separator %></td>'),
-                modelRowTemplate: _.template($('#articles-page-article-table-row-template').html()),
-            });
-
-            this.listenTo(this.collection, 'update', this.render);
-        },
-
-        buildHeader: function (searchForm) {
-            return new Header({
-                title: function () {
-                    var name = '';
-                    if (_.isNull(this.filter.organization_id)) {
-                        name = app.collections.get('entity').get(app.authentication.getEntityId()).getDisplayName();
-                    } else {
-                        name = app.collections.get('organization').get(this.filter.organization_id).getDisplayName();
-                    }
-                    return polyglot.t('articles-page.title') + ' - ' + name;
-                }.bind(this),
+                title: this.buildTitle.bind(this),
                 icon: new Icon({name: 'shopping-cart'}),
-                back: true,
-                menu: app.panels.get('main-menu'),
-                bottom: searchForm,
+                collection: app.collections.get('article'),
+                tableOptions: {
+                    models: this.buildArticles.bind(this),
+                    groupedModels: this.buildGroupedArticles.bind(this),
+                    modelRow: {
+                        options: this.buildArticleRowOptions.bind(this),
+                        template: _.template($('#articles-page-article-table-row-template').html()),
+                        data: this.buildArticleRowData.bind(this),
+                        events: {
+                            click: false,
+                        },
+                    },
+                    modelForm: {
+                        data: this.buildArticleFormData.bind(this),
+                        visible: this.buildArticleFormVisible.bind(this),
+                    },
+                },
             });
         },
 
-        buildRows: function () {
-            var articles = app.collections.get('article').where(this.filter);
-            articles = _.sortBy(articles, function (article) {
+        buildTitle: function () {
+            var name = '';
+            if (_.isNull(this.filter.organization_id)) {
+                name = app.collections.get('entity').get(this.filter.entity_id).getDisplayName();
+            } else {
+                name = app.collections.get('organization').get(this.filter.organization_id).getDisplayName();
+            }
+            return polyglot.t('articles-page.title') + ' - ' + name;
+        },
+
+        buildArticles: function () {
+            var articles = this.collection.where(this.filter);
+
+            return _.sortBy(articles, function (article) {
                 return (article.find('category').getDisplayName() + article.getDisplayName()).removeDiacritics();
             });
-            var rowGroups = _.groupBy(articles, function (article) {
-                return article.find('category').getDisplayName();
-            });
-            var rows = [];
-            _.each(rowGroups, function (articles, name) {
-                rows = _.union(rows, this.buildRowGroup(name, articles));
-            }.bind(this));
-
-            return rows;
         },
 
-        buildModelRowData: function (article) {
+        buildGroupedArticles: function (articles) {
+            return _.groupBy(articles, function (article) {
+                return article.find('category').getDisplayName();
+            });
+        },
+
+        buildArticleRowOptions: function (article) {
+            return {
+                className: article.get('active') ? '' : 'disabled',
+            };
+        },
+
+        buildArticleRowData: function (article) {
             var quantityUnitCategory = article.find('category', {
                 selfAttribute: 'quantity_unit_id',
             });
@@ -64,11 +74,7 @@ define([
             });
         },
 
-        navigateToModelPage: function (article) {
-            //app.router.navigate('article/' + article.get('id'));
-        },
-
-        getModelFormData: function () {
+        buildArticleFormData: function () {
             return {
                 entity_id: this.filter.entity_id,
                 organization_id: this.filter.organization_id,
@@ -76,7 +82,7 @@ define([
             };
         },
 
-        getModelFormVisible: function () {
+        buildArticleFormVisible: function () {
             return {
                 organization_id: false,
                 category_id: true,

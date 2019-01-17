@@ -35,16 +35,9 @@ define([
             window.app = this; // Set 'app' as global var
 
             this.loader = new Loader();
-            this.client = new Client({
-                url: config.api.url,
-                headers: {
-                    'Accept': config.api.mime || undefined,
-                    'Content-Type': config.api.mime || undefined,
-                    'Content-Encoding': config.api.encoding || undefined,
-                },
-                timeout: config.api.timeout,
+            this.client = new Client($.extend(true, {
                 errorHandler: this.onClientError.bind(this),
-            });
+            }, config.api));
             this.authentication = new Authentication({
                 client: this.client,
                 authorization: config.authorization,

@@ -13,54 +13,52 @@ define([
         initialize: function () {
             Page.prototype.initialize.call(this, {
                 id: 'organizations-page',
+                title: this.buildTitle.bind(this),
+                icon: this.buildIcon.bind(this),
                 collection: app.collections.get('organization'),
-                separatorRowTemplate: _.template('<td colspan="1"><%- separator %></td>'),
-                modelRowTemplate: _.template($('#organizations-page-organization-table-row-template').html()),
-            });
-
-            this.listenTo(this.collection, 'update', this.render);
-        },
-
-        buildHeader: function (searchForm) {
-            return new Header({
-                title: function () {
-                    return this.filter.supplier ? polyglot.t('suppliers-page.title') : polyglot.t('clients-page.title');
-                }.bind(this),
-                icon: function () {
-                    return this.filter.supplier ? new Icon({name: 'truck'}) : new Icon({name: 'store-alt'});
-                }.bind(this),
-                back: true,
-                menu: app.panels.get('main-menu'),
-                bottom: searchForm,
+                tableOptions: {
+                    models: this.buildOrganizations.bind(this),
+                    groupedModels: this.buildGroupedOrganizations.bind(this),
+                    modelRow: {
+                        template: _.template($('#organizations-page-organization-table-row-template').html()),
+                        data: this.buildOrganizationRowData.bind(this),
+                    },
+                    modelForm: {
+                        data: this.buildOrganizationFormData.bind(this),
+                        visible: this.buildOrganizationFormVisible.bind(this),
+                    },
+                },
             });
         },
 
-        buildRows: function () {
-            var filter = this.filter.supplier ? {supplier: true} : {client: true};
-            var organizations = app.collections.get('organization').where(filter);
-            organizations = _.sortBy(organizations, function (organization) {
+        buildTitle: function () {
+            return this.filter.supplier ? polyglot.t('suppliers-page.title') : polyglot.t('clients-page.title');
+        },
+
+        buildIcon: function () {
+            return this.filter.supplier ? new Icon({name: 'truck'}) : new Icon({name: 'store-alt'});
+        },
+
+        buildOrganizations: function () {
+            var filter = this.filter.supplier ? {supplier: true} : {client: true},
+                organizations = this.collection.where(filter);
+
+            return _.sortBy(organizations, function (organization) {
                 return organization.getDisplayName().removeDiacritics();
             });
-            var rowGroups = _.groupBy(organizations, function (organization) {
-                return organization.getDisplayName().charAt(0).removeDiacritics().toUpperCase();
-            });
-            var rows = [];
-            _.each(rowGroups, function (organizations, name) {
-                rows = _.union(rows, this.buildRowGroup(name, organizations));
-            }.bind(this));
-
-            return rows;
         },
 
-        buildModelRowData: function (organization) {
+        buildGroupedOrganizations: function (organizations) {
+            return _.groupBy(organizations, function (organization) {
+                return organization.getDisplayName().charAt(0).removeDiacritics().toUpperCase();
+            });
+        },
+
+        buildOrganizationRowData: function (organization) {
             return organization.toJSON();
         },
 
-        navigateToModelPage: function (organization) {
-            app.router.navigate('organization/' + organization.get('id'));
-        },
-
-        getModelFormData: function () {
+        buildOrganizationFormData: function () {
             return {
                 entity_id: this.filter.entity_id,
                 supplier: this.filter.supplier,
@@ -68,7 +66,7 @@ define([
             };
         },
 
-        getModelFormVisible: function () {
+        buildOrganizationFormVisible: function () {
             return {
                 name: true,
                 number: true,

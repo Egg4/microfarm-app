@@ -8,9 +8,12 @@ define([
         env: env,
         api: {
             url: (env == 'prod') ? 'https://api.microfarm.fr/v1.0' : 'https://api.microfarm.local/v1.0',
-            mime: 'application/json',
-            //encoding: 'gzip',
-            timeout: 20000,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                //'Content-Encoding': 'gzip',
+            },
+            timeout: 10000,
         },
         authorization: {
             family: {view: '*'},

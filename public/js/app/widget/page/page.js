@@ -18,20 +18,23 @@ define([
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
             Page.prototype.initialize.call(this, $.extend(true, {
-                layout: this.buildLayout(),
+                layout: this.buildLayout.bind(this),
             }, options));
         },
 
         buildLayout: function () {
             var items = [];
             if (this.header) {
-                items.push(this.header);
+                var header = _.isFunction(this.header) ? this.header() : this.header;
+                items.push(header);
             }
             if (this.body) {
-                items.push(this.body);
+                var body = _.isFunction(this.body) ? this.body() : this.body;
+                items.push(body);
             }
             if (this.footer) {
-                items.push(this.footer);
+                var footer = _.isFunction(this.footer) ? this.footer() : this.footer;
+                items.push(footer);
             }
 
             return new StackLayout({

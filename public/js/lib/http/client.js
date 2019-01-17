@@ -10,18 +10,19 @@ define([
     return Backbone.View.extend({
 
         initialize: function (options) {
-            this.url = options.url || '';
-            this.headers = options.headers || {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Content-Encoding': 'gzip',
+            var defaults = {
+                url: '',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                timeout: 10000,
+                formatter: JSON.stringify,
+                parser: JSON.parse,
+                errorHandler: function(errors) {console.log(errors);},
             };
-            this.timeout = options.timeout || 10000;
-            this.formatter  = options.formatter || JSON.stringify;
-            this.parser  = options.parser || JSON.parse;
-            this.errorHandler = options.errorHandler || function(errors) {
-                console.log(errors);
-            };
+            $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
+
             // Bind Backbone.ajax on this client
             Backbone.ajax = this.backboneAjax.bind(this);
         },
@@ -63,19 +64,28 @@ define([
                 dataType: 'text',
                 timeout: options.timeout || this.timeout,
                 global: false, // Disabled global events
-                success: function (text) {
-                    var data = text ? this.parser(text) : null;
+                success: function (responseText) {
+                    var data = responseText ? this.parser(responseText) : null;
                     deferred.resolve(data);
                 }.bind(this),
-                error: function (xhr) {
-                    var data = xhr.responseText.length > 0 ? this.parser(xhr.responseText) : [{
+                error: function (xhr, status) {
+                    var errors = [];
+                    if (status == 'timeout') {
+                        errors = [{
+                            name: 'timeout',
+                            description: 'Http response timeout',
+                        }];
+                    } else {
+                        errors = xhr.responseText.length > 0 ? this.parser(xhr.responseText) : [{
                             name: 'invalid_response',
                             description: 'Http response is empty',
-                        }],
-                        catchErrors = options.catchErrors || [],
+                        }];
+                    }
+
+                    var catchErrors = options.catchErrors || [],
                         caughtErrors = [],
                         uncaughtErrors = [];
-                    _.each(data, function(error) {
+                    _.each(errors, function(error) {
                         if (_.contains(catchErrors, error.name)) {
                             caughtErrors.push(error);
                         }

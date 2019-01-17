@@ -65,15 +65,18 @@ define([
 
         buildArticleData: function () {
             var data = [],
-                harvestCategory = this.getharvestCategory(),
-                filter = {
-                    organization_id: null,
-                    category_id: harvestCategory.get('id'),
-                };
-            if (!parseInt(this.getElement('id').getValue())) {
-                filter.active = true;
+                articleId = this.getElement('article_id').getValue(),
+                harvestCategory = this.getharvestCategory();
+
+            var articles = app.collections.get('article').where({
+                organization_id: null,
+                category_id: harvestCategory.get('id'),
+                active: true,
+            });
+            if (articleId) {
+                var article = app.collections.get('article').get(articleId);
+                if (!_.contains(articles, article)) articles.push(article);
             }
-            var articles = app.collections.get('article').where(filter);
             _.each(articles, function(article) {
                 data.push({
                     optgroup: article.getDisplayName().charAt(0).removeDiacritics().toUpperCase(),

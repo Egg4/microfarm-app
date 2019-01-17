@@ -6,10 +6,8 @@ define([
     'app/widget/table/table',
     'app/widget/bar/table-bar',
     'lib/widget/html/html',
-    'lib/widget/button/button',
-    'lib/widget/label/label',
     'lib/widget/icon/fa-icon',
-], function ($, _, Table, Bar, Html, Button, Label, Icon) {
+], function ($, _, Table, Bar, Html, Icon) {
 
     return Table.extend({
 
@@ -19,14 +17,27 @@ define([
                 icon: false,
                 collection: false,
                 models: [],
-                row: this.buildRow.bind(this),
-                rowTemplate: false,
-                rowData: this.buildRowData.bind(this),
+                groupedModels: false,
+                rowsGroup: this.buildRowsGroup.bind(this),
+                separatorRow: {
+                    options: {},
+                    template: _.template('<td colspan="100"><%- separator %></td>'),
+                    data: this.buildSeparatorRowData.bind(this),
+                },
+                modelRow: {
+                    options: {},
+                    template: false,
+                    data: this.buildModelRowData.bind(this),
+                    events: {
+                        click: this.navigateToModelPage.bind(this),
+                        taphold: this.openMenuPopup.bind(this),
+                    },
+                },
+                modelForm: {
+                    data: {},
+                    visible: {},
+                },
                 onCreationClick: this.openCreationDialog.bind(this),
-                onRowClick: this.navigateToModelPage.bind(this),
-                onRowHold: this.openMenuPopup.bind(this),
-                modelFormData: this.getModelFormData.bind(this),
-                modelFormVisible: this.getModelFormVisible.bind(this),
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
@@ -52,42 +63,91 @@ define([
                 }),
                 icon: new Icon({name: 'plus'}),
             });
-            var modelFormData = _.isFunction(this.modelFormData) ? this.modelFormData() : this.modelFormData;
+            var modelFormData = _.isFunction(this.modelForm.data) ?
+                this.modelForm.data() : this.modelForm.data;
             dialog.form.setData(modelFormData);
-            var modelFormVisible = _.isFunction(this.modelFormVisible) ? this.modelFormVisible() : this.modelFormVisible;
+            var modelFormVisible = _.isFunction(this.modelForm.visible) ?
+                this.modelForm.visible() : this.modelForm.visible;
             dialog.form.setVisible(modelFormVisible);
             dialog.open();
         },
 
         buildRows: function () {
             var models = _.isFunction(this.models) ? this.models() : this.models;
-            return _.map(models, function (model) {
-                return this.row(model);
-            }.bind(this));
+
+            if (_.isFunction(this.groupedModels)) {
+                var rows = [];
+                _.each(this.groupedModels(models), function (models, separator) {
+                    rows = _.union(rows, this.rowsGroup(models, separator));
+                }.bind(this));
+
+                return rows;
+            }
+
+            return this.rowsGroup(models);
         },
 
-        buildRow: function (model) {
-            return new Html({
+        buildRowsGroup: function (models, separator) {
+            var modelRows = _.map(models, function (model) {
+                var modelRow = _.isFunction(this.modelRow) ?
+                    this.modelRow(model) : this.buildModelRow(model);
+                return modelRow;
+            }.bind(this));
+
+            if (separator) {
+                var separatorRow = _.isFunction(this.separatorRow) ?
+                    this.separatorRow(separator) : this.buildSeparatorRow(separator);
+                return _.union([separatorRow], modelRows);
+            }
+            return modelRows;
+        },
+
+        buildSeparatorRow: function (separator) {
+            var options = _.isFunction(this.separatorRow.options) ?
+                this.separatorRow.options(separator) : this.separatorRow.options;
+
+            return new Html($.extend(true, {
                 tagName: 'tr',
-                template: this.rowTemplate,
-                data: this.rowData(model),
+                className: 'separator',
+                attributes: {
+                    'data-filtertext': ' ',
+                },
+                template: this.separatorRow.template,
+                data: this.separatorRow.data(separator),
+            }, options));
+        },
+
+        buildSeparatorRowData: function (separator) {
+            return {
+                separator: separator,
+            };
+        },
+
+        buildModelRow: function (model) {
+            var options = _.isFunction(this.modelRow.options) ?
+                this.modelRow.options(model) : this.modelRow.options;
+
+            return new Html($.extend(true, {
+                tagName: 'tr',
+                template: this.modelRow.template,
+                data: this.modelRow.data(model),
                 events: {
                     click: function () {
-                        if (this.onRowClick) this.onRowClick(model);
+                        if (_.isFunction(this.modelRow.events.click)) this.modelRow.events.click(model);
                     }.bind(this),
                     taphold: function () {
-                        if (this.onRowHold) this.onRowHold(model);
+                        if (_.isFunction(this.modelRow.events.taphold)) this.modelRow.events.taphold(model);
                     }.bind(this),
                 },
-            });
+            }, options));
         },
 
-        buildRowData: function (model) {
+        buildModelRowData: function (model) {
             return model.toJSON();
         },
 
         navigateToModelPage: function (model) {
-            app.router.navigate(this.collection.modelName + '/' + model.get('id'));
+            app.router.navigate(model.collection.modelName + '/' + model.get('id'));
         },
 
         openMenuPopup: function (model) {
@@ -104,15 +164,16 @@ define([
         },
 
         openEditionDialog: function (model) {
-            var dialog = app.dialogs.get(this.collection.modelName);
+            var dialog = app.dialogs.get(model.collection.modelName);
             dialog.setData({
                 title: polyglot.t('model-dialog.title.edit', {
-                    model: polyglot.t('model.name.' + this.collection.modelName).toLowerCase(),
+                    model: polyglot.t('model.name.' + model.collection.modelName).toLowerCase(),
                 }),
                 icon: new Icon({name: 'pencil-alt'}),
             });
             dialog.form.setData(model.toJSON());
-            var modelFormVisible = _.isFunction(this.modelFormVisible) ? this.modelFormVisible() : this.modelFormVisible;
+            var modelFormVisible = _.isFunction(this.modelForm.visible) ?
+                this.modelForm.visible(model) : this.modelForm.visible;
             dialog.form.setVisible(modelFormVisible);
             dialog.open();
         },
@@ -123,14 +184,6 @@ define([
                 model: model,
             });
             popup.open();
-        },
-
-        getModelFormData: function () {
-            return {};
-        },
-
-        getModelFormVisible: function () {
-            return {};
         },
     });
 });

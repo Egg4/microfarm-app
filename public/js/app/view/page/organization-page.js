@@ -4,7 +4,6 @@ define([
     'jquery',
     'underscore',
     'app/widget/page/model-view-page',
-    'app/widget/bar/header-bar',
     'lib/widget/layout/stack-layout',
     'lib/widget/navigation/navigation',
     'lib/widget/layout/grid-layout',
@@ -12,26 +11,21 @@ define([
     'lib/widget/button/button',
     'lib/widget/label/label',
     'lib/widget/icon/fa-icon',
-], function ($, _, Page, Header, StackLayout, Navigation, GridLayout, Html, Button, Label, Icon) {
+], function ($, _, Page, StackLayout, Navigation, GridLayout, Html, Button, Label, Icon) {
 
     return Page.extend({
 
         initialize: function () {
             Page.prototype.initialize.call(this, {
                 id: 'organization-page',
-            });
-        },
-
-        buildHeader: function () {
-            return new Header({
                 title: function () {
                     return this.model.getDisplayName();
                 }.bind(this),
                 icon: function () {
                     return this.model.get('supplier') ? new Icon({name: 'truck'}) : new Icon({name: 'store-alt'});
                 }.bind(this),
-                back: true,
-                menu: app.panels.get('main-menu'),
+                collection: app.collections.get('organization'),
+                body: this.buildBody.bind(this),
             });
         },
 
@@ -39,11 +33,12 @@ define([
             return new StackLayout({
                 items: [
                     this.buildNavigation(),
-                    this.buildModelHtml(),
+                    this.buildOrganizationHtml(),
                 ],
             });
         },
 
+        /*---------------------------------------- Navigation ------------------------------------------*/
         buildNavigation: function () {
             return new Navigation({
                 layout: function () {
@@ -108,23 +103,18 @@ define([
             });
         },
 
-        buildModelHtml: function () {
+        /*---------------------------------------- Organization ------------------------------------------*/
+        buildOrganizationHtml: function () {
             return new Html({
                 template: $('#organization-page-model-template').html(),
                 data: function () {
-                    return this.buildModelHtmlData();
+                    return this.buildOrganizationHtmlData();
                 }.bind(this),
             });
         },
 
-        buildModelHtmlData: function () {
+        buildOrganizationHtmlData: function () {
             return this.model.toJSON();
-        },
-
-        setData: function (id) {
-            if (this.model) this.stopListening(this.model);
-            this.model = app.collections.get('organization').get(id);
-            this.listenTo(this.model, 'update', this.render);
         },
     });
 });

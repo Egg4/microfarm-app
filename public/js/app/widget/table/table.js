@@ -11,14 +11,15 @@ define([
     return Widget.extend({
 
         initialize: function (options) {
-            Widget.prototype.initialize.call(this, options);
-
             var defaults = {
                 header: false,
+                filterId: false,
                 rows: [],
                 footer: false,
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
+
+            Widget.prototype.initialize.call(this, options);
         },
 
         buildLayout: function () {
@@ -40,6 +41,7 @@ define([
 
         buildTable: function () {
             return new Table({
+                filterId: this.filterId,
                 rows: this.rows,
             });
         },

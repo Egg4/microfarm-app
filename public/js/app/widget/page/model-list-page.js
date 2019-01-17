@@ -4,42 +4,43 @@ define([
     'jquery',
     'underscore',
     'app/widget/page/page',
+    'app/widget/bar/header-bar',
     'lib/widget/layout/stack-layout',
     'app/widget/form/search-form',
-    'lib/widget/table/table',
-    'lib/widget/html/html',
+    'app/widget/table/model-table',
     'lib/widget/button/button',
     'lib/widget/label/label',
     'lib/widget/icon/fa-icon',
-], function ($, _, Page, StackLayout, SearchForm, Table, Html, Button, Label, Icon) {
+], function ($, _, Page, Header, StackLayout, SearchForm, Table, Button, Label, Icon) {
 
     return Page.extend({
 
         initialize: function (options) {
             var defaults = {
+                title: '',
+                icon: false,
                 collection: false,
-                separatorRowTemplate: false,
-                modelRowTemplate: false,
+                searchForm: this.buildSearchForm(),
+                onCreationClick: this.openCreationDialog.bind(this),
+                tableOptions: {},
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
-            var searchForm = this.buildSearchForm();
+            Page.prototype.initialize.call(this, $.extend(true, {
+                header: this.buildHeader.bind(this),
+                body: this.buildBody.bind(this),
+            }, options));
 
-            Page.prototype.initialize.call(this, {
-                header: this.buildHeader(searchForm),
-                body: this.buildBody(searchForm),
-            });
+            this.listenTo(this.collection, 'update', this.render);
         },
 
-        buildHeader: function (searchForm) {
-            return false;
-        },
-
-        buildBody: function (searchForm) {
-            return new StackLayout({
-                items: [
-                    this.buildTable(searchForm),
-                ],
+        buildHeader: function () {
+            return new Header({
+                title: this.title,
+                icon: this.icon,
+                back: true,
+                menu: app.panels.get('main-menu'),
+                bottom: _.isFunction(this.searchForm) ? this.searchForm() : this.searchForm,
             });
         },
 
@@ -58,7 +59,7 @@ define([
                 }),
                 events: {
                     click: function () {
-                        this.openCreationDialog();
+                        this.onCreationClick();
                     }.bind(this),
                 },
             });
@@ -72,108 +73,31 @@ define([
                 }),
                 icon: new Icon({name: 'plus'}),
             });
-            dialog.form.setData(this.getModelFormData());
-            dialog.form.setVisible(this.getModelFormVisible());
+            var modelFormData = _.isFunction(this.tableOptions.modelForm.data) ?
+                this.tableOptions.modelForm.data() : this.tableOptions.modelForm.data;
+            dialog.form.setData(modelFormData);
+            var modelFormVisible = _.isFunction(this.tableOptions.modelForm.visible) ?
+                this.tableOptions.modelForm.visible() : this.tableOptions.modelForm.visible;
+            dialog.form.setVisible(modelFormVisible);
             dialog.open();
         },
 
-        buildTable: function (searchForm) {
-            var filterId = searchForm.inputSearch.getElementId();
+        buildBody: function () {
+            return new StackLayout({
+                items: [
+                    this.buildTable(),
+                ],
+            });
+        },
 
-            return new Table({
+        buildTable: function () {
+            var filterId = this.searchForm.inputSearch.getElementId();
+
+            return new Table($.extend(true, {
                 filterId: filterId,
-                rows: this.buildRows.bind(this),
-            });
-        },
-
-        buildRows: function () {
-            return [];
-        },
-
-        buildRowGroup: function (separator, models) {
-            return _.union([this.buildSeparatorRow(separator)], _.map(models, function (model) {
-                return this.buildModelRow(model);
-            }.bind(this)));
-        },
-
-        buildSeparatorRow: function (separator) {
-            return new Html({
-                tagName: 'tr',
-                className: 'separator',
-                attributes: {
-                    'data-filtertext': ' ',
-                },
-                template: this.separatorRowTemplate,
-                data: {
-                    separator: separator,
-                },
-            });
-        },
-
-        buildModelRow: function (model) {
-            return new Html({
-                tagName: 'tr',
-                template: this.modelRowTemplate,
-                data: this.buildModelRowData(model),
-                events: {
-                    click: function () {
-                        this.navigateToModelPage(model);
-                    }.bind(this),
-                    taphold: function () {
-                        this.openMenuPopup(model);
-                    }.bind(this),
-                },
-            });
-        },
-
-        buildModelRowData: function (model) {
-            return model.toJSON();
-        },
-
-        navigateToModelPage: function (model) {
-
-        },
-
-        openMenuPopup: function (model) {
-            var popup = app.popups.get('menu');
-            popup.setData({
-                title: model.getDisplayName(),
-            });
-            popup.open().done(function (action) {
-                switch (action) {
-                    case 'edit': return this.openEditionDialog(model);
-                    case 'delete': return this.openDeletionPopup(model);
-                }
-            }.bind(this));
-        },
-
-        openEditionDialog: function (model) {
-            var dialog = app.dialogs.get(this.collection.modelName);
-            dialog.setData({
-                title: polyglot.t('model-dialog.title.edit', {
-                    model: polyglot.t('model.name.' + this.collection.modelName).toLowerCase(),
-                }),
-                icon: new Icon({name: 'pencil-alt'}),
-            });
-            dialog.form.setData(model.toJSON());
-            dialog.form.setVisible(this.getModelFormVisible());
-            dialog.open();
-        },
-
-        openDeletionPopup: function (model) {
-            var popup = app.popups.get('delete');
-            popup.setData({
-                model: model,
-            });
-            popup.open();
-        },
-
-        getModelFormData: function () {
-            return {};
-        },
-
-        getModelFormVisible: function () {
-            return {};
+                header: false,
+                collection: this.collection,
+            }, this.tableOptions));
         },
     });
 });
