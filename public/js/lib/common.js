@@ -160,24 +160,30 @@ define([
         return diff + 1;
     };
 
-    Date.prototype.getWeekOfYear = function() {
+    Date.prototype.getWeek = function() {
         return $.datepicker.iso8601Week(this);
     };
 
-    Date.getWeekMonday = function(week, year) {
-        var date = new Date(year, 0, 1);
-        date.setDate((week - 1) * 7);
-        return date;
+    Date.prototype.getWeekMonth = function() {
+        var date = new Date(this.getTime());
+        date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+        return date.getMonth();
     };
 
-    Date.getWeekSunday = function(week, year) {
-        var date = Date.getWeekMonday(week, year);
-        date.setDate(date.getDate() + 6);
-        return date;
+    Date.prototype.getWeekYear = function() {
+        var date = new Date(this.getTime());
+        date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+        return date.getFullYear();
     };
 
     Date.prototype.addDays = function(x) {
         this.setTime(this.getTime() + x * 864e5);
+    };
+
+    Date.prototype.getMonday = function() {
+        var date = new Date(this);
+        date.addDays((date.getDay() == 0 ? -6:1) - date.getDay());
+        return date;
     };
 
     Number.prototype.pad = function(size) {
