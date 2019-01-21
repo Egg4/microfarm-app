@@ -1,0 +1,22 @@
+<script id="task-page-model-template" type="text/template">
+    <table <% if (done) { %>class="done"<% } %>>
+        <tr>
+            <td>
+                <div><%- date.dateFormat('d') %> <%- polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()) %></div>
+                <div class="description"><%- time.substring(0, 5) %></div>
+            </td>
+            <td>
+                <div class="right">
+                    <i class="fas fa-check"></i>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="description">
+                    <% if (description) - description.nl2br() %>
+                </div>
+            </td>
+        </tr>
+    </table>
+</script>

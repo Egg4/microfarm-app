@@ -1,0 +1,13 @@
+<script id="article-page-model-template" type="text/template">
+    <table>
+        <tr>
+            <td class="content">
+                <div>Category: <%- category.value %></div>
+                <div>Unit price: <%- default_unit_price.toFixed(2) %> €</div>
+                <div>Tax: <%- (default_tax*100).toFixed(2) %> %</div>
+                <div>Quantity unit: <%- quantity_unit.value %></div>
+                <div>Actif: <%- active %></div>
+            </td>
+        </tr>
+    </table>
+</script>

@@ -11,7 +11,7 @@ define([
         initialize: function (options) {
             Container.prototype.initialize.call(this);
 
-            options.schemas.each(function (schema, key) {
+            options.modules.schemas.each(function (schema, key) {
                 if (schema.collection) {
                     this.set(key, function () {
                         return new schema.collection.class(null, {
@@ -21,6 +21,7 @@ define([
                             }),
                             url: schema.collection.url || '/' + key,
                             comparator: schema.collection.comparator || 'id',
+                            foreignKeys: schema.collection.foreignKeys || {},
                             uniqueAttributes: schema.collection.uniqueAttributes || [],
                         });
                     });

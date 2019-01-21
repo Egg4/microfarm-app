@@ -200,6 +200,14 @@
     margin: -0.5em 0;
 }
 
+.input-hidden-form-element-widget + .form-group-widget[type=horizontal] {
+    margin-top: 0;
+}
+
+:not(.input-hidden-form-element-widget) ~ .form-group-widget[type=horizontal] {
+    margin-top: -0.5em;
+}
+
 .form-group-widget[type=horizontal] .form-element-widget .ui-input-text,
 .form-group-widget[type=horizontal] .form-element-widget .ui-input-search {
     padding: .25em 0em;

@@ -21,6 +21,9 @@ define([
                 },
                 collection: {
                     class: Collection,
+                    foreignKeys: {
+                        entity_id: 'entity',
+                    },
                     uniqueAttributes: ['name'],
                     comparator: 'name',
                 },

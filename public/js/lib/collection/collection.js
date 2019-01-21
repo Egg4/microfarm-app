@@ -13,6 +13,7 @@ define([
 
             var defaults = {
                 modelName: false,
+                foreignKeys: {},
                 uniqueAttributes: [],
                 url: false,
             };
@@ -55,6 +56,28 @@ define([
                 }
             });
             return isUnique;
+        },
+
+        removeCascade: function(models) {
+            models = _.isString(models) ? this.get(models) : models;
+            models = _.isArray(models) ? models : [models];
+
+            app.collections.each(function(foreignCollection) {
+                _.each(foreignCollection.foreignKeys, function(modelName, attribute) {
+                    if (modelName == this.modelName) {
+                        var foreignModels = [];
+                        _.each(models, function(model) {
+                            var where = {};
+                            where[attribute] = model.get('id');
+                            foreignModels = _.union(foreignModels, foreignCollection.where(where));
+                        });
+                        foreignCollection.removeCascade(foreignModels);
+                    }
+                }.bind(this));
+            }.bind(this));
+
+            this.remove(models, {silent: true});
+            this.trigger('update');
         },
     });
 });

@@ -118,6 +118,10 @@ define([
         });
     };
 
+    String.nl2br = function() {
+        return this.replace(/[\r\n?]/g, '<br />');
+    };
+
     String.random = function(length, charlist) {
         var string = '';
         charlist = charlist || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

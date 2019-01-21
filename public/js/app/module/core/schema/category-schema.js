@@ -1,0 +1,34 @@
+'use strict';
+
+define([
+    'jquery',
+    'underscore',
+    'lib/schema/schema',
+    'lib/model/model',
+    'lib/collection/collection',
+], function ($, _, Schema, Model, Collection) {
+
+    return Schema.extend({
+
+        initialize: function () {
+            Schema.prototype.initialize.call(this, {
+                model: {
+                    class: Model,
+                    displayName: 'value',
+                },
+                collection: {
+                    class: Collection,
+                    foreignKeys: {
+                        parent_id: 'category',
+                    },
+                    uniqueAttributes: ['parent_id', 'key'],
+                    comparator: function (category) {
+                        var parentId = _.isNull(category.get('parent_id')) ? 0 : category.get('parent_id');
+                        var sort = category.get('sort');
+                        return parentId.pad(4) + '-' + sort.pad(4);
+                    },
+                },
+            });
+        },
+    });
+});

@@ -13,7 +13,7 @@ define([
 
             this.router = options.router;
 
-            options.schemas.each(function (schema, key) {
+            options.modules.schemas.each(function (schema, key) {
                 if (schema.page) {
                     this.registerRoutes(key, schema.page.routes);
                     this.set(key, function () {

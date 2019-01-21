@@ -11,7 +11,7 @@ define([
         initialize: function (options) {
             Container.prototype.initialize.call(this);
 
-            options.schemas.each(function (schema, key) {
+            options.modules.schemas.each(function (schema, key) {
                 if (schema.dialog) {
                     this.set(key, function () {
                         return new schema.dialog.class({

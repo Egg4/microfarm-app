@@ -37,5 +37,11 @@ define([
                 iteratee(this.get(key), key);
             }.bind(this));
         },
+
+        map: function (iteratee) {
+            return _.map(this.items, function(item, key) {
+                return iteratee(this.get(key), key);
+            }.bind(this));
+        },
     });
 });

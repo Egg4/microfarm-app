@@ -33,6 +33,16 @@ define([
                 $(this.el).append(item.el);
                 item.render();
             }.bind(this));
+
+            var visible = false;
+            _.each(this.getElements(), function(element) {
+                if (element.isVisible()) visible = true;
+            }.bind(this));
+            if (visible) {
+                $(this.el).show();
+            } else {
+                $(this.el).hide();
+            }
         },
 
         getElements: function () {

@@ -84,7 +84,7 @@ function includeTemplates($dir, $extension = 'phtml') {
         </div>
 
         <!-- Templates -->
-        <? includeTemplates(PUBLIC_DIR . '/js/app/template'); ?>
+        <? includeTemplates(PUBLIC_DIR . '/js/app'); ?>
 
     </body>
 </html>

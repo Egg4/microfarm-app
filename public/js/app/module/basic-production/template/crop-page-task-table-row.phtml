@@ -1,0 +1,7 @@
+<script id="crop-page-task-table-row-template" type="text/template">
+    <td>
+        <div><%- date.dateFormat('d') %> <%- polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()) %></div>
+        <div class="description"><%- time.substring(0, 5) %></div>
+    </td>
+    <td><%- category.value %></td>
+</script>

@@ -4,7 +4,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'app/container/schema-container',
+    'app/container/module-container',
     'app/container/collection-container',
     'app/container/dialog-container',
     'app/container/popup-container',
@@ -16,7 +16,7 @@ define([
     'app/router',
     'app/config',
 ], function ($, _, Backbone,
-             SchemaContainer,
+             ModuleContainer,
              CollectionContainer,
              DialogContainer,
              PopupContainer,
@@ -28,7 +28,6 @@ define([
              Router,
              config
 ) {
-
     return Backbone.View.extend({
 
         initialize: function () {
@@ -43,19 +42,12 @@ define([
                 authorization: config.authorization,
             });
             this.router = new Router();
-            this.schemas = new SchemaContainer();
-            this.collections = new CollectionContainer({
-                schemas: this.schemas,
-            });
-            this.dialogs = new DialogContainer({
-                schemas: this.schemas,
-            });
+            this.modules = new ModuleContainer();
+            this.collections = new CollectionContainer({modules: this.modules});
+            this.dialogs = new DialogContainer({modules: this.modules});
             this.popups = new PopupContainer();
             this.panels = new PanelContainer();
-            this.pages = new PageContainer({
-                schemas: this.schemas,
-                router: this.router,
-            });
+            this.pages = new PageContainer({modules: this.modules, router: this.router});
         },
 
         run: function () {

@@ -15,15 +15,31 @@ define([
             Panel.prototype.initialize.call(this, $.extend(true, {
                 id: 'main-menu-panel',
                 position: 'right',
-                items: [
-                    this.buildPlannerButton(),
-                    this.buildEntityButton(),
-                    this.buildCropsButton(),
-                    this.buildSuppliersButton(),
-                    this.buildClientsButton(),
-                    this.buildLogoutButton(),
-                ],
+                items: this.buildButtons(),
             }, options));
+        },
+
+        buildButtons: function () {
+            var buttons = [];
+            if (app.modules.has('basic-production')) {
+                buttons.push(this.buildPlannerButton());
+            }
+            if (app.modules.has('core')) {
+                buttons.push(this.buildEntityButton());
+            }
+            if (app.modules.has('basic-production')) {
+                buttons.push(this.buildCropsButton());
+            }
+            if (app.modules.has('trade')) {
+                buttons.push(this.buildSuppliersButton());
+            }
+            if (app.modules.has('trade')) {
+                buttons.push(this.buildClientsButton());
+            }
+            if (app.modules.has('core')) {
+                buttons.push(this.buildLogoutButton());
+            }
+            return buttons;
         },
 
         buildPlannerButton: function () {

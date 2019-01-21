@@ -22,9 +22,17 @@ body {
     opacity: 0.3;
 }
 
+.done {
+    text-decoration: line-through;
+}
+
 /********************************/
 /*  Table                       */
 /********************************/
+table {
+    width: 100%;
+}
+
 td .image {
     background-size: cover;
     width: 2.5em;
@@ -113,10 +121,6 @@ td .right {
     white-space: nowrap;
     overflow: hidden;
     line-height: normal;
-}
-
-#planner-page .task.done {
-    text-decoration: line-through;
 }
 
 #planner-page .task.reported {

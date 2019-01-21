@@ -11,7 +11,7 @@ define([
 
     return Container.extend({
 
-        initialize: function (options) {
+        initialize: function () {
             Container.prototype.initialize.call(this, {
                 'main-menu': function () {
                     return new MenuPanel();

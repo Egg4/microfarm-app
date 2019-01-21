@@ -5,7 +5,8 @@ define([
     'underscore',
     'app/widget/page/page',
     'app/widget/bar/header-bar',
-], function ($, _, Page, Header) {
+    'lib/widget/icon/fa-icon',
+], function ($, _, Page, Header, Icon) {
 
     return Page.extend({
 
@@ -29,6 +30,30 @@ define([
                 back: true,
                 menu: app.panels.get('main-menu'),
             });
+        },
+
+        openEditionDialog: function (options) {
+            options = $.extend(true, {
+                formVisible: {},
+            }, options);
+            var dialog = app.dialogs.get(this.collection.modelName);
+            dialog.setData({
+                title: polyglot.t('model-dialog.title.edit', {
+                    model: polyglot.t('model.name.' + this.collection.modelName).toLowerCase(),
+                }),
+                icon: new Icon({name: 'pencil-alt'}),
+            });
+            dialog.form.setData(this.model.toJSON());
+            dialog.form.setVisible(options.formVisible);
+            return dialog.open();
+        },
+
+        openDeletionPopup: function () {
+            var popup = app.popups.get('delete');
+            popup.setData({
+                model: this.model,
+            });
+            return popup.open();
         },
 
         setData: function (id) {

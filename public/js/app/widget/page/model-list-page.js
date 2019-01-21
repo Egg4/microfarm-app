@@ -79,7 +79,7 @@ define([
             var modelFormVisible = _.isFunction(this.tableOptions.modelForm.visible) ?
                 this.tableOptions.modelForm.visible() : this.tableOptions.modelForm.visible;
             dialog.form.setVisible(modelFormVisible);
-            dialog.open();
+            return dialog.open();
         },
 
         buildBody: function () {

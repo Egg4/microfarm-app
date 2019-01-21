@@ -28,8 +28,16 @@ define([
         },
 
         destroy: function(options) {
+            var collection = this.collection;
+            var successCallback = options.success || false;
+            delete options.success;
+
             Backbone.Model.prototype.destroy.call(this, $.extend(true, {
                 wait: true,
+                success: function(model, response) {
+                    collection.removeCascade(model);
+                    if (successCallback) successCallback(model, response);
+                },
             }, options));
         },
 
@@ -54,23 +62,6 @@ define([
             var where = options.where;
             where[options.refAttribute] = this.get(options.selfAttribute);
             return app.collections.get(modelName).where(where);
-        },
-
-        parseDate: function(attribute, format) {
-            format = format || 'yy-mm-dd';
-            var value = this.get(attribute);
-            return !_.isNull(value) ? Date.parse(value, format) : null;
-        },
-
-        formatDate: function(attribute, format) {
-            format = format || 'yy-mm-dd';
-            var date = this.parseDate(attribute);
-            return !_.isNull(date) ? date.format(format) : '';
-        },
-
-        toFixed: function(attribute, digits) {
-            digits = digits || 0;
-            return parseFloat(this.get(attribute)).toFixed(digits);
         },
     });
 });
