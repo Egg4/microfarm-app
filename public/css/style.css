@@ -32,6 +32,7 @@ body {
 .model-view {
     padding: .5em;
     background-color: white;
+    border-bottom: 1px solid #ddd;
 }
 
 .model-view .label {
@@ -41,6 +42,10 @@ body {
 /********************************/
 /*  Table                       */
 /********************************/
+.table-bar {
+    border-top: none;
+}
+
 table {
     width: 100%;
 }

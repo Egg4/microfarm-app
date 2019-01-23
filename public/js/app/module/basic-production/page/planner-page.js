@@ -233,7 +233,7 @@ define([
             });
             dialog.form.setData(task.toJSON());
             dialog.form.setVisible({
-                crop_id: true,
+                crop_id: false,
                 output_id: false,
                 organization_id: false,
                 category_id: true,

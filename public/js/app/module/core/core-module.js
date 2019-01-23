@@ -8,12 +8,14 @@ define([
     'app/module/core/schema/category-schema',
     'app/module/core/schema/entity-schema',
     'app/module/core/schema/login-schema',
+    'app/module/core/schema/user-schema',
     'app/module/core/schema/user_role-schema',
 ], function ($, _, Module,
              AuthenticationSchema,
              CategorySchema,
              EntitySchema,
              LoginSchema,
+             UserSchema,
              UserRoleSchema
 ) {
     return Module.extend({
@@ -25,6 +27,7 @@ define([
                     category: new CategorySchema(),
                     entity: new EntitySchema(),
                     login: new LoginSchema(),
+                    user: new UserSchema(),
                     user_role: new UserRoleSchema(),
                 },
             });

@@ -18,7 +18,9 @@ define([
         initialize: function () {
             Page.prototype.initialize.call(this, {
                 id: 'entity-page',
-                title: polyglot.t('entity-page.title'),
+                title: function () {
+                    return this.model.getDisplayName();
+                }.bind(this),
                 icon: new Icon({name: 'home'}),
                 collection: app.collections.get('entity'),
                 body: this.buildBody.bind(this),
@@ -113,6 +115,7 @@ define([
         /*---------------------------------------- Entity ------------------------------------------*/
         buildEntityHtml: function () {
             return new Html({
+                className: 'model-view',
                 template: $('#entity-page-model-template').html(),
                 data: function () {
                     return this.buildEntityHtmlData();

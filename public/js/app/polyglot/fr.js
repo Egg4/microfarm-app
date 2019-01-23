@@ -20,7 +20,6 @@ define([], function () {
         'crop-page.task-table.title': 'Tâches',
         'crops-page.title': 'Cultures',
         'dashboard-page.title': 'Tableau de bord',
-        'entity-page.title': 'Ferme',
         'entity-page.button.varieties': 'Variétés',
         'entity-page.button.articles': 'Articles',
         'entity-page.button.zones': 'Foncier',
@@ -59,6 +58,8 @@ define([], function () {
         'model.field.quantity_unit': 'Unité',
         'model.field.date': 'Date',
         'model.field.crop_id': 'Culture',
+        'model.field.farm': 'Ferme',
+        'model.field.number': 'Numéro',
 
         // Dialog
         'model-dialog.title.create': 'Création %{model}',

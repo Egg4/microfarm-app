@@ -37,23 +37,26 @@ define([
         fetchAll: function () {
             var deferred = $.Deferred();
 
-            app.loader.show();
-            var promises = [];
-            this.each(function(collection) {
-                promises.push(collection.fetch({
-                    reset: true,
-                    data: {range: '0-1000'},
-                }));
+            var resources = this.map(function(collection) {
+                return collection.modelName;
             });
 
-            $.when.apply($, promises)
-                .done(function() {
-                    this.fetchFlag = true;
-                    deferred.resolve();
-                }.bind(this))
-                .always(function() {
-                    app.loader.hide();
+            app.loader.show();
+            app.client.send({
+                method: 'POST',
+                url: '/entity/all',
+                data: {
+                    resources: resources,
+                },
+            }).done(function(data) {
+                _.each(data, function(models, key) {
+                    this.get(key).reset(models);
                 }.bind(this));
+                this.fetchFlag = true;
+                deferred.resolve();
+            }.bind(this)).always(function() {
+                app.loader.hide();
+            }.bind(this));
 
             return deferred.promise();
         },
