@@ -1,20 +1,37 @@
 <script id="task-page-model-template" type="text/template">
-    <table <% if (done) { %>class="done"<% } %>>
+    <table>
         <tr>
             <td>
-                <div><%- date.dateFormat('d') %> <%- polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()) %></div>
-                <div class="description"><%- time.substring(0, 5) %></div>
+                <div class="label"><%- polyglot.t('model.field.crop_id') %></div>
             </td>
             <td>
-                <div class="right">
-                    <i class="fas fa-check"></i>
+                <div class="value"><%- article.name %> <%- crop.number %></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.date') %></div>
+            </td>
+            <td>
+                <div class="value">
+                    <%- date.dateFormat('d') %>
+                    <%- polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()) %>
+                    <%- time.substring(0, 5) %>
                 </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.done') %></div>
+            </td>
+            <td>
+                <div class="value"><%- polyglot.t('model.field.done.' + done) %></div>
             </td>
         </tr>
         <tr>
             <td colspan="2">
                 <div class="description">
-                    <% if (description) - description.nl2br() %>
+                    <% if (description) { %><%= description.nl2br() %><% } %>
                 </div>
             </td>
         </tr>

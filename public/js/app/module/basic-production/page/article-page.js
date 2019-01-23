@@ -93,10 +93,9 @@ define([
         /*---------------------------------------- Article ----------------------------------------*/
         buildArticleHtml: function () {
             return new Html({
+                className: 'model-view',
                 template: $('#article-page-model-template').html(),
-                data: function () {
-                    return this.buildArticleHtmlData();
-                }.bind(this),
+                data: this.buildArticleHtmlData.bind(this),
             });
         },
 

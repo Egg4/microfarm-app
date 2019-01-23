@@ -96,52 +96,37 @@ define([
         },
 
         buildOrganizationData: function () {
-            var data = [];
             var organizations = app.collections.get('organization').where({
                 supplier: true,
             });
-            _.each(organizations, function(organization) {
-                data.push({
+            var data = _.map(organizations, function(organization) {
+                return {
                     optgroup: organization.getDisplayName().charAt(0).removeDiacritics().toUpperCase(),
                     value: organization.get('id'),
                     label: organization.getDisplayName(),
-                });
+                };
             });
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
         },
 
         buildCategoryData: function () {
-            var data = [];
-            var rootCategory = _.first(app.collections.get('category').where({
-                parent_id: null,
-                key: 'article_category_id',
-            }));
-            _.each(rootCategory.findAll('category', {
-                refAttribute: 'parent_id',
-            }), function(category) {
-                data.push({
+            var categories = app.collections.get('category').findRoot('article_category_id').findChildren();
+            return _.map(categories, function(category) {
+                return {
                     value: category.get('id'),
                     label: category.getDisplayName(),
-                });
+                };
             });
-            return data;
         },
 
         buildQuantityUnitData: function () {
-            var data = [];
-            var rootCategory = _.first(app.collections.get('category').where({
-                parent_id: null,
-                key: 'article_quantity_unit_id',
-            }));
-            _.each(rootCategory.findAll('category', {
-                refAttribute: 'parent_id',
-            }), function(category) {
-                data.push({
+            var categories = app.collections.get('category').findRoot('article_quantity_unit_id').findChildren();
+            return _.map(categories, function(category) {
+                return {
                     value: category.get('id'),
                     label: category.getDisplayName(),
-                });
+                };
             });
-            return data;
         },
     });
 });

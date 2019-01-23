@@ -27,6 +27,18 @@ body {
 }
 
 /********************************/
+/*  Model view                  */
+/********************************/
+.model-view {
+    padding: .5em;
+    background-color: white;
+}
+
+.model-view .label {
+    font-weight: 700;
+}
+
+/********************************/
 /*  Table                       */
 /********************************/
 table {

@@ -38,16 +38,17 @@ define([
             var deferred = $.Deferred();
             if (!this.validate()) return deferred.reject();
 
-            var data = this.getData();
-            var model = parseInt(data.id) ? this.collection.get(data.id) : new this.collection.model(_.omit(data, 'id'));
-            if (model.isNew()) {
-                this.collection.create(model, {
+            var data = this.getData(),
+                isNew = (_.isUndefined(data.id) || !parseInt(data.id));
+
+            if (isNew) {
+                this.collection.create(_.omit(data, 'id'), {
                     success: deferred.resolve,
                     error: deferred.reject,
                 });
             }
             else {
-                model.save(data, {
+                this.collection.get(data.id).save(data, {
                     success: deferred.resolve,
                     error: deferred.reject,
                 });

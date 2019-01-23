@@ -66,7 +66,7 @@ define([
         buildArticleData: function () {
             var data = [],
                 articleId = this.getElement('article_id').getValue(),
-                harvestCategory = this.getharvestCategory();
+                harvestCategory = this.getHarvestCategory();
 
             var articles = app.collections.get('article').where({
                 organization_id: null,
@@ -103,7 +103,7 @@ define([
 
         openArticleCreationDialog: function () {
             var dialog = app.dialogs.get('article'),
-                harvestCategory = this.getharvestCategory();
+                harvestCategory = this.getHarvestCategory();
 
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
@@ -133,15 +133,15 @@ define([
             }.bind(this));
         },
 
-        getharvestCategory: function () {
-            var rootCategory = _.first(app.collections.get('category').where({
+        getHarvestCategory: function () {
+            var rootCategory = app.collections.get('category').findWhere({
                 parent_id: null,
                 key: 'article_category_id',
-            }));
-            return _.first(app.collections.get('category').where({
+            });
+            return app.collections.get('category').findWhere({
                 parent_id: rootCategory.get('id'),
                 key: 'harvest',
-            }));
+            });
         },
     });
 });

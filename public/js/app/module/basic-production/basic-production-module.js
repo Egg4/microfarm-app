@@ -8,15 +8,19 @@ define([
     'app/module/basic-production/schema/articles-schema',
     'app/module/basic-production/schema/crop-schema',
     'app/module/basic-production/schema/crops-schema',
+    'app/module/basic-production/schema/output-schema',
     'app/module/basic-production/schema/planner-schema',
     'app/module/basic-production/schema/task-schema',
+    'app/module/basic-production/schema/working-schema',
 ], function ($, _, Module,
              ArticleSchema,
              ArticlesSchema,
              CropSchema,
              CropsSchema,
+             OutputSchema,
              PlannerSchema,
-             TaskSchema
+             TaskSchema,
+             WorkingSchema
 ) {
     return Module.extend({
 
@@ -28,8 +32,10 @@ define([
                     articles: new ArticlesSchema(),
                     crop: new CropSchema(),
                     crops: new CropsSchema(),
+                    output: new OutputSchema(),
                     planner: new PlannerSchema(),
                     task: new TaskSchema(),
+                    working: new WorkingSchema(),
                 },
             });
         },

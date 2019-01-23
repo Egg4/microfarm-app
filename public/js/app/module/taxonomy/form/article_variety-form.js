@@ -68,15 +68,24 @@ define([
         },
 
         buildVarietyData: function () {
-            var plantId = this.getElement('plant_id').getValue(),
+            var plantId = this.getElement('plant_id').getValue()
+            var varietyId = this.getElement('variety_id').getValue(),
                 data = [{
                     optgroup: '-',
                     value: null,
-                    label: polyglot.t('form.select.label.all'),
+                    label: polyglot.t('model.field.variety_id.null'),
                 }],
                 varieties = app.collections.get('variety').where({
                     plant_id: plantId,
+                    active: true,
                 });
+            if (varietyId) {
+                var variety = app.collections.get('variety').get(varietyId);
+                if (!_.contains(varieties, variety)) varieties.push(variety);
+            }
+            varieties = _.sortBy(varieties, function (variety) {
+                return variety.getDisplayName();
+            });
             _.each(varieties, function(variety) {
                 data.push({
                     optgroup: variety.get('name').charAt(0).removeDiacritics().toUpperCase(),

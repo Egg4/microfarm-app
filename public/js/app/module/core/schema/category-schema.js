@@ -4,8 +4,8 @@ define([
     'jquery',
     'underscore',
     'lib/schema/schema',
-    'lib/model/model',
-    'lib/collection/collection',
+    'app/module/core/model/category-model',
+    'app/module/core/collection/category-collection',
 ], function ($, _, Schema, Model, Collection) {
 
     return Schema.extend({

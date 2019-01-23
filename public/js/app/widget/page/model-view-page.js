@@ -34,24 +34,28 @@ define([
 
         openEditionDialog: function (options) {
             options = $.extend(true, {
+                model: this.model,
                 formVisible: {},
             }, options);
-            var dialog = app.dialogs.get(this.collection.modelName);
+            var dialog = app.dialogs.get(options.model.collection.modelName);
             dialog.setData({
                 title: polyglot.t('model-dialog.title.edit', {
-                    model: polyglot.t('model.name.' + this.collection.modelName).toLowerCase(),
+                    model: polyglot.t('model.name.' + options.model.collection.modelName).toLowerCase(),
                 }),
                 icon: new Icon({name: 'pencil-alt'}),
             });
-            dialog.form.setData(this.model.toJSON());
+            dialog.form.setData(options.model.toJSON());
             dialog.form.setVisible(options.formVisible);
             return dialog.open();
         },
 
-        openDeletionPopup: function () {
+        openDeletionPopup: function (options) {
+            options = $.extend(true, {
+                model: this.model,
+            }, options);
             var popup = app.popups.get('delete');
             popup.setData({
-                model: this.model,
+                model: options.model,
             });
             return popup.open();
         },
@@ -59,7 +63,7 @@ define([
         setData: function (id) {
             if (this.model) this.stopListening(this.model);
             this.model = this.collection.get(id);
-            this.listenTo(this.model, 'update', this.render);
+            this.listenTo(this.model, 'change', this.render);
         },
     });
 });

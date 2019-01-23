@@ -1,10 +1,20 @@
 /********************************/
-/*  Table                       */
+/*  Form                        */
 /********************************/
-.table-widget tr.separator {
-    background-color: #ededed;
-    cursor: inherit;
-    font-weight: 700;
+.form-widget {
+    max-width: 600px;
+    margin: auto;
+}
+
+.bar-widget .form-widget {
+    max-width: none;
+}
+
+.bar-widget .form-group-widget[type=horizontal] .form-element-widget .ui-input-text,
+.bar-widget .form-group-widget[type=horizontal] .form-element-widget .ui-input-search,
+.bar-widget .form-group-widget[type=horizontal] .form-element-widget .ui-select .ui-btn,
+.bar-widget .form-group-widget[type=horizontal] .button-widget {
+    border-bottom: none;
 }
 
 /********************************/
@@ -12,6 +22,20 @@
 /********************************/
 .dialog > .layout-widget > .form-widget {
     padding: 0 .5em;
+}
+
+.dialog .footer-bar > .layout-widget {
+    max-width: 600px;
+    margin: auto;
+}
+
+/********************************/
+/*  Table                       */
+/********************************/
+.table-widget tr.separator {
+    background-color: #ededed;
+    cursor: inherit;
+    font-weight: 700;
 }
 
 /********************************/

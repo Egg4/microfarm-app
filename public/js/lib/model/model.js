@@ -11,6 +11,7 @@ define([
 
         initialize: function (attributes, options) {
             Backbone.Model.prototype.initialize.call(this, attributes, options);
+            this.collections = this.collection.collections;
 
             this.on('change', this.onChange);
         },
@@ -41,6 +42,19 @@ define([
             }, options));
         },
 
+        isMatch: function (attributes) {
+            var keys = _.keys(attributes),
+                length = keys.length;
+
+            for (var i = 0; i < length; i++) {
+                var key = keys[i],
+                    values = _.isArray(attributes[key]) ? attributes[key] : [attributes[key]];
+                if (_.isUndefined(this.attributes[key])
+                    || !_.contains(values, this.attributes[key])) return false;
+            }
+            return true;
+        },
+
         getDisplayName: function() {
             return _.isFunction(this.displayName) ? this.displayName() : this.get(this.displayName);
         },
@@ -50,18 +64,17 @@ define([
                 selfAttribute: modelName + '_id',
             }, options);
             var id = this.get(options.selfAttribute);
-            return !_.isNull(id) ? app.collections.get(modelName).get(id) : null;
+            return !_.isNull(id) ? this.collections.get(modelName).get(id) : null;
         },
 
-        findAll: function(modelName, options) {
+        findAll: function(modelName, where, options) {
             options = $.extend(true, {
                 selfAttribute: 'id',
                 refAttribute: this.collection.modelName + '_id',
-                where: {},
             }, options);
-            var where = options.where;
+            where = where || {};
             where[options.refAttribute] = this.get(options.selfAttribute);
-            return app.collections.get(modelName).where(where);
+            return this.collections.get(modelName).where(where);
         },
     });
 });

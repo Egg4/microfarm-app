@@ -18,17 +18,16 @@ define([
 
             Popup.prototype.initialize.call(this, $.extend(true, {
                 dismissible: true,
-                body: this.buildList(),
+                body: this.buildList.bind(this),
             }, options));
         },
 
         buildList: function () {
+            var items = _.isFunction(this.items) ? this.items() : this.items;
             return new List({
-                items: function () {
-                    return _.map(this.items, function(item) {
-                        return this.buildListItem(item);
-                    }.bind(this));
-                }.bind(this),
+                items: _.map(items, function(item) {
+                    return this.buildListItem(item);
+                }.bind(this)),
             });
         },
 

@@ -13,22 +13,25 @@ define([
 
             options.modules.schemas.each(function (schema, key) {
                 if (schema.collection) {
-                    this.set(key, function () {
-                        return new schema.collection.class(null, {
-                            modelName: key,
-                            model: schema.model.class.extend({
-                                displayName: schema.model.displayName || 'id',
-                            }),
-                            url: schema.collection.url || '/' + key,
-                            comparator: schema.collection.comparator || 'id',
-                            foreignKeys: schema.collection.foreignKeys || {},
-                            uniqueAttributes: schema.collection.uniqueAttributes || [],
-                        });
-                    });
+                    this.set(key, this.buildCollection(key, schema));
                 }
             }.bind(this));
 
             this.fetchFlag = false;
+        },
+
+        buildCollection: function (key, schema) {
+            return new schema.collection.class(null, {
+                collections: this,
+                modelName: key,
+                model: schema.model.class.extend({
+                    displayName: schema.model.displayName || 'id',
+                }),
+                url: schema.collection.url || '/' + key,
+                comparator: schema.collection.comparator || 'id',
+                foreignKeys: schema.collection.foreignKeys || {},
+                uniqueAttributes: schema.collection.uniqueAttributes || [],
+            });
         },
 
         fetchAll: function () {

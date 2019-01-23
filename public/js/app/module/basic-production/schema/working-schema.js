@@ -6,7 +6,7 @@ define([
     'lib/schema/schema',
     'lib/model/model',
     'lib/collection/collection',
-    'app/module/taxonomy/form/article_variety-form',
+    'app/module/basic-production/form/working-form',
     'app/widget/dialog/model-dialog',
 ], function ($, _, Schema, Model, Collection, Form, Dialog) {
 
@@ -17,19 +17,17 @@ define([
                 model: {
                     class: Model,
                     displayName: function () {
-                        var plant = this.find('plant'),
-                            variety = this.find('variety');
-                        return _.isNull(variety) ? plant.getDisplayName() : variety.getDisplayName();
+                        return this.get('duration').substring(0, 5);
                     },
                 },
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        article_id: 'article',
-                        plant_id: 'plant',
-                        //variety_id: 'variety', // Set Null
+                        entity_id: 'entity',
+                        task_id: 'task',
+                        user_id: 'user',
                     },
-                    uniqueAttributes: ['article_id', 'plant_id', 'variety_id'],
+                    uniqueAttributes: ['task_id', 'user_id'],
                     comparator: 'id',
                 },
                 form: {

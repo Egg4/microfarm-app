@@ -34,7 +34,6 @@ define([
             return new StackLayout({
                 items: [
                     this.buildNavigation(),
-                    this.buildCropHtml(),
                     this.buildTaskTable(),
                 ],
             });
@@ -91,23 +90,6 @@ define([
                         });
                     }.bind(this),
                 },
-            });
-        },
-
-        /*---------------------------------------- Crop ------------------------------------------*/
-        buildCropHtml: function () {
-            return new Html({
-                template: $('#crop-page-model-template').html(),
-                data: function () {
-                    return this.buildCropHtmlData();
-                }.bind(this),
-            });
-        },
-
-        buildCropHtmlData: function () {
-            var article = this.model.find('article');
-            return $.extend(this.model.toJSON(), {
-                article: article.toJSON(),
             });
         },
 

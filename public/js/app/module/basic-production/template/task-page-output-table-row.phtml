@@ -1,7 +1,10 @@
-<script id="article-page-variety-table-row-template" type="text/template">
+<script id="task-page-output-table-row-template" type="text/template">
+    <td>
+        <i class="fas fa-dolly"></i>
+    </td>
     <td>
         <div>
-            <%- plant.name %>
+            <%- article.name %>
         </div>
     </td>
     <td>
@@ -12,5 +15,8 @@
             <span><%- polyglot.t('model.field.variety_id.null').toLowerCase() %></span>
             <% } %>
         </div>
+    </td>
+    <td>
+        <div class="right"><%- quantity %> <%- quantity_unit.value %></div>
     </td>
 </script>

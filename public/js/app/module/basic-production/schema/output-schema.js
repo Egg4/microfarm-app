@@ -6,7 +6,7 @@ define([
     'lib/schema/schema',
     'lib/model/model',
     'lib/collection/collection',
-    'app/module/taxonomy/form/article_variety-form',
+    'app/module/basic-production/form/output-form',
     'app/widget/dialog/model-dialog',
 ], function ($, _, Schema, Model, Collection, Form, Dialog) {
 
@@ -17,19 +17,20 @@ define([
                 model: {
                     class: Model,
                     displayName: function () {
-                        var plant = this.find('plant'),
-                            variety = this.find('variety');
-                        return _.isNull(variety) ? plant.getDisplayName() : variety.getDisplayName();
+                        var article = this.find('article'),
+                            quantityUnit = article.find('category', {selfAttribute: 'quantity_unit_id'}).get('value');
+                        return article.getDisplayName() + ' - ' + this.get('quantity') + ' ' + quantityUnit;
                     },
                 },
                 collection: {
                     class: Collection,
                     foreignKeys: {
+                        entity_id: 'entity',
+                        task_id: 'task',
                         article_id: 'article',
-                        plant_id: 'plant',
                         //variety_id: 'variety', // Set Null
                     },
-                    uniqueAttributes: ['article_id', 'plant_id', 'variety_id'],
+                    uniqueAttributes: ['task_id', 'article_id', 'variety_id'],
                     comparator: 'id',
                 },
                 form: {

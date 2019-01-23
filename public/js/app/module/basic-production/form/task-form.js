@@ -104,18 +104,13 @@ define([
         },
 
         buildCategoryData: function () {
-            var rootCategory = _.first(app.collections.get('category').where({
-                parent_id: null,
-                key: 'task_category_id',
-            }));
-            var cropProductionCategory = _.first(app.collections.get('category').where({
-                parent_id: rootCategory.get('id'),
+            var cropProductionCategory = app.collections.get('category').findRoot('task_category_id').findChild({
                 key: 'crop_production',
-            }));
+            });
 
             var data = [];
-            _.each(cropProductionCategory.findAll('category', {refAttribute: 'parent_id'}), function(parentCategory) {
-                _.each(parentCategory.findAll('category', {refAttribute: 'parent_id'}), function(category) {
+            _.each(cropProductionCategory.findChildren(), function(parentCategory) {
+                _.each(parentCategory.findChildren(), function(category) {
                     data.push({
                         optgroup: parentCategory.getDisplayName(),
                         value: category.get('id'),

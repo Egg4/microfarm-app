@@ -118,7 +118,7 @@ define([
         });
     };
 
-    String.nl2br = function() {
+    String.prototype.nl2br = function() {
         return this.replace(/[\r\n?]/g, '<br />');
     };
 

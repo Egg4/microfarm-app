@@ -12,6 +12,7 @@ define([
             Backbone.Collection.prototype.initialize.call(this, models, options);
 
             var defaults = {
+                collections: false,
                 modelName: false,
                 foreignKeys: {},
                 uniqueAttributes: [],
@@ -43,6 +44,18 @@ define([
             return Backbone.Collection.prototype.sortBy.call(this, attribute);
         },
 
+        filter: function(attributes) {
+            return _.filter(this.models, function (model) {
+                return model.isMatch(attributes);
+            });
+        },
+
+        find: function(attributes) {
+            return _.find(this.models, function (model) {
+                return model.isMatch(attributes);
+            });
+        },
+
         isUnique: function(data, attributes) {
             var attributes = attributes || this.uniqueAttributes,
                 where = {},
@@ -62,7 +75,7 @@ define([
             models = _.isString(models) ? this.get(models) : models;
             models = _.isArray(models) ? models : [models];
 
-            app.collections.each(function(foreignCollection) {
+            this.collections.each(function(foreignCollection) {
                 _.each(foreignCollection.foreignKeys, function(modelName, attribute) {
                     if (modelName == this.modelName) {
                         var foreignModels = [];

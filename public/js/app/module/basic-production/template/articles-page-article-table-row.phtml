@@ -1,4 +1,11 @@
 <script id="articles-page-article-table-row-template" type="text/template">
-    <td class="title"><%- name %></td>
-    <td class="description"><%- default_unit_price.toFixed(2) %> &euro; / <%- quantityUnitCategory.value %></td>
+    <td>
+        <div class="title"><%- name %></div>
+    </td>
+    <td>
+        <div class="description"><%- quantityUnitCategory.value %></div>
+    </td>
+    <td>
+        <div class="description right"><%- default_unit_price.toFixed(2) %> &euro;</div>
+    </td>
 </script>

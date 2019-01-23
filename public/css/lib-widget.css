@@ -95,11 +95,13 @@
 }
 
 .button-widget.ui-btn-icon-top {
-    padding-top: 2.1em;
+    padding-top: 1.8em;
+    padding-bottom: 0.5em;
 }
 
 .button-widget.ui-btn-icon-bottom {
-    padding-bottom: 2.1em;
+    padding-top: 0.5em;
+    padding-bottom: 1.8em;
 }
 
 .button-widget.ui-btn-icon-left::after,
@@ -145,7 +147,7 @@
 .button-widget.ui-btn-icon-bottom .fa-icon-widget {
     left: 50%;
     margin-left: -0.625em;
-    font-size: 1.3em;
+    font-size: 1.2em;
 }
 
 .button-widget.ui-btn-icon-top .label-widget .text,

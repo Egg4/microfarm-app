@@ -1,12 +1,51 @@
 <script id="article-page-model-template" type="text/template">
     <table>
         <tr>
-            <td class="content">
-                <div>Category: <%- category.value %></div>
-                <div>Unit price: <%- default_unit_price.toFixed(2) %> €</div>
-                <div>Tax: <%- (default_tax*100).toFixed(2) %> %</div>
-                <div>Quantity unit: <%- quantity_unit.value %></div>
-                <div>Actif: <%- active %></div>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.category_id') %></div>
+            </td>
+            <td>
+                <div class="value"><%- category.value %></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.quantity_unit') %></div>
+            </td>
+            <td>
+                <div class="value"><%- quantity_unit.value %></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.price_without_tax') %></div>
+            </td>
+            <td>
+                <div class="value"><%- default_unit_price.toFixed(2) %> € / <%- quantity_unit.value %></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.tax') %></div>
+            </td>
+            <td>
+                <div class="value"><%- (default_tax*100).toFixed(2) %> %</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.price_with_tax') %></div>
+            </td>
+            <td>
+                <div class="value"><%- (default_unit_price * (1 + default_tax)).toFixed(2) %> € / <%- quantity_unit.value %></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.active') %></div>
+            </td>
+            <td>
+                <div class="value"><%- polyglot.t('model.field.active.' + active) %></div>
             </td>
         </tr>
     </table>
