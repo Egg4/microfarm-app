@@ -30,6 +30,7 @@ define([
                         }),
                         new Select({
                             name: 'organization_id',
+                            placeholder: polyglot.t('form.placeholder.organization_id'),
                             defaultValue: 0,
                             optgroup: true,
                             nullable: true,
@@ -43,6 +44,7 @@ define([
                         }),
                         new Select({
                             name: 'category_id',
+                            placeholder: polyglot.t('form.placeholder.category_id'),
                             cast: 'integer',
                             data: this.buildCategoryData.bind(this),
                         }),
@@ -52,6 +54,7 @@ define([
                         }),
                         new Select({
                             name: 'quantity_unit_id',
+                            placeholder: polyglot.t('form.placeholder.quantity_unit_id'),
                             cast: 'integer',
                             data: this.buildQuantityUnitData.bind(this),
                         }),
@@ -61,13 +64,13 @@ define([
                                 new InputNumber({
                                     name: 'default_unit_price',
                                     css: {flex: '1'},
-                                    placeholder: polyglot.t('form.placeholder.unit-price'),
+                                    placeholder: polyglot.t('form.placeholder.unit_price'),
                                     min: 0,
                                     cast: 'float',
                                 }),
                                 new Select({
                                     name: 'default_tax',
-                                    defaultValue: 0,
+                                    placeholder: polyglot.t('form.placeholder.tax'),
                                     css: {width: '6em'},
                                     cast: 'float',
                                     data: [

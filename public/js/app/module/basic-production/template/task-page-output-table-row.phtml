@@ -10,7 +10,7 @@
     <td>
         <div>
             <% if (variety) { %>
-            <span><%- variety.name %></span>
+            <span><%- plant.name %> <%- variety.name %></span>
             <% } else { %>
             <span><%- polyglot.t('model.field.variety_id.null').toLowerCase() %></span>
             <% } %>

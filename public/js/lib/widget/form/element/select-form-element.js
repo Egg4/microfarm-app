@@ -12,6 +12,7 @@ define([
             FormElement.prototype.initialize.call(this, options);
 
             var defaults = {
+                placeholder: false,
                 optgroup: false,
                 data: {},
             };
@@ -64,7 +65,13 @@ define([
                     this.value = this.element.val();
                     $(this.el).trigger('change');
                 }.bind(this));
-                this.element.selectmenu();
+                this.element.selectmenu({
+                    create: function() {
+                        if (this.placeholder && this.value === "") {
+                            $(this.element).prev().html(this.placeholder);
+                        }
+                    }.bind(this),
+                });
             }
         },
     });

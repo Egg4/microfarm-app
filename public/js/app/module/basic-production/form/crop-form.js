@@ -33,6 +33,7 @@ define([
                             items: [
                                 new Select({
                                     name: 'article_id',
+                                    placeholder: polyglot.t('form.placeholder.article_id'),
                                     optgroup: true,
                                     cast: 'integer',
                                     css: {flex: '1'},
@@ -53,9 +54,8 @@ define([
                         }),
                         new InputNumber({
                             name: 'number',
-                            placeholder: polyglot.t('form.placeholder.number'),
+                            placeholder: polyglot.t('form.placeholder.serial_number'),
                             min: 1,
-                            defaultValue: 1,
                             cast: 'integer',
                         }),
                     ],
@@ -127,9 +127,10 @@ define([
                 active: false,
             });
             dialog.open().done(function (article) {
-                this.getElement('article_id').setValue(article.get('id'));
-                this.getElement('article_id').render();
-                this.buildNumberValue();
+                var articleSelect = this.getElement('article_id');
+                articleSelect.setValue(article.get('id'));
+                articleSelect.render();
+                $(articleSelect.el).trigger('change');
             }.bind(this));
         },
 

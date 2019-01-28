@@ -70,7 +70,7 @@ define([
         buildVarietiesButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('entity-page.button.varieties'),
+                    text: polyglot.t('varieties-page.title'),
                     icon: new Icon({name: 'dna'}),
                 }),
                 iconAlign: 'top',
@@ -85,7 +85,7 @@ define([
         buildArticlesButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('entity-page.button.articles'),
+                    text: polyglot.t('articles-page.title'),
                     icon: new Icon({name: 'shopping-cart'}),
                 }),
                 iconAlign: 'top',
@@ -100,8 +100,8 @@ define([
         buildZonesButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('entity-page.button.zones'),
-                    icon: new Icon({name: 'map'}),
+                    text: polyglot.t('zones-page.title'),
+                    icon: new Icon({name: 'sitemap'}),
                 }),
                 iconAlign: 'top',
                 events: {
@@ -141,6 +141,13 @@ define([
                     new Icon({name: 'wrench'}),
                     new Icon({name: 'thermometer-half'}),
                     new Icon({name: 'sitemap'}),
+                    new Icon({name: 'grip-horizontal'}),
+                    new Icon({name: 'grip-vertical'}),
+                    new Icon({name: 'th-large'}),
+                    new Icon({name: 'th'}),
+                    new Icon({name: 'bars'}),
+                    new Icon({name: 'align-justify'}),
+                    new Icon({name: 'vector-square'}),
                     new Icon({name: 'leaf'}),
                     new Icon({name: 'seedling'}),
                     new Icon({name: 'cannabis'}),

@@ -6,48 +6,53 @@ define([
     'lib/container/container',
     'app/module/basic-production/basic-production-module',
     'app/module/core/core-module',
+    'app/module/land/land-module',
     'app/module/taxonomy/taxonomy-module',
 ], function ($, _, Container,
              BasicProductionModule,
              CoreModule,
+             LandModule,
              TaxonomyModule
 ) {
     return Container.extend({
 
         initialize: function () {
-            Container.prototype.initialize.call(this, {
-                'basic-production': new BasicProductionModule(),
+            Container.prototype.initialize.call(this);
+            this.schemas = new Container();
+
+            var modules = {
                 'core': new CoreModule(),
+                'basic-production': new BasicProductionModule(),
                 'taxonomy': new TaxonomyModule(),
-            });
+                'land': new LandModule(),
+            };
 
-            this.checkDependencies();
-            this.schemas = this.buildSchemaContainer();
-        },
-
-        checkDependencies: function () {
-            this.each(function (module, name) {
-                _.each(module.dependencies, function (depName) {
-                    if (!this.has(depName)) {
-                        throw new Error('Module "' + name + '" require module "' + depName + '"');
-                    }
-                }.bind(this));
+            _.each(modules, function (module, name) {
+                this.set(name, module);
             }.bind(this));
         },
 
-        buildSchemaContainer: function () {
-            var container = new Container();
+        set: function (name, module) {
+            Container.prototype.set.call(this, name, module);
+            this.checkModuleDependencies(name, module);
+            this.registerModuleSchemas(module.schemas);
+        },
 
-            this.each(function (module) {
-                _.each(module.schemas, function (schema, key) {
-                    if (container.has(key)) {
-                        throw new Error('Schema "' + key + '" already set');
-                    }
-                    container.set(key, schema);
-                });
-            });
+        checkModuleDependencies: function (name, module) {
+            _.each(module.dependencies, function (depName) {
+                if (!this.has(depName)) {
+                    throw new Error('Module "' + name + '" require module "' + depName + '"');
+                }
+            }.bind(this));
+        },
 
-            return container;
+        registerModuleSchemas: function (schemas) {
+            _.each(schemas, function (schema, key) {
+                if (this.schemas.has(key)) {
+                    throw new Error('Schema "' + key + '" already set');
+                }
+                this.schemas.set(key, schema);
+            }.bind(this));
         },
     });
 });

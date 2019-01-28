@@ -80,7 +80,7 @@ define([
                     monthDay: date.format('d'),
                 },
                 events: {
-                    taphold: function () {
+                    click: function () {
                         this.openCreationDialog(date);
                     }.bind(this),
                 },

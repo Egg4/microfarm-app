@@ -28,14 +28,24 @@ define([
             });
 
             this.listenTo(app.collections.get('task'), 'update', this.render);
+            if (app.modules.has('land')) {
+                this.listenTo(app.collections.get('crop_location'), 'update', this.render);
+                this.listenTo(app.collections.get('zone'), 'update', this.render);
+                this.listenTo(app.collections.get('block'), 'update', this.render);
+                this.listenTo(app.collections.get('bed'), 'update', this.render);
+            }
         },
 
         buildBody: function () {
+            var items = [];
+            items.push(this.buildNavigation());
+            items.push(this.buildTaskTable());
+            if (app.modules.has('land')) {
+                items.push(this.buildLocationTable());
+            }
+
             return new StackLayout({
-                items: [
-                    this.buildNavigation(),
-                    this.buildTaskTable(),
-                ],
+                items: items,
             });
         },
 
@@ -152,6 +162,64 @@ define([
                 time: true,
                 description: true,
                 done: true,
+            };
+        },
+
+        /*---------------------------------------- Location -------------------------------------*/
+        buildLocationTable: function () {
+            return new Table({
+                title: polyglot.t('crop-page.crop_location-table.title'),
+                icon: new Icon({name: 'map-marker-alt'}),
+                collection: app.collections.get('crop_location'),
+                models: this.buildLocations.bind(this),
+                modelRow: {
+                    template: _.template($('#crop-page-crop_location-table-row-template').html()),
+                    data: this.buildLocationRowData.bind(this),
+                    events: {
+                        click: false,
+                    },
+                },
+                modelForm: {
+                    data: this.buildLocationFormData.bind(this),
+                    visible: this.buildLocationFormVisible.bind(this),
+                },
+            });
+        },
+
+        buildLocations: function () {
+            var cropLocations = app.collections.get('crop_location').where({
+                crop_id: this.model.get('id'),
+            });
+
+            return _.sortBy(cropLocations, function (cropLocation) {
+                return cropLocation.get('id');
+            });
+        },
+
+        buildLocationRowData: function (cropLocation) {
+            var zone = cropLocation.find('zone'),
+                block = cropLocation.find('block'),
+                bed = cropLocation.find('bed');
+            return $.extend(cropLocation.toJSON(), {
+                zone: zone.toJSON(),
+                block: _.isNull(block) ? null : block.toJSON(),
+                bed: _.isNull(bed) ? null : bed.toJSON(),
+            });
+        },
+
+        buildLocationFormData: function () {
+            return {
+                entity_id: this.model.get('entity_id'),
+                crop_id: this.model.get('id'),
+            };
+        },
+
+        buildLocationFormVisible: function () {
+            return {
+                crop_id: false,
+                zone_id: true,
+                block_id: true,
+                bed_id: true,
             };
         },
     });

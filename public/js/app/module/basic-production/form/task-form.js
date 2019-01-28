@@ -34,6 +34,7 @@ define([
                         }),
                         new Select({
                             name: 'category_id',
+                            placeholder: polyglot.t('form.placeholder.category_id'),
                             optgroup: true,
                             cast: 'integer',
                             data: this.buildCategoryData.bind(this),
@@ -43,6 +44,7 @@ define([
                             items: [
                                 new Select({
                                     name: 'crop_id',
+                                    placeholder: polyglot.t('form.placeholder.crop_id'),
                                     optgroup: true,
                                     nullable: true,
                                     cast: 'integer',
@@ -72,11 +74,12 @@ define([
                             items: [
                                 new InputDate({
                                     name: 'date',
-                                    css: {flex: '1'},
                                     placeholder: polyglot.t('form.placeholder.date'),
+                                    css: {flex: '1'},
                                 }),
                                 new Select({
                                     name: 'time',
+                                    placeholder: polyglot.t('form.placeholder.time'),
                                     css: {width: '8em'},
                                     data: this.buildTimeData.bind(this),
                                 }),
@@ -148,8 +151,10 @@ define([
                 number: true,
             });
             dialog.open().done(function (crop) {
-                this.getElement('crop_id').setValue(crop.get('id'));
-                this.getElement('crop_id').render();
+                var cropSelect = this.getElement('crop_id');
+                cropSelect.setValue(crop.get('id'));
+                cropSelect.render();
+                $(cropSelect.el).trigger('change');
             }.bind(this));
         },
 

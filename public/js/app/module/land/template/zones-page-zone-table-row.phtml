@@ -1,0 +1,15 @@
+<script id="zones-page-zone-table-row-template" type="text/template">
+    <td>
+        <div><%- name %></div>
+        <div class="description">
+            <% _.each(blocks, function (block) { %>
+            <div>
+                <%- polyglot.t('zones-page.zone-table.block-x-beds', {
+                block: block.name,
+                bedCount: block.bedCount,
+                }) %>
+            </div>
+            <% }); %>
+        </div>
+    </td>
+</script>

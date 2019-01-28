@@ -29,6 +29,7 @@ define([
                         }),
                         new Select({
                             name: 'plant_id',
+                            placeholder: polyglot.t('form.placeholder.plant_id'),
                             optgroup: true,
                             cast: 'integer',
                             data: this.buildPlantData.bind(this),

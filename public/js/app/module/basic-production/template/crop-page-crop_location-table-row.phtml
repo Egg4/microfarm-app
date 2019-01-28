@@ -1,0 +1,23 @@
+<script id="crop-page-crop_location-table-row-template" type="text/template">
+    <td>
+        <div><%- zone.name %></div>
+    </td>
+    <td>
+        <div>
+            <% if (block) { %>
+            <span><%- block.name %></span>
+            <% } else { %>
+            <span><%- polyglot.t('model.field.block_id.null').toLowerCase() %></span>
+            <% } %>
+        </div>
+    </td>
+    <td>
+        <div>
+            <% if (bed) { %>
+            <span><%- bed.name %></span>
+            <% } else { %>
+            <span><%- polyglot.t('model.field.bed_id.null').toLowerCase() %></span>
+            <% } %>
+        </div>
+    </td>
+</script>

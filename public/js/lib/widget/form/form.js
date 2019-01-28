@@ -21,7 +21,7 @@ define([
 
             var defaults = {
                 formGroup: false,
-                autocomplete: false,
+                autocomplete: 'off',
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 

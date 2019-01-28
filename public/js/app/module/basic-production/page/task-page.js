@@ -271,6 +271,7 @@ define([
                         category: category.toJSON(),
                         quantity_unit: quantityUnit.toJSON(),
                         variety: _.isNull(variety) ? null : variety.toJSON(),
+                        plant: _.isNull(variety) ? null : variety.find('plant').toJSON(),
                 });
             }
         },

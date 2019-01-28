@@ -32,6 +32,7 @@ define([
                             items: [
                                 new Select({
                                     name: 'plant_id',
+                                    placeholder: polyglot.t('form.placeholder.plant_id'),
                                     optgroup: true,
                                     cast: 'integer',
                                     css: {flex: '0.5'},
@@ -42,6 +43,7 @@ define([
                                 }),
                                 new Select({
                                     name: 'variety_id',
+                                    placeholder: polyglot.t('form.placeholder.variety_id'),
                                     optgroup: true,
                                     nullable: true,
                                     cast: 'integer',
@@ -68,8 +70,8 @@ define([
         },
 
         buildVarietyData: function () {
-            var plantId = this.getElement('plant_id').getValue()
-            var varietyId = this.getElement('variety_id').getValue(),
+            var plantId = this.getElement('plant_id').getValue(),
+                varietyId = this.getElement('variety_id').getValue(),
                 data = [{
                     optgroup: '-',
                     value: null,
@@ -100,6 +102,7 @@ define([
             var varietySelect = this.getElement('variety_id');
             varietySelect.setValue(null);
             varietySelect.render();
+            $(varietySelect.el).trigger('change');
         },
     });
 });

@@ -32,6 +32,7 @@ define([
                         }),
                         new Select({
                             name: 'duration',
+                            placeholder: polyglot.t('form.placeholder.duration'),
                             data: this.buildDurationData.bind(this),
                         }),
                     ],

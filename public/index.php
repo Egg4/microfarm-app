@@ -7,9 +7,26 @@ define('APP_ENV', $_SERVER['APP_ENV']);
 function resourceUrl($publicFilePath, array $params = array()) {
     $filename = __DIR__ . $publicFilePath;
     if (!file_exists($filename)) throw new ErrorException(sprintf('File "%s" not found in the public directory', $filename));
-    $params['_'] = date('ymdHis', filemtime($filename)); // Add param to avoid browser cache on file update
+    // Add param to avoid browser cache on file update
+    $params['_'] = cacheBust($filename);
 
     return $publicFilePath . '?' . http_build_query($params);
+}
+
+function cacheBust($filename) {
+    $time = APP_ENV == 'dev' ? time() : filemtime($filename);
+    return date('ymdHis', $time);
+}
+
+function apiUrl() {
+    $doNAT = ($_SERVER['SERVER_NAME'] == $_SERVER['SERVER_ADDR']);
+    $api = [
+        'scheme' => $_SERVER['REQUEST_SCHEME'],
+        'host' => $doNAT ? $_SERVER['SERVER_NAME'] : str_replace('app', 'api', $_SERVER['SERVER_NAME']),
+        'port' => $doNAT ? intval($_SERVER['SERVER_PORT']) + 1 : intval($_SERVER['SERVER_PORT']),
+    ];
+
+    return sprintf('%s://%s:%d/v1.0', $api['scheme'], $api['host'], $api['port']);
 }
 
 function includeTemplates($dir, $extension = 'phtml') {
@@ -63,9 +80,10 @@ function includeTemplates($dir, $extension = 'phtml') {
         </script>
         <script>
             var env = '<?= APP_ENV; ?>';
-            var cacheBust = '<?= date('ymdHis', APP_ENV == 'dev' ? time() : filemtime(PUBLIC_DIR . '/index.php')); ?>';
+            var apiUrl = '<?= apiUrl(); ?>';
             require.config({
-                urlArgs: '_=' + cacheBust,
+                // Add param to avoid browser cache on file update
+                urlArgs: '_=<?= cacheBust(PUBLIC_DIR . '/index.php'); ?>',
             });
         </script>
 
@@ -78,7 +96,7 @@ function includeTemplates($dir, $extension = 'phtml') {
 
         <div id="home-page">
             <div class="pane">
-                <h1>Microfarm</h1>
+                <h1>Micro ferme</h1>
                 <h3>App</h3>
             </div>
         </div>

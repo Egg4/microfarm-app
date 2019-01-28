@@ -7,7 +7,7 @@ define([
     var config = {
         env: env,
         api: {
-            url: (env == 'prod') ? 'https://api.microfarm.fr/v1.0' : 'https://api.microfarm.local/v1.0',
+            url: apiUrl,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
