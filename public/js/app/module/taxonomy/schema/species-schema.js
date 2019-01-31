@@ -19,9 +19,12 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        genus_id: 'genus',
+                        genus_id: {
+                            model: 'genus',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['genus_id', 'name'],
+                    uniqueKey: ['genus_id', 'name'],
                     comparator: 'name',
                 },
             });

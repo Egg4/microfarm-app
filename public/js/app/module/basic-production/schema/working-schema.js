@@ -23,11 +23,16 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        task_id: 'task',
-                        user_id: 'user',
+                        task_id: {
+                            model: 'task',
+                            onDelete: 'cascade',
+                        },
+                        user_id: {
+                            model: 'user',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['task_id', 'user_id'],
+                    uniqueKey: ['task_id', 'user_id'],
                     comparator: 'id',
                 },
                 form: {

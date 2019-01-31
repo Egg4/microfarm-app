@@ -9,6 +9,7 @@ define([
     'app/module/basic-production/schema/crop-schema',
     'app/module/basic-production/schema/crops-schema',
     'app/module/basic-production/schema/output-schema',
+    'app/module/basic-production/schema/outputs-schema',
     'app/module/basic-production/schema/planner-schema',
     'app/module/basic-production/schema/task-schema',
     'app/module/basic-production/schema/working-schema',
@@ -18,6 +19,7 @@ define([
              CropSchema,
              CropsSchema,
              OutputSchema,
+             OutputsSchema,
              PlannerSchema,
              TaskSchema,
              WorkingSchema
@@ -33,6 +35,7 @@ define([
                     crop: new CropSchema(),
                     crops: new CropsSchema(),
                     output: new OutputSchema(),
+                    outputs: new OutputsSchema(),
                     planner: new PlannerSchema(),
                     task: new TaskSchema(),
                     working: new WorkingSchema(),

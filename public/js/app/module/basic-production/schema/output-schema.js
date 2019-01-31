@@ -8,7 +8,8 @@ define([
     'lib/collection/collection',
     'app/module/basic-production/form/output-form',
     'app/widget/dialog/model-dialog',
-], function ($, _, Schema, Model, Collection, Form, Dialog) {
+    'app/module/basic-production/page/output-page',
+], function ($, _, Schema, Model, Collection, Form, Dialog, Page) {
 
     return Schema.extend({
 
@@ -25,12 +26,20 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        task_id: 'task',
-                        article_id: 'article',
-                        //variety_id: 'variety', // Set Null
+                        task_id: {
+                            model: 'task',
+                            onDelete: 'cascade',
+                        },
+                        article_id: {
+                            model: 'article',
+                            onDelete: 'cascade',
+                        },
+                        variety_id: {
+                            model: 'variety',
+                            onDelete: 'set_null',
+                        },
                     },
-                    uniqueAttributes: ['task_id', 'article_id', 'variety_id'],
+                    uniqueKey: ['task_id', 'article_id', 'variety_id'],
                     comparator: 'id',
                 },
                 form: {
@@ -38,6 +47,12 @@ define([
                 },
                 dialog: {
                     class: Dialog,
+                },
+                page: {
+                    class: Page,
+                    routes: [{
+                        pattern: 'output/:id',
+                    }],
                 },
             });
         },

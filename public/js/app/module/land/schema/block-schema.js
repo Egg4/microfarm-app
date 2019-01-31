@@ -22,10 +22,12 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        zone_id: 'zone',
+                        zone_id: {
+                            model: 'zone',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['zone_id', 'name'],
+                    uniqueKey: ['zone_id', 'name'],
                     comparator: 'name',
                 },
                 form: {

@@ -24,9 +24,11 @@ define([
                         new InputHidden({
                             name: 'id',
                             required: false,
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'entity_id',
+                            cast: 'integer',
                         }),
                         new FormGroup({
                             type: 'horizontal',

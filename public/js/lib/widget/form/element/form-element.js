@@ -54,9 +54,12 @@ define([
 
         getValue: function () {
             if (this.nullable) {
-                if (this.value.length == 0 || this.value == 'null') {
+                if (this.value === '' || this.value === 'null') {
                     return null;
                 }
+            }
+            if (!this.required && this.value === '') {
+                return '';
             }
             switch (this.cast) {
                 case 'integer':
@@ -67,7 +70,7 @@ define([
                     return (this.value);
                 case 'string':
                 default:
-                    return this.value;
+                    return String(this.value).trim();
             }
         },
 

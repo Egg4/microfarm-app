@@ -22,12 +22,20 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        organization_id: 'organization',
-                        category_id: 'category',
-                        quantity_unit_id: 'category',
+                        organization_id: {
+                            model: 'organization',
+                            onDelete: 'cascade',
+                        },
+                        category_id: {
+                            model: 'category',
+                            onDelete: 'cascade',
+                        },
+                        quantity_unit_id: {
+                            model: 'category',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['organization_id', 'name'],
+                    uniqueKey: ['organization_id', 'name'],
                     comparator: 'name',
                 },
                 form: {

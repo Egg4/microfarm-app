@@ -101,7 +101,9 @@ td .right {
 #planner-page .table-widget {
     table-layout: fixed;
     font-size: 1em;
+    color: black;
     font-weight: 100;
+    text-shadow: none;
 }
 
 #planner-page .table-widget tr {
@@ -153,10 +155,10 @@ td .right {
     background-color: #e0e0e0;
 }
 
-#planner-page .task .category {
+#planner-page .task .title {
     font-size: 0.6em;
 }
 
-#planner-page .task .crop {
+#planner-page .task .description {
     font-size: 0.5em;
 }

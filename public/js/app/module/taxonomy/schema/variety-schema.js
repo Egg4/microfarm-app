@@ -23,10 +23,12 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        plant_id: 'plant',
+                        plant_id: {
+                            model: 'plant',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['plant_id', 'name'],
+                    uniqueKey: ['plant_id', 'name'],
                     comparator: 'name',
                 },
                 form: {

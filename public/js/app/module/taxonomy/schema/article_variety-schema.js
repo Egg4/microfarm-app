@@ -25,11 +25,20 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        article_id: 'article',
-                        plant_id: 'plant',
-                        //variety_id: 'variety', // Set Null
+                        article_id: {
+                            model: 'article',
+                            onDelete: 'cascade',
+                        },
+                        plant_id: {
+                            model: 'plant',
+                            onDelete: 'cascade',
+                        },
+                        variety_id: {
+                            model: 'variety',
+                            onDelete: 'set_null',
+                        },
                     },
-                    uniqueAttributes: ['article_id', 'plant_id', 'variety_id'],
+                    uniqueKey: ['article_id', 'plant_id', 'variety_id'],
                     comparator: 'id',
                 },
                 form: {

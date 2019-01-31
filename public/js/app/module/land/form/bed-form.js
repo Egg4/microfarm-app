@@ -21,12 +21,15 @@ define([
                         new InputHidden({
                             name: 'id',
                             required: false,
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'entity_id',
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'block_id',
+                            cast: 'integer',
                         }),
                         new InputNumber({
                             name: 'name',

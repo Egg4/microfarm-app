@@ -24,7 +24,7 @@ define([
             if (!this.collection.isUnique(data)) {
                 var modelName = polyglot.t('model.name.' + this.collection.modelName, {_: this.collection.modelName});
                 errors.push({
-                    attributes: this.collection.uniqueAttributes,
+                    attributes: this.collection.uniqueKey,
                     message: polyglot.t('form.validator.not-unique', {
                         _: '%{model}: this model already exists',
                         model: modelName,

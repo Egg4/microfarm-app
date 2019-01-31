@@ -24,12 +24,15 @@ define([
                         new InputHidden({
                             name: 'id',
                             required: false,
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'entity_id',
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'task_id',
+                            cast: 'integer',
                         }),
                         new FormGroup({
                             type: 'horizontal',
@@ -63,7 +66,6 @@ define([
                                 new Select({
                                     name: 'variety_id',
                                     placeholder: polyglot.t('form.placeholder.variety_id'),
-                                    optgroup: true,
                                     nullable: true,
                                     cast: 'integer',
                                     css: {flex: '1'},
@@ -201,12 +203,11 @@ define([
             });
             _.each(varieties, function(variety) {
                 data.push({
-                    optgroup: variety.get('name').charAt(0).removeDiacritics().toUpperCase(),
                     value: variety.get('id'),
                     label: variety.getDisplayName(),
                 });
             });
-            return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
+            return data;
         },
 
         openVarietyCreationDialog: function () {

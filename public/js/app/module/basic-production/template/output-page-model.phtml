@@ -1,0 +1,38 @@
+<script id="output-page-model-template" type="text/template">
+    <table>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.variety_id') %></div>
+            </td>
+            <td>
+                <div class="value">
+                    <% if (variety) { %>
+                    <span><%- plant.name %> <%- variety.name %></span>
+                    <% } else { %>
+                    <span><%- polyglot.t('model.field.variety_id.null').toLowerCase() %></span>
+                    <% } %>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.date') %></div>
+            </td>
+            <td>
+                <div class="value">
+                    <%- task.date.dateFormat('d') %>
+                    <%- polyglot.t('date.month.' + task.date.dateFormat('M').toLowerCase()) %>
+                    <%- task.time.substring(0, 5) %>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="label"><%- polyglot.t('model.field.quantity') %></div>
+            </td>
+            <td>
+                <div class="value"><%- quantity %> <%- quantity_unit.value %></div>
+            </td>
+        </tr>
+    </table>
+</script>

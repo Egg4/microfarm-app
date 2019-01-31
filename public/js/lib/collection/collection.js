@@ -15,7 +15,7 @@ define([
                 collections: false,
                 modelName: false,
                 foreignKeys: {},
-                uniqueAttributes: [],
+                uniqueKey: [],
                 url: false,
             };
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
@@ -57,7 +57,7 @@ define([
         },
 
         isUnique: function(data, attributes) {
-            var attributes = attributes || this.uniqueAttributes,
+            var attributes = attributes || this.uniqueKey,
                 where = {},
                 isUnique = true;
             _.each(attributes, function(attribute) {
@@ -71,26 +71,34 @@ define([
             return isUnique;
         },
 
-        removeCascade: function(models) {
-            models = _.isString(models) ? this.get(models) : models;
-            models = _.isArray(models) ? models : [models];
-
-            this.collections.each(function(foreignCollection) {
-                _.each(foreignCollection.foreignKeys, function(modelName, attribute) {
-                    if (modelName == this.modelName) {
-                        var foreignModels = [];
-                        _.each(models, function(model) {
-                            var where = {};
-                            where[attribute] = model.get('id');
-                            foreignModels = _.union(foreignModels, foreignCollection.where(where));
-                        });
-                        foreignCollection.removeCascade(foreignModels);
-                    }
-                }.bind(this));
+        handleForeignKeys: function(foreignModel) {
+            _.each(this.foreignKeys, function(foreignKey, attribute) {
+                if (foreignKey.model === foreignModel.collection.modelName) {
+                    this.handleForeignKey(attribute, foreignModel.get('id'), foreignKey.onDelete);
+                }
             }.bind(this));
+        },
 
-            this.remove(models, {silent: true});
-            this.trigger('update');
+        handleForeignKey: function(attribute, value, onDelete) {
+            var filter = {};
+            filter[attribute] = value;
+            var models = this.where(filter);
+
+            if (_.isEmpty(models)) return;
+            switch (onDelete) {
+                case 'cascade':
+                    this.remove(models, {silent: true});
+                    _.each(models, function(model) {
+                        this.trigger('remove', model, this, {});
+                    }.bind(this));
+                    break;
+                case 'set_null':
+                    _.each(models, function(model) {
+                        model.set(attribute, null, {silent: true});
+                    });
+                    break;
+            }
+            this.trigger('update', this, {});
         },
     });
 });

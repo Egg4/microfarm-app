@@ -1,6 +1,7 @@
-<script id="task-page-output-table-row-template" type="text/template">
+<script id="outputs-page-output-table-row-template" type="text/template">
     <td>
-        <i class="fas fa-dolly"></i>
+        <div><%- task.date.dateFormat('d') %> <%- polyglot.t('date.month.' + task.date.dateFormat('M').toLowerCase()) %></div>
+        <div class="description"><%- task.time.substring(0, 5) %></div>
     </td>
     <td>
         <div>

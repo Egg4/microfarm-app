@@ -8,9 +8,10 @@ define([
     'lib/widget/form/element/input-hidden-form-element',
     'lib/widget/form/element/select-form-element',
     'lib/widget/form/element/input-text-form-element',
+    'lib/widget/form/element/textarea-form-element',
     'lib/widget/form/element/checkbox-form-element',
     'lib/widget/form/label/form-label',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputText, Checkbox, FormLabel) {
+], function ($, _, Form, FormGroup, InputHidden, Select, InputText, Textarea, Checkbox, FormLabel) {
 
     return Form.extend({
 
@@ -23,9 +24,11 @@ define([
                         new InputHidden({
                             name: 'id',
                             required: false,
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'entity_id',
+                            cast: 'integer',
                         }),
                         new Select({
                             name: 'plant_id',
@@ -37,6 +40,11 @@ define([
                         new InputText({
                             name: 'name',
                             placeholder: polyglot.t('form.placeholder.name'),
+                        }),
+                        new Textarea({
+                            name: 'description',
+                            placeholder: polyglot.t('form.placeholder.description'),
+                            nullable: true,
                         }),
                         new FormGroup({
                             items: [

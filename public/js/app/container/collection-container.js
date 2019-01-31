@@ -17,21 +17,48 @@ define([
                 }
             }.bind(this));
 
+            this.registerForeignKeysHandlers();
             this.fetchFlag = false;
         },
 
         buildCollection: function (key, schema) {
-            return new schema.collection.class(null, {
+            var collection = new schema.collection.class(null, {
                 collections: this,
                 modelName: key,
-                model: schema.model.class.extend({
-                    displayName: schema.model.displayName || 'id',
-                }),
                 url: schema.collection.url || '/' + key,
                 comparator: schema.collection.comparator || 'id',
                 foreignKeys: schema.collection.foreignKeys || {},
-                uniqueAttributes: schema.collection.uniqueAttributes || [],
+                uniqueKey: schema.collection.uniqueKey || [],
             });
+            collection.model = schema.model.class.extend({
+                collection: collection,
+                displayName: schema.model.displayName || 'id',
+            });
+
+            return collection;
+        },
+
+        registerForeignKeysHandlers: function () {
+            this.each(function(collection) {
+                var foreignCollections = this.getForeignCollections(collection);
+                _.each(foreignCollections, function(foreignCollection) {
+                    collection.on({
+                        remove: foreignCollection.handleForeignKeys.bind(foreignCollection),
+                    });
+                });
+            }.bind(this));
+        },
+
+        getForeignCollections: function (collection) {
+            var foreignCollections = [];
+            this.each(function(foreignCollection) {
+                _.each(foreignCollection.foreignKeys, function(foreignKey) {
+                    if (foreignKey.model === collection.modelName) {
+                        foreignCollections.push(foreignCollection);
+                    }
+                });
+            });
+            return foreignCollections;
         },
 
         fetchAll: function () {

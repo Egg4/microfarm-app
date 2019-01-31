@@ -30,6 +30,9 @@ define([
             if (app.modules.has('basic-production')) {
                 buttons.push(this.buildCropsButton());
             }
+            if (app.modules.has('basic-production')) {
+                buttons.push(this.buildOutputsButton());
+            }
             if (app.modules.has('trade')) {
                 buttons.push(this.buildSuppliersButton());
             }
@@ -82,6 +85,21 @@ define([
                 events: {
                     click: function () {
                         this.redirect('crops');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildOutputsButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('main-menu-panel.button.outputs'),
+                    icon: new Icon({name: 'dolly'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        this.redirect('outputs');
                     }.bind(this),
                 },
             });

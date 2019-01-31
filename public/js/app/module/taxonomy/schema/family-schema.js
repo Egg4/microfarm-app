@@ -18,7 +18,7 @@ define([
                 },
                 collection: {
                     class: Collection,
-                    uniqueAttributes: ['name'],
+                    uniqueKey: ['name'],
                     comparator: 'name',
                 },
             });

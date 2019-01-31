@@ -21,10 +21,12 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        block_id: 'block',
+                        block_id: {
+                            model: 'block',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['block_id', 'name'],
+                    uniqueKey: ['block_id', 'name'],
                     comparator: 'name',
                 },
                 form: {

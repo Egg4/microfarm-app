@@ -19,8 +19,11 @@ define([
 ], function ($, _, Page, Header, Footer, BorderLayout, Table, Row, Cell, List, ListItem, Html, Button, Label, Icon) {
 
     return Page.extend({
-        headerTemplate: _.template($('#planner-page-header-template').html()),
-        taskTemplate: _.template($('#planner-page-task-template').html()),
+        template: {
+            header: _.template($('#planner-page-header-template').html()),
+            crop: _.template($('#planner-page-crop-task-template').html()),
+            output: _.template($('#planner-page-output-task-template').html()),
+        },
 
         initialize: function () {
             Page.prototype.initialize.call(this, {
@@ -45,6 +48,7 @@ define([
 
         buildHeaderTitle: function () {
             var monthDate = new Date();
+            monthDate.setDate(1);
             monthDate.setMonth(this.monday.getWeekMonth());
 
             return polyglot.t('planner-page.title', {
@@ -74,7 +78,7 @@ define([
         buildHeaderCell: function (date) {
             return new Html({
                 tagName: 'td',
-                template: this.headerTemplate,
+                template: this.template.header,
                 data: {
                     weekDay:  polyglot.t('date.day.' + date.format('D').toLowerCase()),
                     monthDay: date.format('d'),
@@ -103,7 +107,7 @@ define([
             });
             dialog.form.setVisible({
                 crop_id: true,
-                output_id: false,
+                output_id: true,
                 organization_id: false,
                 category_id: true,
                 date: true,
@@ -173,7 +177,7 @@ define([
         buildTaskHtml: function (task) {
             var html = new Html({
                 className: 'task',
-                template: this.taskTemplate,
+                template: this.template[this.getTaskType(task)],
                 data: this.buildTaskHtmlData(task),
                 events: {
                     click: function () {
@@ -193,24 +197,52 @@ define([
             return html;
         },
 
+        getTaskType: function (task) {
+            if (!_.isNull(task.get('crop_id'))) return 'crop';
+            if (!_.isNull(task.get('output_id'))) return 'output';
+            if (!_.isNull(task.get('organization_id'))) return 'organization';
+        },
+
         buildTaskHtmlData: function (task) {
-            var crop = task.find('crop'),
-                article = crop.find('article'),
-                category = task.find('category');
-            return $.extend(task.toJSON(), {
-                crop: crop.toJSON(),
-                article: article.toJSON(),
-                category: category.toJSON(),
-            });
+            var category = task.find('category');
+
+            switch (this.getTaskType(task)) {
+                case 'crop':
+                    var crop = task.find('crop'),
+                        article = crop.find('article');
+                    return $.extend(task.toJSON(), {
+                        crop: crop.toJSON(),
+                        article: article.toJSON(),
+                        category: category.toJSON(),
+                    });
+                case 'output':
+                    var output = task.find('output'),
+                        article = output.find('article'),
+                        variety = output.find('variety');
+                    return $.extend(task.toJSON(), {
+                        output: output.toJSON(),
+                        article: article.toJSON(),
+                        category: category.toJSON(),
+                        variety: _.isNull(variety) ? null : variety.toJSON(),
+                        plant: _.isNull(variety) ? null : variety.find('plant').toJSON(),
+                    });
+            }
         },
 
         openMenuPopup: function (task) {
-            var crop = task.find('crop'),
-                article = crop.find('article'),
-                popup = app.popups.get('menu');
+            var suffix = '';
+            switch (this.getTaskType(task)) {
+                case 'crop':
+                    suffix = task.find('crop').getDisplayName();
+                    break;
+                case 'output':
+                    suffix = task.find('output').getDisplayName();
+                    break;
+            }
 
+            var popup = app.popups.get('menu');
             popup.setData({
-                title: task.getDisplayName() + ' - ' + article.get('name') + ' ' + crop.get('number'),
+                title: task.getDisplayName() + ' - ' + suffix,
             });
             popup.open().done(function (action) {
                 switch (action) {
@@ -221,10 +253,7 @@ define([
         },
 
         openEditionDialog: function (task) {
-            var crop = task.find('crop'),
-                article = crop.find('article'),
-                dialog = app.dialogs.get('task');
-
+            var dialog = app.dialogs.get('task');
             dialog.setData({
                 title: polyglot.t('model-dialog.title.edit', {
                     model: polyglot.t('model.name.task').toLowerCase(),
@@ -246,12 +275,19 @@ define([
         },
 
         openDeletionPopup: function (task) {
-            var crop = task.find('crop'),
-                article = crop.find('article'),
-                popup = app.popups.get('delete');
+            var suffix = '';
+            switch (this.getTaskType(task)) {
+                case 'crop':
+                    suffix = task.find('crop').getDisplayName();
+                    break;
+                case 'output':
+                    suffix = task.find('output').getDisplayName();
+                    break;
+            }
 
+            var popup = app.popups.get('delete');
             popup.setData({
-                title: task.getDisplayName() + ' - ' + article.get('name') + ' ' + crop.get('number'),
+                title: task.getDisplayName() + ' - ' + suffix,
                 model: task,
             });
             popup.open();

@@ -20,15 +20,19 @@ define([
                         new InputHidden({
                             name: 'id',
                             required: false,
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'entity_id',
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'task_id',
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'user_id',
+                            cast: 'integer',
                         }),
                         new Select({
                             name: 'duration',

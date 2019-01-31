@@ -19,9 +19,12 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        family_id: 'family',
+                        family_id: {
+                            model: 'family',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['family_id', 'name'],
+                    uniqueKey: ['family_id', 'name'],
                     comparator: 'name',
                 },
             });

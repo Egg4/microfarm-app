@@ -28,9 +28,11 @@ define([
                         new InputHidden({
                             name: 'id',
                             required: false,
+                            cast: 'integer',
                         }),
                         new InputHidden({
                             name: 'entity_id',
+                            cast: 'integer',
                         }),
                         new Select({
                             name: 'category_id',
@@ -61,13 +63,32 @@ define([
                                 }),
                             ],
                         }),
-                        new InputHidden({
-                            name: 'output_id',
-                            nullable: true,
+                        new FormGroup({
+                            type: 'horizontal',
+                            items: [
+                                new Select({
+                                    name: 'output_id',
+                                    placeholder: polyglot.t('form.placeholder.output_id'),
+                                    optgroup: true,
+                                    nullable: true,
+                                    cast: 'integer',
+                                    css: {flex: '1'},
+                                    data: this.buildOutputData.bind(this),
+                                }),
+                                new Button({
+                                    label: new Label({
+                                        icon: new Icon({name: 'plus'}),
+                                    }),
+                                    events: {
+                                        click: this.openOutputCreationDialog.bind(this),
+                                    },
+                                }),
+                            ],
                         }),
                         new InputHidden({
                             name: 'organization_id',
                             nullable: true,
+                            cast: 'integer',
                         }),
                         new FormGroup({
                             type: 'horizontal',
@@ -107,6 +128,16 @@ define([
         },
 
         buildCategoryData: function () {
+            var cropId = this.getElement('crop_id').getValue(),
+                outputId = this.getElement('output_id').getValue(),
+                organizationId = this.getElement('organization_id').getValue();
+
+            if (!_.isNull(cropId)) return this.buildCropCategoryData();
+            if (!_.isNull(outputId)) return this.buildOutputCategoryData();
+            //if (!_.isNull(organizationId)) return this.buildOrganizationCategoryData();
+        },
+
+        buildCropCategoryData: function () {
             var cropProductionCategory = app.collections.get('category').findRoot('task_category_id').findChild({
                 key: 'crop_production',
             });
@@ -114,11 +145,29 @@ define([
             var data = [];
             _.each(cropProductionCategory.findChildren(), function(parentCategory) {
                 _.each(parentCategory.findChildren(), function(category) {
-                    data.push({
-                        optgroup: parentCategory.getDisplayName(),
-                        value: category.get('id'),
-                        label: category.getDisplayName(),
-                    });
+                    if (_.contains(['primary', 'maintenance', 'destruction'], parentCategory.get('key'))) {
+                        data.push({
+                            optgroup: parentCategory.getDisplayName(),
+                            value: category.get('id'),
+                            label: category.getDisplayName(),
+                        });
+                    }
+                });
+            });
+            return _.groupBy(data, 'optgroup');
+        },
+
+        buildOutputCategoryData: function () {
+            var postProductionCategory = app.collections.get('category').findRoot('task_category_id').findChild({
+                key: 'post_production',
+            });
+
+            var data = [];
+            _.each(postProductionCategory.findChildren(), function(category) {
+                data.push({
+                    optgroup: '',
+                    value: category.get('id'),
+                    label: category.getDisplayName(),
                 });
             });
             return _.groupBy(data, 'optgroup');
@@ -155,6 +204,42 @@ define([
                 cropSelect.setValue(crop.get('id'));
                 cropSelect.render();
                 $(cropSelect.el).trigger('change');
+            }.bind(this));
+        },
+
+        buildOutputData: function () {
+            var data = app.collections.get('output').map(function(output) {
+                return {
+                    optgroup: output.find('task').find('crop').find('article').getDisplayName(),
+                    value: output.get('id'),
+                    label: output.getDisplayName(),
+                };
+            });
+            return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
+        },
+
+        openOutputCreationDialog: function () {
+            var dialog = app.dialogs.get('output');
+            dialog.setData({
+                title: polyglot.t('model-dialog.title.create', {
+                    model: polyglot.t('model.name.output').toLowerCase(),
+                }),
+                icon: new Icon({name: 'plus'}),
+            });
+            dialog.form.setData({
+                entity_id: this.getElement('entity_id').getValue(),
+            });
+            dialog.form.setVisible({
+                task_id: true,
+                article_id: true,
+                variety_id: true,
+                quantity: true,
+            });
+            dialog.open().done(function (output) {
+                var outputSelect = this.getElement('output_id');
+                outputSelect.setValue(output.get('id'));
+                outputSelect.render();
+                $(outputSelect.el).trigger('change');
             }.bind(this));
         },
 

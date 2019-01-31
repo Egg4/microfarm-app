@@ -20,7 +20,7 @@ define([
                 },
                 collection: {
                     class: Collection,
-                    uniqueAttributes: ['email'],
+                    uniqueKey: ['email'],
                     comparator: 'email',
                 },
             });

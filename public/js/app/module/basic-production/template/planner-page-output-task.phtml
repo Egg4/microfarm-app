@@ -1,0 +1,15 @@
+<script id="planner-page-output-task-template" type="text/template">
+    <div class="title">
+        <%- category.value %>
+    </div>
+    <div class="description">
+        <%- article.name %>
+    </div>
+    <div class="description">
+        <% if (variety) { %>
+        <span><%- plant.name %> <%- variety.name %></span>
+        <% } else { %>
+        <span><%- polyglot.t('model.field.variety_id.null').toLowerCase() %></span>
+        <% } %>
+    </div>
+</script>

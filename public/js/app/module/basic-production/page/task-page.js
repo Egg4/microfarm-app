@@ -24,9 +24,7 @@ define([
         initialize: function () {
             Page.prototype.initialize.call(this, {
                 id: 'task-page',
-                title: function () {
-                    return this.model.getDisplayName();
-                }.bind(this),
+                title: this.buildTitle.bind(this),
                 icon: new Icon({name: 'tasks'}),
                 collection: app.collections.get('task'),
                 body: this.buildBody.bind(this),
@@ -35,6 +33,10 @@ define([
             this.creationMenuPopup = this.buildCreationMenuPopup();
             this.listenTo(app.collections.get('working'), 'update', this.render);
             this.listenTo(app.collections.get('output'), 'update', this.render);
+        },
+
+        buildTitle: function () {
+            return this.model.getDisplayName();
         },
 
         buildBody: function () {
@@ -59,10 +61,15 @@ define([
         },
 
         buildNavigationButtons: function () {
-            return [
-                this.buildCropButton(),
-                this.buildEditButton(),
-            ];
+            var items = [];
+            if (!_.isNull(this.model.get('crop_id'))) {
+                items.push(this.buildCropButton());
+            }
+            if (!_.isNull(this.model.get('output_id'))) {
+                items.push(this.buildOutputButton());
+            }
+            items.push(this.buildEditButton());
+            return items;
         },
 
         buildCropButton: function () {
@@ -76,6 +83,22 @@ define([
                 events: {
                     click: function () {
                         app.router.navigate('crop/' + crop.get('id'));
+                    },
+                },
+            });
+        },
+
+        buildOutputButton: function () {
+            var output = this.model.find('output');
+            return new Button({
+                label: new Label({
+                    text: output.getDisplayName(),
+                    icon: new Icon({name: 'dolly'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('output/' + output.get('id'));
                     },
                 },
             });
@@ -117,13 +140,9 @@ define([
         },
 
         buildTaskHtmlData: function () {
-            var crop = this.model.find('crop'),
-                article = crop.find('article'),
-                category = this.model.find('category');
+            var category = this.model.find('category');
 
             return $.extend(this.model.toJSON(), {
-                crop: crop.toJSON(),
-                article: article.toJSON(),
                 category: category.toJSON(),
             });
         },
@@ -154,14 +173,14 @@ define([
             var items = [],
                 category = this.model.find('category');
 
-            items.push(this.buildWorkingButton());
+            items.push(this.buildMenuPopupWorkingButton());
             if (category.get('key') == 'harvest') {
-                items.push(this.buildOutputButton());
+                items.push(this.buildMenuPopupOutputButton());
             }
             return items;
         },
 
-        buildWorkingButton: function () {
+        buildMenuPopupWorkingButton: function () {
             return new Button({
                 label: new Label({
                     text: polyglot.t('model.name.working'),
@@ -175,7 +194,7 @@ define([
             });
         },
 
-        buildOutputButton: function () {
+        buildMenuPopupOutputButton: function () {
             return new Button({
                 label: new Label({
                     text: polyglot.t('model.name.output'),
@@ -233,11 +252,24 @@ define([
                 template: this.templates[model.collection.modelName],
                 data: this.buildModelRowData(model),
                 events: {
+                    click: function () {
+                        this.navigateToModelPage(model);
+                    }.bind(this),
                     taphold: function () {
                         this.openMenuPopup(model);
                     }.bind(this),
                 },
             });
+        },
+
+        navigateToModelPage: function (model) {
+            switch (model.collection.modelName) {
+                case 'working':
+                    break;
+                case 'output':
+                    app.router.navigate('output/' + model.get('id'));
+                    break;
+            }
         },
 
         openMenuPopup: function (model) {

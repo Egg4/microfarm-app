@@ -24,10 +24,12 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        article_id: 'article',
+                        article_id: {
+                            model: 'article',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['article_id', 'number'],
+                    uniqueKey: ['article_id', 'number'],
                     comparator: function (crop) {
                         var articleId = crop.get('article_id');
                         var number = crop.get('number');

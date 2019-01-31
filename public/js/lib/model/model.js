@@ -11,14 +11,19 @@ define([
 
         initialize: function (attributes, options) {
             Backbone.Model.prototype.initialize.call(this, attributes, options);
-            this.collections = this.collection.collections;
+
+            $.extend(true, this, {
+                collections: this.collection.collections,
+            });
 
             this.on('change', this.onChange);
         },
 
-        onChange: function() {
-            this.collection.sort();
-            this.collection.trigger('update');
+        onChange: function(model, options) {
+            if (!options.silent) {
+                this.collection.sort();
+                this.collection.trigger('update');
+            }
         },
 
         save: function(attributes, options) {
@@ -29,16 +34,8 @@ define([
         },
 
         destroy: function(options) {
-            var collection = this.collection;
-            var successCallback = options.success || false;
-            delete options.success;
-
             Backbone.Model.prototype.destroy.call(this, $.extend(true, {
                 wait: true,
-                success: function(model, response) {
-                    collection.removeCascade(model);
-                    if (successCallback) successCallback(model, response);
-                },
             }, options));
         },
 

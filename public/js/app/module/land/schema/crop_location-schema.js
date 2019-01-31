@@ -30,12 +30,24 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        crop_id: 'crop',
-                        zone_id: 'zone',
-                        //block_id: 'block', // Set Null
-                        //bed_id: 'bed', // Set Null
+                        crop_id: {
+                            model: 'crop',
+                            onDelete: 'cascade',
+                        },
+                        zone_id: {
+                            model: 'zone',
+                            onDelete: 'cascade',
+                        },
+                        block_id: {
+                            model: 'block',
+                            onDelete: 'set_null',
+                        },
+                        bed_id: {
+                            model: 'bed',
+                            onDelete: 'set_null',
+                        },
                     },
-                    uniqueAttributes: ['crop_id', 'zone_id', 'block_id', 'bed_id'],
+                    uniqueKey: ['crop_id', 'zone_id', 'block_id', 'bed_id'],
                     comparator: 'id',
                 },
                 form: {

@@ -24,7 +24,7 @@ define([
                     foreignKeys: {
                         entity_id: 'entity',
                     },
-                    uniqueAttributes: ['name'],
+                    uniqueKey: ['name'],
                     comparator: 'name',
                 },
                 form: {

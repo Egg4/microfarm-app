@@ -18,19 +18,31 @@ define([
                 model: {
                     class: Model,
                     displayName: function () {
-                        return this.find('category').getDisplayName();
+                        var taskName = this.find('category').getDisplayName().toLowerCase();
+                        return polyglot.t('model.name.task') + ' ' + taskName;
                     },
                 },
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        crop_id: 'crop',
-                        output_id: 'output',
-                        organization_id: 'organization',
-                        category_id: 'category',
+                        crop_id: {
+                            model: 'crop',
+                            onDelete: 'cascade',
+                        },
+                        output_id: {
+                            model: 'output',
+                            onDelete: 'cascade',
+                        },
+                        organization_id: {
+                            model: 'organization',
+                            onDelete: 'cascade',
+                        },
+                        category_id: {
+                            model: 'category',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['crop_id', 'output_id', 'organization_id', 'category_id', 'date', 'time'],
+                    uniqueKey: ['crop_id', 'output_id', 'organization_id', 'category_id', 'date'],
                     comparator: function (task) {
                         return task.get('date') + task.get('time');
                     },

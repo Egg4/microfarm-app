@@ -19,9 +19,12 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        parent_id: 'category',
+                        parent_id: {
+                            model: 'category',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['parent_id', 'key'],
+                    uniqueKey: ['parent_id', 'key'],
                     comparator: function (category) {
                         var parentId = _.isNull(category.get('parent_id')) ? 0 : category.get('parent_id');
                         var sort = category.get('sort');

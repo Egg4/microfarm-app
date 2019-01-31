@@ -19,11 +19,16 @@ define([
                 collection: {
                     class: Collection,
                     foreignKeys: {
-                        entity_id: 'entity',
-                        user_id: 'user',
-                        role_id: 'role',
+                        user_id: {
+                            model: 'user',
+                            onDelete: 'cascade',
+                        },
+                        role_id: {
+                            model: 'role',
+                            onDelete: 'cascade',
+                        },
                     },
-                    uniqueAttributes: ['user_id'],
+                    uniqueKey: ['user_id'],
                     comparator: 'id',
                 },
             });
