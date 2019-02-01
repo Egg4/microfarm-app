@@ -8,9 +8,6 @@ require.config({
         'jquery.datepicker': {
             deps: ['jquery'],
         },
-        'jquery.mobile.datepicker': {
-            deps: ['jquery.mobile', 'jquery.datepicker'],
-        },
         'underscore': {
             exports: '_',
         },
@@ -22,22 +19,15 @@ require.config({
             deps: ['underscore'],
             exports: 'Polyglot',
         },
-        /*
-        'jspdf': {
-            exports: 'jsPDF',
-        },
-        */
     },
     paths: {
         'jquery': '../vendor/js/jquery-min',
         'jquery.mobile': '../vendor/js/jquery.mobile-min',
         'jquery.datepicker': '../vendor/js/jquery.datepicker',
-        'jquery.mobile.datepicker': '../vendor/js/jquery.mobile.datepicker',
         'underscore': '../vendor/js/underscore-min',
         'backbone': '../vendor/js/backbone-min',
         'pako': '../vendor/js/pako-min',
         'polyglot': '../vendor/js/polyglot',
-        //'jspdf': '../vendor/js/jspdf-min',
     },
 });
 
@@ -49,7 +39,7 @@ require([
         $.mobile.linkBindingEnabled = false;
         $.mobile.hashListeningEnabled = false;
         $.event.special.tap.emitTapOnTaphold = true;
-        $.event.special.tap.tapholdThreshold = 400;
+        $.event.special.tap.tapholdThreshold = 300;
     });
 });
 
@@ -62,7 +52,7 @@ require([
     'lib/common',
     'polyglot',
     'jquery.mobile',
-    'jquery.mobile.datepicker',
+    'jquery.datepicker',
 ], function ($, _, Backbone, App, polyglotFr) {
     window.polyglot = new Polyglot({phrases: polyglotFr});
     new App().run();

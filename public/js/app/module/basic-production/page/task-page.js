@@ -16,8 +16,9 @@ define([
 ], function ($, _, Page, StackLayout, Navigation, GridLayout, Html, Table, MenuPopup, Button, Label, Icon) {
 
     return Page.extend({
-        templates: {
+        template: {
             working: _.template($('#task-page-working-table-row-template').html()),
+            seeding: _.template($('#task-page-seeding-table-row-template').html()),
             output: _.template($('#task-page-output-table-row-template').html()),
         },
 
@@ -32,6 +33,7 @@ define([
 
             this.creationMenuPopup = this.buildCreationMenuPopup();
             this.listenTo(app.collections.get('working'), 'update', this.render);
+            this.listenTo(app.collections.get('seeding'), 'update', this.render);
             this.listenTo(app.collections.get('output'), 'update', this.render);
         },
 
@@ -174,6 +176,9 @@ define([
                 category = this.model.find('category');
 
             items.push(this.buildMenuPopupWorkingButton());
+            if (category.get('key') == 'seeding') {
+                items.push(this.buildMenuPopupSeedingButton());
+            }
             if (category.get('key') == 'harvest') {
                 items.push(this.buildMenuPopupOutputButton());
             }
@@ -189,6 +194,20 @@ define([
                 events: {
                     click: function () {
                         this.closeCreationMenuPopup('working');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildMenuPopupSeedingButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('model.name.seeding'),
+                    icon: new Icon({name: 'seedling'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeCreationMenuPopup('seeding');
                     }.bind(this),
                 },
             });
@@ -237,6 +256,11 @@ define([
             models = _.union(models, app.collections.get('working').where({
                 task_id: this.model.get('id'),
             }));
+            if (category.get('key') == 'seeding') {
+                models = _.union(models, app.collections.get('seeding').where({
+                    task_id: this.model.get('id'),
+                }));
+            }
             if (category.get('key') == 'harvest') {
                 models = _.union(models, app.collections.get('output').where({
                     task_id: this.model.get('id'),
@@ -249,7 +273,7 @@ define([
         buildModelRow: function (model) {
             return new Html({
                 tagName: 'tr',
-                template: this.templates[model.collection.modelName],
+                template: this.template[model.collection.modelName],
                 data: this.buildModelRowData(model),
                 events: {
                     click: function () {
@@ -265,6 +289,7 @@ define([
         navigateToModelPage: function (model) {
             switch (model.collection.modelName) {
                 case 'working':
+                case 'seeding':
                     break;
                 case 'output':
                     app.router.navigate('output/' + model.get('id'));
@@ -293,6 +318,19 @@ define([
         buildModelRowData: function (model) {
             switch (model.collection.modelName) {
                 case 'working': return model.toJSON();
+                case 'seeding':
+                    var variety = model.find('variety'),
+                        plant = variety.find('plant'),
+                        category = model.find('category'),
+                        densityUnit = model.find('category', {selfAttribute: 'density_unit_id'}),
+                        areaUnit = model.find('category', {selfAttribute: 'area_unit_id'});
+                    return $.extend(model.toJSON(), {
+                        variety: variety.toJSON(),
+                        plant: plant.toJSON(),
+                        category: category.toJSON(),
+                        density_unit: densityUnit.toJSON(),
+                        area_unit: areaUnit.toJSON(),
+                });
                 case 'output':
                     var article = model.find('article'),
                         category = article.find('category'),
@@ -304,7 +342,7 @@ define([
                         quantity_unit: quantityUnit.toJSON(),
                         variety: _.isNull(variety) ? null : variety.toJSON(),
                         plant: _.isNull(variety) ? null : variety.find('plant').toJSON(),
-                });
+                    });
             }
         },
 
@@ -315,6 +353,11 @@ define([
                     task_id: this.model.get('id'),
                     user_id: app.authentication.getUserId(),
                     duration: '01:00:00',
+                };
+                case 'seeding': return {
+                    entity_id: this.model.get('entity_id'),
+                    task_id: this.model.get('id'),
+                    variety_id: null,
                 };
                 case 'output': return {
                     entity_id: this.model.get('entity_id'),
@@ -328,9 +371,24 @@ define([
         buildModelFormVisible: function (modelName) {
             switch (modelName) {
                 case 'working': return {
+                    task_id: false,
+                    user_id: false,
                     duration: true,
                 };
+                case 'seeding': return {
+                    task_id: false,
+                    article_id: true,
+                    output_id: true,
+                    variety_id: app.modules.has('taxonomy'),
+                    nursery: true,
+                    category_id: true,
+                    density: true,
+                    density_unit_id: true,
+                    area: true,
+                    area_unit_id: true,
+                };
                 case 'output': return {
+                    task_id: false,
                     article_id: true,
                     variety_id: app.modules.has('taxonomy'),
                     quantity: true,

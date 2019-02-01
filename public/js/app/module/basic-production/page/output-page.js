@@ -190,7 +190,7 @@ define([
                 entity_id: this.model.get('entity_id'),
                 output_id: this.model.get('id'),
                 date: task.get('date'),
-                time: task.get('time'),
+                time: (parseInt(task.get('time').substring(0, 2)) + 1).pad(2) + ':00:00',
                 done: false,
             };
         },

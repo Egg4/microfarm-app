@@ -152,16 +152,16 @@
 
 .button-widget.ui-btn-icon-top .label-widget .text,
 .button-widget.ui-btn-icon-bottom .label-widget .text {
-    font-size: .6em;
-    font-weight: 100;
+    font-size: .8em;
+    font-weight: normal;
 }
 
 .button-widget.ui-btn-icon-top .fa-icon-widget {
-    top: 14px;
+    top: 10px;
 }
 
 .button-widget.ui-btn-icon-bottom .fa-icon-widget {
-    bottom: 14px;
+    bottom: 10px;
 }
 
 /********************************/

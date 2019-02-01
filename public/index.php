@@ -1,7 +1,7 @@
 <?php
 
 define('PUBLIC_DIR', __DIR__);
-define('APP_ENV', $_SERVER['APP_ENV']);
+define('APP_ENV', isset($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : 'prod');
 //define('APP_ENV', 'test');
 
 function resourceUrl($publicFilePath, array $params = array()) {
@@ -14,15 +14,19 @@ function resourceUrl($publicFilePath, array $params = array()) {
 }
 
 function cacheBust($filename) {
-    $time = APP_ENV == 'dev' ? time() : filemtime($filename);
+    $time = APP_ENV === 'dev' ? time() : filemtime($filename);
     return date('ymdHis', $time);
 }
 
+function apiServerName() {
+    return str_replace('app', 'api', $_SERVER['SERVER_NAME']);
+}
+
 function apiUrl() {
-    $doNAT = ($_SERVER['SERVER_NAME'] == $_SERVER['SERVER_ADDR']);
+    $doNAT = ($_SERVER['SERVER_NAME'] === $_SERVER['SERVER_ADDR']);
     $api = [
         'scheme' => $_SERVER['REQUEST_SCHEME'],
-        'host' => $doNAT ? $_SERVER['SERVER_NAME'] : str_replace('app', 'api', $_SERVER['SERVER_NAME']),
+        'host' => $doNAT ? $_SERVER['SERVER_NAME'] : apiServerName(),
         'port' => $doNAT ? intval($_SERVER['SERVER_PORT']) + 1 : intval($_SERVER['SERVER_PORT']),
     ];
 
@@ -44,7 +48,7 @@ function includeTemplates($dir, $extension = 'phtml') {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -60,25 +64,17 @@ function includeTemplates($dir, $extension = 'phtml') {
         <meta name="theme-color" content="#ffffff">
 
         <!-- Css -->
-        <link rel="stylesheet" href="<?= resourceUrl('/vendor/css/jquery.mobile-min.css'); ?>" />
-        <link rel="stylesheet" href="<?= resourceUrl('/vendor/css/jquery.mobile.datepicker.css'); ?>" />
-        <link rel="stylesheet" href="<?= resourceUrl('/vendor/css/jquery.mobile.datepicker.theme.css'); ?>" />
-        <link rel="stylesheet" href="<?= resourceUrl('/vendor/css/fontawesome.min.css'); ?>">
-        <link rel="stylesheet" href="<?= resourceUrl('/vendor/css/fontawesome-solid.min.css'); ?>">
-        <link rel="stylesheet" href="<?= resourceUrl('/css/lib-widget.css'); ?>" />
-        <link rel="stylesheet" href="<?= resourceUrl('/css/app-widget.css'); ?>" />
-        <link rel="stylesheet" href="<?= resourceUrl('/css/style.css'); ?>" />
+        <link
+            rel="stylesheet"
+            href="<?= APP_ENV === 'dev' ? '/css/main.css' : '/build/app-min.css'; ?>"/>
 
         <!-- Javascript -->
-        <!--
-        <script src="<?= resourceUrl('/vendor/js/jspdf-min.js'); ?>"></script>
-        <script src="<?= resourceUrl('/vendor/js/jspdf.plugin.autotable-min.js'); ?>"></script>
-        -->
         <script
-            data-main="<?= APP_ENV == 'dev' ? 'js/bootstrap' : 'build/bootstrap-built'; ?>"
-            src="<?= resourceUrl('/vendor/js/require-min.js'); ?>">
+            type="text/javascript"
+            <?= APP_ENV === 'dev' ? 'data-main="js/bootstrap"' : ''; ?>
+            src="<?= APP_ENV === 'dev' ? '/vendor/js/require-min.js' : '/build/app-min.js'; ?>">
         </script>
-        <script>
+        <script type="text/javascript">
             var env = '<?= APP_ENV; ?>';
             var apiUrl = '<?= apiUrl(); ?>';
             require.config({

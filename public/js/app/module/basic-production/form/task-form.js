@@ -49,6 +49,7 @@ define([
                                     placeholder: polyglot.t('form.placeholder.crop_id'),
                                     optgroup: true,
                                     nullable: true,
+                                    defaultValue: null,
                                     cast: 'integer',
                                     css: {flex: '1'},
                                     data: this.buildCropData.bind(this),
@@ -71,6 +72,7 @@ define([
                                     placeholder: polyglot.t('form.placeholder.output_id'),
                                     optgroup: true,
                                     nullable: true,
+                                    defaultValue: null,
                                     cast: 'integer',
                                     css: {flex: '1'},
                                     data: this.buildOutputData.bind(this),
@@ -88,6 +90,7 @@ define([
                         new InputHidden({
                             name: 'organization_id',
                             nullable: true,
+                            defaultValue: null,
                             cast: 'integer',
                         }),
                         new FormGroup({
@@ -101,7 +104,7 @@ define([
                                 new Select({
                                     name: 'time',
                                     placeholder: polyglot.t('form.placeholder.time'),
-                                    css: {width: '8em'},
+                                    css: {width: '10em'},
                                     data: this.buildTimeData.bind(this),
                                 }),
                             ],
@@ -128,13 +131,13 @@ define([
         },
 
         buildCategoryData: function () {
-            var cropId = this.getElement('crop_id').getValue(),
-                outputId = this.getElement('output_id').getValue(),
-                organizationId = this.getElement('organization_id').getValue();
+            var cropId = this.getElement('crop_id').getRawValue(),
+                outputId = this.getElement('output_id').getRawValue(),
+                organizationId = this.getElement('organization_id').getRawValue();
 
-            if (!_.isNull(cropId)) return this.buildCropCategoryData();
-            if (!_.isNull(outputId)) return this.buildOutputCategoryData();
-            //if (!_.isNull(organizationId)) return this.buildOrganizationCategoryData();
+            if (cropId !== 'null') return this.buildCropCategoryData();
+            if (outputId !== 'null') return this.buildOutputCategoryData();
+            if (organizationId !== 'null') return this.buildOrganizationCategoryData();
         },
 
         buildCropCategoryData: function () {
@@ -173,6 +176,10 @@ define([
             return _.groupBy(data, 'optgroup');
         },
 
+        buildOrganizationCategoryData: function () {
+            return [];
+        },
+
         buildCropData: function () {
             var data = app.collections.get('crop').map(function(crop) {
                 return {
@@ -208,12 +215,19 @@ define([
         },
 
         buildOutputData: function () {
-            var data = app.collections.get('output').map(function(output) {
-                return {
-                    optgroup: output.find('task').find('crop').find('article').getDisplayName(),
+            var data = [];
+            app.collections.get('output').each(function(output) {
+                var task = output.find('task'),
+                    date = task.get('date'),
+                    day = date.dateFormat('d'),
+                    month = polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()),
+                    time = task.get('time').substring(0, 5);
+
+                data.push({
+                    optgroup: task.find('crop').find('article').getDisplayName(),
                     value: output.get('id'),
-                    label: output.getDisplayName(),
-                };
+                    label: day + ' ' + month + ' ' + time + ' - '  + output.getDisplayName(),
+                });
             });
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
         },
@@ -250,6 +264,56 @@ define([
                     label: index.pad(2) + ':00',
                 };
             });
+        },
+
+        validator: function (data) {
+            var errors = Form.prototype.validator.call(this, data);
+
+            // crop_id && output_id && organization_id cannot be null
+            if (_.isNull(data.crop_id) && _.isNull(data.output_id) && _.isNull(data.organization_id)) {
+                var fieldName = '';
+                if (this.getElement('crop_id').isVisible()) {
+                    fieldName = polyglot.t('form.field.crop_id');
+                }
+                if (this.getElement('output_id').isVisible()) {
+                    fieldName = polyglot.t('form.field.output_id');
+                }
+                if (this.getElement('organization_id').isVisible()) {
+                    fieldName = polyglot.t('form.field.organization_id');
+                }
+                errors.push({
+                    attributes: ['crop_id', 'output_id', 'organization_id'],
+                    message: polyglot.t('form.validator.required', {
+                        field: fieldName,
+                    }),
+                });
+            }
+
+            // crop-production task must be anterior to post-production task
+            if (!_.isNull(data.output_id)) {
+                var outputId = this.getElement('output_id').getValue(),
+                    output = app.collections.get('output').get(outputId),
+                    outputTask = output.find('task'),
+                    outputTaskDateTime = outputTask.get('date') + outputTask.get('time'),
+                    thisTaskDateTime = this.getElement('date').getValue() + this.getElement('time').getValue();
+
+                if (outputTaskDateTime >= thisTaskDateTime) {
+                    var date = outputTask.get('date'),
+                        day = date.dateFormat('d'),
+                        month = polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()),
+                        time = outputTask.get('time').substring(0, 5);
+
+                    errors.push({
+                        attributes: ['date', 'time'],
+                        message: polyglot.t('form.validator.datetime-greater-than-x', {
+                            field: polyglot.t('form.field.date') + ', ' + polyglot.t('form.field.time'),
+                            datetime: day + ' ' + month + ' ' + time,
+                        }),
+                    });
+                }
+            }
+
+            return errors;
         },
     });
 });

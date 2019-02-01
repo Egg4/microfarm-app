@@ -74,6 +74,10 @@ define([
             }
         },
 
+        getRawValue: function () {
+            return this.value;
+        },
+
         getDefaultValue: function () {
             return this.defaultValue;
         },

@@ -1,3 +1,12 @@
+@import url('../vendor/css/jquery.mobile-min.css');
+@import url('../vendor/css/fontawesome.min.css');
+@import url('../vendor/css/fontawesome-solid.min.css');
+@import url('lib-widget.css');
+@import url('app-widget.css');
+
+/********************************/
+/*  Global                      */
+/********************************/
 body {
     margin: 0;
 }
@@ -62,7 +71,7 @@ td .photo {
 }
 
 td .description {
-    font-size: small;
+    font-size: 0.8em;
     line-height: normal;
     white-space: nowrap;
 }
@@ -101,8 +110,7 @@ td .right {
 #planner-page .table-widget {
     table-layout: fixed;
     font-size: 1em;
-    color: black;
-    font-weight: 100;
+    font-weight: normal;
     text-shadow: none;
 }
 

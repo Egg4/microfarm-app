@@ -39,7 +39,6 @@ define([
             }, config.api));
             this.authentication = new Authentication({
                 client: this.client,
-                authorization: config.authorization,
             });
             this.router = new Router();
             this.modules = new ModuleContainer();

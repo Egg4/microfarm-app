@@ -14,7 +14,6 @@ define([
                 headerKey: 'Authorization',
                 storage: localStorage,
                 client: false,
-                authorization: {},
             }, options);
 
             if (this.isSet()) {
@@ -69,13 +68,6 @@ define([
 
         hasRole: function (role) {
             return (this.getRole() == role);
-        },
-
-        hasRights: function (model, action) {
-            if (_.isUndefined(this.authorization[model])) return false;
-            if (_.isUndefined(this.authorization[model][action])) return false;
-            var requiredRole = this.authorization[model][action];
-            return (requiredRole == '*' || this.hasRole(requiredRole));
         },
 
         logout: function () {
