@@ -6,7 +6,7 @@ define([
     'lib/schema/schema',
     'lib/model/model',
     'lib/collection/collection',
-    'app/module/basic-production/form/seeding-form',
+    'app/module/basic-production/form/planting-form',
     'app/widget/dialog/model-dialog',
 ], function ($, _, Schema, Model, Collection, Form, Dialog) {
 
@@ -17,7 +17,8 @@ define([
                 model: {
                     class: Model,
                     displayName: function () {
-                        return this.find('variety').getDisplayName();
+                        var suffix = this.find('variety').getDisplayName().toLowerCase();
+                        return polyglot.t('model.name.planting') + ' ' + suffix;
                     },
                 },
                 collection: {
@@ -40,14 +41,6 @@ define([
                             onDelete: 'cascade',
                         },
                         category_id: {
-                            model: 'category',
-                            onDelete: 'cascade',
-                        },
-                        density_unit_id: {
-                            model: 'category',
-                            onDelete: 'cascade',
-                        },
-                        area_unit_id: {
                             model: 'category',
                             onDelete: 'cascade',
                         },

@@ -17,8 +17,8 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'output-form',
-                collection: app.collections.get('output'),
+                id: 'planting-form',
+                collection: app.collections.get('planting'),
                 formGroup: new FormGroup({
                     items: [
                         new InputHidden({
@@ -30,17 +30,9 @@ define([
                             name: 'entity_id',
                             cast: 'integer',
                         }),
-                        new Select({
+                        new InputHidden({
                             name: 'task_id',
-                            placeholder: polyglot.t('form.placeholder.task_id'),
-                            optgroup: true,
                             cast: 'integer',
-                            data: this.buildTaskData.bind(this),
-                            events: {
-                                change: function () {
-                                    this.getElement('article_id').render();
-                                }.bind(this),
-                            },
                         }),
                         new FormGroup({
                             type: 'horizontal',
@@ -55,7 +47,6 @@ define([
                                     events: {
                                         change: function () {
                                             this.getElement('variety_id').render();
-                                            this.formGroup.items[5].items[1].render();
                                         }.bind(this),
                                     },
                                 }),
@@ -69,13 +60,18 @@ define([
                                 }),
                             ],
                         }),
+                        new InputHidden({
+                            name: 'output_id',
+                            nullable: true,
+                            defaultValue: null,
+                            cast: 'integer',
+                        }),
                         new FormGroup({
                             type: 'horizontal',
                             items: [
                                 new Select({
                                     name: 'variety_id',
                                     placeholder: polyglot.t('form.placeholder.variety_id'),
-                                    nullable: true,
                                     cast: 'integer',
                                     css: {flex: '1'},
                                     data: this.buildVarietyData.bind(this),
@@ -90,21 +86,57 @@ define([
                                 }),
                             ],
                         }),
+                        new Select({
+                            name: 'category_id',
+                            placeholder: polyglot.t('form.placeholder.category_id'),
+                            cast: 'integer',
+                            data: this.buildCategoryData.bind(this),
+                        }),
                         new FormGroup({
                             type: 'horizontal',
                             items: [
                                 new InputNumber({
-                                    name: 'quantity',
-                                    placeholder: polyglot.t('form.placeholder.quantity'),
+                                    name: 'intra_row_spacing',
+                                    placeholder: polyglot.t('form.placeholder.intra_row_spacing'),
+                                    min: 0,
+                                    cast: 'integer',
+                                    css: {flex: '1'},
+                                }),
+                                new Button({
+                                    css: {width: '8em'},
+                                    label: new Label({text: 'cm'}),
+                                }),
+                            ],
+                        }),
+                        new FormGroup({
+                            type: 'horizontal',
+                            items: [
+                                new InputNumber({
+                                    name: 'inter_row_spacing',
+                                    placeholder: polyglot.t('form.placeholder.inter_row_spacing'),
+                                    min: 0,
+                                    cast: 'integer',
+                                    css: {flex: '1'},
+                                }),
+                                new Button({
+                                    css: {width: '8em'},
+                                    label: new Label({text: 'cm'}),
+                                }),
+                            ],
+                        }),
+                        new FormGroup({
+                            type: 'horizontal',
+                            items: [
+                                new InputNumber({
+                                    name: 'area',
+                                    placeholder: polyglot.t('form.placeholder.area'),
                                     min: 0,
                                     cast: 'float',
                                     css: {flex: '1'},
                                 }),
                                 new Button({
                                     css: {width: '8em'},
-                                    label: new Label({
-                                        text: this.buildQuantityButtonText.bind(this),
-                                    }),
+                                    label: new Label({text: 'm²'}),
                                 }),
                             ],
                         }),
@@ -113,72 +145,40 @@ define([
             });
         },
 
-        buildTaskData: function () {
-            var data = [];
-            var harvestCategory = app.collections.get('category').findRoot('task_category_id').findChild({
-                key: 'crop_production',
-            }).findChild({
-                key: 'primary',
-            }).findChild({
-                key: 'harvest',
-            });
-            var tasks = app.collections.get('task').where({
-                category_id: harvestCategory.get('id'),
-            });
-            tasks = _.sortBy(tasks, function (task) {
-                return task.getDisplayName();
-            });
-            _.each(tasks, function(task) {
-                var date = task.get('date'),
-                    day = date.dateFormat('d'),
-                    month = polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()),
-                    time = task.get('time').substring(0, 5);
-                data.push({
-                    optgroup: task.find('crop').find('article').getDisplayName(),
-                    value: task.get('id'),
-                    label: day + ' ' + month + ' ' + time + ' - '  + task.find('crop').getDisplayName(),
-                });
-            });
-            return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
-        },
-
         buildArticleData: function () {
             var data = [],
                 taskId = this.getElement('task_id').getValue(),
-                task = app.collections.get('task').get(taskId);
-
-            if (!task) return [];
-
-            var cropArticle = task.find('crop').find('article'),
-                categories = app.collections.get('category').findRoot('article_category_id').findChildren({
-                    key: ['seed', 'plant', 'harvest'],
+                task = app.collections.get('task').get(taskId),
+                plantCategory = app.collections.get('category').findRoot('article_category_id').findChild({
+                    key: 'plant',
                 }),
                 articles = app.collections.get('article').where({
-                    organization_id: null,
-                    category_id: _.map(categories, function(category) {
-                        return category.get('id');
-                    }),
+                    category_id: plantCategory.get('id'),
                     active: true,
-                });
-            var cropArticleVarieties = cropArticle.findAll('article_variety');
-            var plantIds = _.map(cropArticleVarieties, function(cropArticleVariety) {
-                return cropArticleVariety.get('plant_id');
-            });
-            articles = _.filter(articles, function (article) {
-                var articleVarieties = article.findAll('article_variety', {
-                    plant_id: plantIds,
-                })
-                return articleVarieties.length > 0;
-            });
-            if (!_.contains(articles, cropArticle)) {
-                articles.push(cropArticle);
+                }),
+                cropArticleVarieties = task.find('crop').find('article').findAll('article_variety'),
+                plantIds = _.map(cropArticleVarieties, function(cropArticleVariety) {
+                    return cropArticleVariety.get('plant_id');
+                }),
+                articles = _.filter(articles, function (article) {
+                    var articleVarieties = article.findAll('article_variety', {
+                        plant_id: plantIds,
+                    })
+                    return articleVarieties.length > 0;
+                }),
+                articleId = this.getElement('article_id').getValue();
+
+            if (articleId) {
+                var article = app.collections.get('article').get(articleId);
+                if (!_.contains(articles, article)) articles.push(article);
             }
             articles = _.sortBy(articles, function (article) {
                 return article.getDisplayName();
             });
             _.each(articles, function(article) {
+                var organization = article.find('organization');
                 data.push({
-                    optgroup: article.find('category').getDisplayName(),
+                    optgroup: _.isNull(organization) ? '-' : organization.getDisplayName(),
                     value: article.get('id'),
                     label: article.getDisplayName(),
                 });
@@ -187,7 +187,11 @@ define([
         },
 
         openArticleCreationDialog: function () {
-            var dialog = app.dialogs.get('article');
+            var plantCategory = app.collections.get('category').findRoot('article_category_id').findChild({
+                    key: 'plant',
+                }),
+                dialog = app.dialogs.get('article');
+
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
                     model: polyglot.t('model.name.article').toLowerCase(),
@@ -197,15 +201,12 @@ define([
             dialog.form.setData({
                 entity_id: this.getElement('entity_id').getValue(),
                 organization_id: null,
+                category_id: plantCategory.get('id'),
                 active: true,
             });
             dialog.form.setVisible({
                 organization_id: false,
-                category_id: true,
-                name: true,
-                quantity_unit_id: true,
-                default_unit_price: true,
-                default_tax: true,
+                category_id: false,
                 active: false,
             });
             dialog.open().done(function (article) {
@@ -225,15 +226,13 @@ define([
             var plantIds = _.map(article.findAll('article_variety'), function(articleVariety) {
                     return articleVariety.get('plant_id');
                 }),
-                varietyId = this.getElement('variety_id').getValue(),
-                data = [{
-                    value: null,
-                    label: polyglot.t('model.field.variety_id.null'),
-                }],
+                data = [],
                 varieties = app.collections.get('variety').where({
                     plant_id: plantIds,
                     active: true,
-                });
+                }),
+                varietyId = this.getElement('variety_id').getValue();
+
             if (varietyId) {
                 var variety = app.collections.get('variety').get(varietyId);
                 if (!_.contains(varieties, variety)) varieties.push(variety);
@@ -251,20 +250,28 @@ define([
         },
 
         openVarietyCreationDialog: function () {
-            var dialog = app.dialogs.get('variety');
+            var articleId = this.getElement('article_id').getValue(),
+                article = app.collections.get('article').get(articleId),
+                dialog = app.dialogs.get('variety');
+
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
                     model: polyglot.t('model.name.variety').toLowerCase(),
                 }),
                 icon: new Icon({name: 'plus'}),
             });
-            dialog.form.setData({
+            var formData = {};
+            if (article) {
+                var plantIds = _.map(article.findAll('article_variety'), function(articleVariety) {
+                    return articleVariety.get('plant_id');
+                });
+                formData.plant_id = _.first(plantIds);
+            }
+            dialog.form.setData($.extend(formData, {
                 entity_id: this.getElement('entity_id').getValue(),
                 active: true,
-            });
+            }));
             dialog.form.setVisible({
-                plant_id: true,
-                name: true,
                 active: false,
             });
             dialog.open().done(function (variety) {
@@ -275,14 +282,14 @@ define([
             }.bind(this));
         },
 
-        buildQuantityButtonText: function () {
-            var articleId = this.getElement('article_id').getValue(),
-                article = app.collections.get('article').get(articleId);
-
-            if (!article) return '';
-
-            var quantityUnit = article.find('category', {selfAttribute: 'quantity_unit_id'});
-            return quantityUnit.get('value');
+        buildCategoryData: function () {
+            var categories = app.collections.get('category').findRoot('planting_category_id').findChildren();
+            return _.map(categories, function(category) {
+                return {
+                    value: category.get('id'),
+                    label: category.getDisplayName(),
+                };
+            });
         },
     });
 });

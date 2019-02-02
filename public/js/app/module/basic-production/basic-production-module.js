@@ -11,7 +11,8 @@ define([
     'app/module/basic-production/schema/output-schema',
     'app/module/basic-production/schema/outputs-schema',
     'app/module/basic-production/schema/planner-schema',
-    'app/module/basic-production/schema/seeding-schema',
+    'app/module/basic-production/schema/planting-schema',
+    'app/module/basic-production/schema/seedling-schema',
     'app/module/basic-production/schema/task-schema',
     'app/module/basic-production/schema/working-schema',
 ], function ($, _, Module,
@@ -22,7 +23,8 @@ define([
              OutputSchema,
              OutputsSchema,
              PlannerSchema,
-             SeedingSchema,
+             PlantingSchema,
+             SeedlingSchema,
              TaskSchema,
              WorkingSchema
 ) {
@@ -30,7 +32,7 @@ define([
 
         initialize: function () {
             Module.prototype.initialize.call(this, {
-                dependencies: ['core'],
+                dependencies: ['core', 'taxonomy'],
                 schemas: {
                     article: new ArticleSchema(),
                     articles: new ArticlesSchema(),
@@ -39,7 +41,8 @@ define([
                     output: new OutputSchema(),
                     outputs: new OutputsSchema(),
                     planner: new PlannerSchema(),
-                    seeding: new SeedingSchema(),
+                    planting: new PlantingSchema(),
+                    seedling: new SeedlingSchema(),
                     task: new TaskSchema(),
                     working: new WorkingSchema(),
                 },

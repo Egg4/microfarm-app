@@ -104,7 +104,7 @@ define([
                                 new Select({
                                     name: 'time',
                                     placeholder: polyglot.t('form.placeholder.time'),
-                                    css: {width: '10em'},
+                                    css: {width: '8em'},
                                     data: this.buildTimeData.bind(this),
                                 }),
                             ],

@@ -17,7 +17,7 @@ define([
                 model: {
                     class: Model,
                     displayName: function () {
-                        return this.get('duration').substring(0, 5);
+                        return polyglot.t('model.name.working') + ' ' + this.get('duration').substring(0, 5);
                     },
                 },
                 collection: {

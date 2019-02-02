@@ -27,9 +27,7 @@ define([
                 body: this.buildBody.bind(this),
             });
 
-            if (app.modules.has('taxonomy')) {
-                this.listenTo(app.collections.get('article_variety'), 'update', this.render);
-            }
+            this.listenTo(app.collections.get('article_variety'), 'update', this.render);
         },
 
         buildBody: function () {
@@ -38,9 +36,7 @@ define([
 
             items.push(this.buildNavigation());
             items.push(this.buildArticleHtml());
-            if (app.modules.has('taxonomy')
-            && _.contains(['seed', 'plant', 'harvest'], category.get('key'))
-            ) {
+            if (_.contains(['seed', 'plant', 'harvest'], category.get('key'))) {
                 items.push(this.buildVarietyTable());
             }
             return new StackLayout({

@@ -73,7 +73,7 @@ define([
                                 new Select({
                                     name: 'default_tax',
                                     placeholder: polyglot.t('form.placeholder.tax'),
-                                    css: {width: '10em'},
+                                    css: {width: '8em'},
                                     cast: 'float',
                                     data: [
                                         {value: 0, label: '0%'},

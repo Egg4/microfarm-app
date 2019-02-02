@@ -18,7 +18,8 @@ define([
     return Page.extend({
         template: {
             working: _.template($('#task-page-working-table-row-template').html()),
-            seeding: _.template($('#task-page-seeding-table-row-template').html()),
+            seedling: _.template($('#task-page-seedling-table-row-template').html()),
+            planting: _.template($('#task-page-planting-table-row-template').html()),
             output: _.template($('#task-page-output-table-row-template').html()),
         },
 
@@ -33,7 +34,8 @@ define([
 
             this.creationMenuPopup = this.buildCreationMenuPopup();
             this.listenTo(app.collections.get('working'), 'update', this.render);
-            this.listenTo(app.collections.get('seeding'), 'update', this.render);
+            this.listenTo(app.collections.get('seedling'), 'update', this.render);
+            this.listenTo(app.collections.get('planting'), 'update', this.render);
             this.listenTo(app.collections.get('output'), 'update', this.render);
         },
 
@@ -176,8 +178,11 @@ define([
                 category = this.model.find('category');
 
             items.push(this.buildMenuPopupWorkingButton());
-            if (category.get('key') == 'seeding') {
-                items.push(this.buildMenuPopupSeedingButton());
+            if (category.get('key') == 'seedling') {
+                items.push(this.buildMenuPopupSeedlingButton());
+            }
+            if (category.get('key') == 'planting') {
+                items.push(this.buildMenuPopupPlantingButton());
             }
             if (category.get('key') == 'harvest') {
                 items.push(this.buildMenuPopupOutputButton());
@@ -199,15 +204,29 @@ define([
             });
         },
 
-        buildMenuPopupSeedingButton: function () {
+        buildMenuPopupSeedlingButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('model.name.seeding'),
+                    text: polyglot.t('model.name.seedling'),
                     icon: new Icon({name: 'seedling'}),
                 }),
                 events: {
                     click: function () {
-                        this.closeCreationMenuPopup('seeding');
+                        this.closeCreationMenuPopup('seedling');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildMenuPopupPlantingButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('model.name.planting'),
+                    icon: new Icon({name: 'screwdriver'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeCreationMenuPopup('planting');
                     }.bind(this),
                 },
             });
@@ -256,8 +275,13 @@ define([
             models = _.union(models, app.collections.get('working').where({
                 task_id: this.model.get('id'),
             }));
-            if (category.get('key') == 'seeding') {
-                models = _.union(models, app.collections.get('seeding').where({
+            if (category.get('key') == 'seedling') {
+                models = _.union(models, app.collections.get('seedling').where({
+                    task_id: this.model.get('id'),
+                }));
+            }
+            if (category.get('key') == 'planting') {
+                models = _.union(models, app.collections.get('planting').where({
                     task_id: this.model.get('id'),
                 }));
             }
@@ -289,7 +313,8 @@ define([
         navigateToModelPage: function (model) {
             switch (model.collection.modelName) {
                 case 'working':
-                case 'seeding':
+                case 'seedling':
+                case 'planting':
                     break;
                 case 'output':
                     app.router.navigate('output/' + model.get('id'));
@@ -318,7 +343,7 @@ define([
         buildModelRowData: function (model) {
             switch (model.collection.modelName) {
                 case 'working': return model.toJSON();
-                case 'seeding':
+                case 'seedling':
                     var variety = model.find('variety'),
                         plant = variety.find('plant'),
                         category = model.find('category'),
@@ -331,6 +356,15 @@ define([
                         density_unit: densityUnit.toJSON(),
                         area_unit: areaUnit.toJSON(),
                 });
+                case 'planting':
+                    var variety = model.find('variety'),
+                        plant = variety.find('plant'),
+                        category = model.find('category');
+                    return $.extend(model.toJSON(), {
+                        variety: variety.toJSON(),
+                        plant: plant.toJSON(),
+                        category: category.toJSON(),
+                    });
                 case 'output':
                     var article = model.find('article'),
                         category = article.find('category'),
@@ -354,16 +388,18 @@ define([
                     user_id: app.authentication.getUserId(),
                     duration: '01:00:00',
                 };
-                case 'seeding': return {
+                case 'seedling': return {
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),
-                    variety_id: null,
+                };
+                case 'planting': return {
+                    entity_id: this.model.get('entity_id'),
+                    task_id: this.model.get('id'),
                 };
                 case 'output': return {
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),
                     article_id: this.model.find('crop').find('article').get('id'),
-                    variety_id: null,
                 };
             }
         },
@@ -373,25 +409,15 @@ define([
                 case 'working': return {
                     task_id: false,
                     user_id: false,
-                    duration: true,
                 };
-                case 'seeding': return {
+                case 'seedling': return {
                     task_id: false,
-                    article_id: true,
-                    output_id: true,
-                    variety_id: app.modules.has('taxonomy'),
-                    nursery: true,
-                    category_id: true,
-                    density: true,
-                    density_unit_id: true,
-                    area: true,
-                    area_unit_id: true,
+                };
+                case 'planting': return {
+                    task_id: false,
                 };
                 case 'output': return {
                     task_id: false,
-                    article_id: true,
-                    variety_id: app.modules.has('taxonomy'),
-                    quantity: true,
                 };
             }
         },

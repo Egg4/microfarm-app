@@ -19,8 +19,8 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'seeding-form',
-                collection: app.collections.get('seeding'),
+                id: 'seedling-form',
+                collection: app.collections.get('seedling'),
                 formGroup: new FormGroup({
                     items: [
                         new InputHidden({
@@ -119,7 +119,7 @@ define([
                                     name: 'density_unit_id',
                                     placeholder: polyglot.t('form.placeholder.density_unit_id'),
                                     cast: 'integer',
-                                    css: {width: '10em'},
+                                    css: {width: '8em'},
                                     data: this.buildDensityUnitData.bind(this),
                                 }),
                             ],
@@ -137,7 +137,7 @@ define([
                                     name: 'area_unit_id',
                                     placeholder: polyglot.t('form.placeholder.area_unit_id'),
                                     cast: 'integer',
-                                    css: {width: '10em'},
+                                    css: {width: '8em'},
                                     data: this.buildAreaUnitData.bind(this),
                                 }),
                             ],
@@ -151,28 +151,25 @@ define([
             var data = [],
                 taskId = this.getElement('task_id').getValue(),
                 task = app.collections.get('task').get(taskId),
-                categories = app.collections.get('category').findRoot('article_category_id').findChildren({
+                seedCategory = app.collections.get('category').findRoot('article_category_id').findChild({
                     key: 'seed',
                 }),
                 articles = app.collections.get('article').where({
-                    category_id: _.map(categories, function(category) {
-                        return category.get('id');
-                    }),
+                    category_id: seedCategory.get('id'),
                     active: true,
                 }),
-                articleId = this.getElement('article_id').getValue();
-            if (app.modules.has('taxonomy')) {
-                var cropArticleVarieties = task.find('crop').find('article').findAll('article_variety');
-                var plantIds = _.map(cropArticleVarieties, function(cropArticleVariety) {
+                cropArticleVarieties = task.find('crop').find('article').findAll('article_variety'),
+                plantIds = _.map(cropArticleVarieties, function(cropArticleVariety) {
                     return cropArticleVariety.get('plant_id');
-                });
+                }),
                 articles = _.filter(articles, function (article) {
                     var articleVarieties = article.findAll('article_variety', {
                         plant_id: plantIds,
                     })
                     return articleVarieties.length > 0;
-                });
-            }
+                }),
+                articleId = this.getElement('article_id').getValue();
+
             if (articleId) {
                 var article = app.collections.get('article').get(articleId);
                 if (!_.contains(articles, article)) articles.push(article);
@@ -192,7 +189,11 @@ define([
         },
 
         openArticleCreationDialog: function () {
-            var dialog = app.dialogs.get('article');
+            var seedCategory = app.collections.get('category').findRoot('article_category_id').findChild({
+                    key: 'seed',
+                }),
+                dialog = app.dialogs.get('article');
+
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
                     model: polyglot.t('model.name.article').toLowerCase(),
@@ -202,15 +203,12 @@ define([
             dialog.form.setData({
                 entity_id: this.getElement('entity_id').getValue(),
                 organization_id: null,
+                category_id: seedCategory.get('id'),
                 active: true,
             });
             dialog.form.setVisible({
                 organization_id: false,
-                category_id: true,
-                name: true,
-                quantity_unit_id: true,
-                default_unit_price: true,
-                default_tax: true,
+                category_id: false,
                 active: false,
             });
             dialog.open().done(function (article) {
@@ -230,15 +228,13 @@ define([
             var plantIds = _.map(article.findAll('article_variety'), function(articleVariety) {
                     return articleVariety.get('plant_id');
                 }),
-                data = [{
-                    value: null,
-                    label: polyglot.t('model.field.variety_id.null'),
-                }],
+                data = [],
                 varieties = app.collections.get('variety').where({
                     plant_id: plantIds,
                     active: true,
                 }),
                 varietyId = this.getElement('variety_id').getValue();
+
             if (varietyId) {
                 var variety = app.collections.get('variety').get(varietyId);
                 if (!_.contains(varieties, variety)) varieties.push(variety);
@@ -256,20 +252,28 @@ define([
         },
 
         openVarietyCreationDialog: function () {
-            var dialog = app.dialogs.get('variety');
+            var articleId = this.getElement('article_id').getValue(),
+                article = app.collections.get('article').get(articleId),
+                dialog = app.dialogs.get('variety');
+
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
                     model: polyglot.t('model.name.variety').toLowerCase(),
                 }),
                 icon: new Icon({name: 'plus'}),
             });
-            dialog.form.setData({
+            var formData = {};
+            if (article) {
+                var plantIds = _.map(article.findAll('article_variety'), function(articleVariety) {
+                    return articleVariety.get('plant_id');
+                });
+                formData.plant_id = _.first(plantIds);
+            }
+            dialog.form.setData($.extend(formData, {
                 entity_id: this.getElement('entity_id').getValue(),
                 active: true,
-            });
+            }));
             dialog.form.setVisible({
-                plant_id: true,
-                name: true,
                 active: false,
             });
             dialog.open().done(function (variety) {
@@ -281,7 +285,7 @@ define([
         },
 
         buildCategoryData: function () {
-            var categories = app.collections.get('category').findRoot('seeding_category_id').findChildren();
+            var categories = app.collections.get('category').findRoot('seedling_category_id').findChildren();
             return _.map(categories, function(category) {
                 return {
                     value: category.get('id'),
@@ -291,7 +295,7 @@ define([
         },
 
         buildDensityUnitData: function () {
-            var categories = app.collections.get('category').findRoot('seeding_density_unit_id').findChildren();
+            var categories = app.collections.get('category').findRoot('seedling_density_unit_id').findChildren();
             return _.map(categories, function(category) {
                 return {
                     value: category.get('id'),
@@ -301,7 +305,7 @@ define([
         },
 
         buildAreaUnitData: function () {
-            var categories = app.collections.get('category').findRoot('seeding_area_unit_id').findChildren();
+            var categories = app.collections.get('category').findRoot('seedling_area_unit_id').findChildren();
             return _.map(categories, function(category) {
                 return {
                     value: category.get('id'),

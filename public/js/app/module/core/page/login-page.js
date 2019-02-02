@@ -15,8 +15,24 @@ define([
     return Page.extend({
 
         initialize: function () {
-            this.form = new Form();
-            this.button = new Button({
+            Page.prototype.initialize.call(this, {
+                id: 'login-page',
+                header: new Header({
+                    title: polyglot.t('login-page.title'),
+                    icon: new Icon({name: 'lock'}),
+                }),
+                body: new StackLayout({
+                    className: 'body',
+                    items: [
+                        new Form(),
+                        this.buildLoginButton(),
+                    ],
+                }),
+            });
+        },
+
+        buildLoginButton: function() {
+            return new Button({
                 label: new Label({
                     text: polyglot.t('login-page.button.submit'),
                     icon: new Icon({name: 'sign-in-alt'}),
@@ -27,35 +43,24 @@ define([
                     click: this.login.bind(this),
                 },
             });
-
-            Page.prototype.initialize.call(this, {
-                id: 'login-page',
-                header: new Header({
-                    title: polyglot.t('login-page.title'),
-                    icon: new Icon({name: 'lock'}),
-                }),
-                body: new StackLayout({
-                    items: [
-                        this.form,
-                        this.button,
-                    ],
-                }),
-            });
         },
 
         login: function() {
-            this.button.state = 'disabled';
-            this.button.render();
+            var loginForm = this.body.items[0],
+                loginButton = this.body.items[1];
+
+            loginButton.state = 'disabled';
+            loginButton.render();
             app.loader.show();
 
-            this.form.submit()
+            loginForm.submit()
                 .done(function(data) {
                     app.authentication.set(data.key, data);
                     app.router.navigate('authentication');
                 })
                 .always(function() {
-                    this.button.state = 'enabled';
-                    this.button.render();
+                    loginButton.state = 'enabled';
+                    loginButton.render();
                     app.loader.hide();
                 }.bind(this));
         },

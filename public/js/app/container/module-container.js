@@ -22,8 +22,8 @@ define([
 
             var modules = {
                 'core': new CoreModule(),
-                'basic-production': new BasicProductionModule(),
                 'taxonomy': new TaxonomyModule(),
+                'basic-production': new BasicProductionModule(),
                 'land': new LandModule(),
             };
 
