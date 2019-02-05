@@ -29,6 +29,7 @@ define([
             $(this.el).attr('type', this.type);
 
             $(this.el).empty();
+            this.items = _.isFunction(this.items) ? this.items() : this.items;
             _.each(this.items, function(item) {
                 $(this.el).append(item.el);
                 item.render();
@@ -37,16 +38,19 @@ define([
             var visible = false;
             _.each(this.getElements(), function(element) {
                 if (element.isVisible()) visible = true;
-            }.bind(this));
+            });
             if (visible) {
+                $(this.el).removeClass('hidden');
                 $(this.el).show();
             } else {
+                $(this.el).addClass('hidden');
                 $(this.el).hide();
             }
         },
 
         getElements: function () {
             var elements = {};
+            this.items = _.isFunction(this.items) ? this.items() : this.items;
             _.each(this.items, function(item) {
                 if (item instanceof FormElement) {
                     elements[item.getName()] = item;

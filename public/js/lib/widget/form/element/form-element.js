@@ -111,12 +111,14 @@ define([
 
             $(this.el).empty();
             if (this.visible) {
+                $(this.el).removeClass('hidden');
                 if (this.label) {
                     $(this.el).append(this.label.el);
                     this.label.render();
                 }
             }
             else {
+                $(this.el).addClass('hidden');
                 this.hiddenElement.val(this.value);
                 $(this.el).append(this.hiddenElement);
             }

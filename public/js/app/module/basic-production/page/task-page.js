@@ -65,15 +65,17 @@ define([
         },
 
         buildNavigationButtons: function () {
-            var items = [];
-            if (!_.isNull(this.model.get('crop_id'))) {
-                items.push(this.buildCropButton());
+            var buttons = [];
+            if (!_.isNull(this.model.get('crop_id')) && app.authentication.can('read', 'crop')) {
+                buttons.push(this.buildCropButton());
             }
-            if (!_.isNull(this.model.get('output_id'))) {
-                items.push(this.buildOutputButton());
+            if (!_.isNull(this.model.get('output_id')) && app.authentication.can('read', 'output')) {
+                buttons.push(this.buildOutputButton());
             }
-            items.push(this.buildEditButton());
-            return items;
+            if (app.authentication.can('update', 'task')) {
+                buttons.push(this.buildEditButton());
+            }
+            return buttons;
         },
 
         buildCropButton: function () {
@@ -177,14 +179,16 @@ define([
             var items = [],
                 category = this.model.find('category');
 
-            items.push(this.buildMenuPopupWorkingButton());
-            if (category.get('key') == 'seedling') {
+            if (app.authentication.can('create', 'working')) {
+                items.push(this.buildMenuPopupWorkingButton());
+            }
+            if (category.get('key') == 'seedling' && app.authentication.can('create', 'seedling')) {
                 items.push(this.buildMenuPopupSeedlingButton());
             }
-            if (category.get('key') == 'planting') {
+            if (category.get('key') == 'planting' && app.authentication.can('create', 'planting')) {
                 items.push(this.buildMenuPopupPlantingButton());
             }
-            if (category.get('key') == 'harvest') {
+            if (category.get('key') == 'harvest' && app.authentication.can('create', 'harvest')) {
                 items.push(this.buildMenuPopupOutputButton());
             }
             return items;

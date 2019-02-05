@@ -202,11 +202,11 @@
     margin: -0.5em 0;
 }
 
-.input-hidden-form-element-widget + .form-group-widget[type=horizontal] {
+form .hidden + .form-group-widget[type=horizontal] {
     margin-top: 0;
 }
 
-:not(.input-hidden-form-element-widget) ~ .form-group-widget[type=horizontal] {
+:not(form .hidden) ~ .form-group-widget[type=horizontal] {
     margin-top: -0.5em;
 }
 

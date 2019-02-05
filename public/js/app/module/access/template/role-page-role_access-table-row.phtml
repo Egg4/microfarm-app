@@ -1,0 +1,20 @@
+<script id="role-page-role_access-table-row-template" type="text/template">
+    <td>
+        <div><%- polyglot.t('model.name.' + resource) %></div>
+    </td>
+    <td>
+        <div class="center <% if (!access.create) { %>disabled<% } %>">
+            <i class="fas fa-plus"></i>
+        </div>
+    </td>
+    <td>
+        <div class="center <% if (!access.update) { %>disabled<% } %>">
+            <i class="fas fa-pencil-alt"></i>
+        </div>
+    </td>
+    <td>
+        <div class="center <% if (!access.delete) { %>disabled<% } %>">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+    </td>
+</script>

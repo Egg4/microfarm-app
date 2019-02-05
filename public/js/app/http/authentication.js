@@ -16,7 +16,7 @@ define([
                 client: false,
             }, options);
 
-            if (this.isSet()) {
+            if (this.isUserLogged()) {
                 this.client.setHeader(this.headerKey, this.getKey());
             }
         },
@@ -41,39 +41,76 @@ define([
             this.client.removeHeader(this.headerKey);
         },
 
-        isSet: function () {
+        isUserLogged: function () {
             return !_.isNull(this.storage.getItem(this.namespace + '.key'));
         },
 
+        isEntitySelected: function () {
+            if (!this.isUserLogged()) return false;
+            var data = this.getData();
+            return !_.isUndefined(data.user_role);
+        },
+
         getUserId: function () {
-            if (!this.isSet()) return null;
+            if (!this.isUserLogged()) {
+                throw new Error('User not logged');
+            }
             var data = this.getData();
             return data.user.id;
         },
 
+        getUserRoleId: function () {
+            if (!this.isEntitySelected()) {
+                throw new Error('Entity not selected');
+            }
+            var data = this.getData();
+            return data.user_role.id;
+        },
+
         getEntityId: function () {
-            if (!this.isSet()) return null;
+            if (!this.isEntitySelected()) {
+                throw new Error('Entity not selected');
+            }
             var data = this.getData();
-            return _.isUndefined(data.user_role) ? null : data.user_role.entity_id;
+            return data.user_role.entity_id;
         },
 
-        getRole: function () {
-            if (!this.isSet()) return null;
+        getRoleId: function () {
+            if (!this.isEntitySelected()) {
+                throw new Error('Entity not selected');
+            }
             var data = this.getData();
-            if (_.isUndefined(data.user_role)) return null;
-            if (_.isNull(data.user_role.role_id)) return 'admin';
-
-            return data.role.name;
+            return data.user_role.role_id;
         },
 
-        hasRole: function (role) {
-            return (this.getRole() == role);
+        isAdmin: function () {
+            return _.isNull(this.getRoleId());
+        },
+
+        can: function (action, resource) {
+            if (this.isAdmin()) return true;
+            if (action === 'read') return true;
+
+            var roleAccess = app.collections.get('role_access').find({
+                role_id: this.getRoleId(),
+                resource: resource,
+            });
+
+            return roleAccess && roleAccess.has(action) && roleAccess.get(action)
+        },
+
+        activate: function (key) {
+            return this.client.send({
+                method: 'POST',
+                url: '/user/activate',
+                data: {key: key},
+            });
         },
 
         logout: function () {
             var deferred = $.Deferred();
 
-            if (this.isSet()) {
+            if (this.isUserLogged()) {
                 this.client.send({
                     method: 'POST',
                     url: '/user/logout',

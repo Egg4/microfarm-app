@@ -20,7 +20,7 @@ define([
                 title: '',
                 icon: false,
                 collection: false,
-                searchForm: this.buildSearchForm(),
+                searchForm: this.buildSearchForm.bind(this),
                 onCreationClick: this.openCreationDialog.bind(this),
                 tableOptions: {},
             };
@@ -35,20 +35,24 @@ define([
         },
 
         buildHeader: function () {
+            this.searchForm = _.isFunction(this.searchForm) ? this.searchForm() : this.searchForm;
             return new Header({
                 title: this.title,
                 icon: this.icon,
                 back: true,
                 menu: app.panels.get('main-menu'),
-                bottom: _.isFunction(this.searchForm) ? this.searchForm() : this.searchForm,
+                bottom: this.searchForm,
             });
         },
 
         buildSearchForm: function () {
+            var buttons = [];
+            if (app.authentication.can('create', this.collection.modelName)) {
+                buttons.push(this.buildCreationButton());
+            }
+
             return new SearchForm({
-                buttons: [
-                    this.buildCreationButton(),
-                ],
+                buttons: buttons,
             });
         },
 

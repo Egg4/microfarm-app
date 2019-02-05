@@ -8,7 +8,7 @@ define([
     'lib/widget/layout/stack-layout',
     'lib/widget/navigation/navigation',
     'lib/widget/layout/grid-layout',
-    'app/module/core/form/login-form',
+    'app/module/core/form/signup-form',
     'lib/widget/button/button',
     'lib/widget/label/label',
     'lib/widget/icon/fa-icon',
@@ -18,10 +18,10 @@ define([
 
         initialize: function () {
             Page.prototype.initialize.call(this, {
-                id: 'login-page',
+                id: 'signup-page',
                 header: new Header({
-                    title: polyglot.t('login-page.title'),
-                    icon: new Icon({name: 'lock'}),
+                    title: polyglot.t('signup-page.title'),
+                    icon: new Icon({name: 'user-plus'}),
                 }),
                 body: this.buildBody(),
             });
@@ -35,7 +35,7 @@ define([
                         className: 'body',
                         items: [
                             this.buildForm(),
-                            this.buildLoginButton(),
+                            this.buildSignupButton(),
                         ],
                     }),
                 ],
@@ -48,22 +48,22 @@ define([
                 layout: new GridLayout({
                     column: 1,
                     items: [
-                        this.buildSignupButton(),
+                        this.buildLoginButton(),
                     ],
                 }),
             });
         },
 
-        buildSignupButton: function() {
+        buildLoginButton: function() {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('login-page.button.signup'),
-                    icon: new Icon({name: 'user-plus'}),
+                    text: polyglot.t('login-page.button.login'),
+                    icon: new Icon({name: 'sign-in-alt'}),
                 }),
                 iconAlign: 'top',
                 events: {
                     click: function () {
-                        app.router.navigate('signup');
+                        app.router.navigate('login');
                     },
                 },
             });
@@ -74,39 +74,46 @@ define([
             return new Form();
         },
 
-        buildLoginButton: function() {
+        buildSignupButton: function() {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('login-page.button.login'),
-                    icon: new Icon({name: 'sign-in-alt'}),
+                    text: polyglot.t('login-page.button.signup'),
+                    icon: new Icon({name: 'user-plus'}),
                 }),
                 iconAlign: 'right',
                 theme: 'b',
                 events: {
-                    click: this.login.bind(this),
+                    click: this.signup.bind(this),
                 },
             });
         },
 
-        login: function() {
+        signup: function() {
             var bodyLayout = this.body.items[1],
-                loginForm = bodyLayout.items[0],
-                loginButton = bodyLayout.items[1];
+                signupForm = bodyLayout.items[0],
+                signupButton = bodyLayout.items[1];
 
-            loginButton.state = 'disabled';
-            loginButton.render();
+            signupButton.state = 'disabled';
+            signupButton.render();
             app.loader.show();
 
-            loginForm.submit()
-                .done(function(data) {
-                    app.authentication.set(data.key, data);
-                    app.router.navigate('authentication');
+            signupForm.submit()
+                .done(function() {
+                    app.router.navigate('login');
                 })
                 .always(function() {
-                    loginButton.state = 'enabled';
-                    loginButton.render();
+                    signupButton.state = 'enabled';
+                    signupButton.render();
                     app.loader.hide();
-                }.bind(this));
+                });
+        },
+
+        render: function () {
+            var bodyLayout = this.body.items[1],
+                signupForm = bodyLayout.items[0];
+            signupForm.setData({});
+
+            Page.prototype.render.call(this);
         },
     });
 });

@@ -45,15 +45,17 @@ define([
         },
 
         filter: function(attributes) {
-            return _.filter(this.models, function (model) {
+            var predicate = _.isFunction(attributes) ? attributes : function (model) {
                 return model.isMatch(attributes);
-            });
+            };
+            return _.filter(this.models, predicate);
         },
 
         find: function(attributes) {
-            return _.find(this.models, function (model) {
+            var predicate = _.isFunction(attributes) ? attributes : function (model) {
                 return model.isMatch(attributes);
-            });
+            };
+            return _.find(this.models, predicate);
         },
 
         isUnique: function(data, attributes) {

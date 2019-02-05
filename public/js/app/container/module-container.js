@@ -4,14 +4,18 @@ define([
     'jquery',
     'underscore',
     'lib/container/container',
+    'app/module/access/access-module',
     'app/module/basic-production/basic-production-module',
     'app/module/core/core-module',
     'app/module/land/land-module',
+    'app/module/post-production/post-production-module',
     'app/module/taxonomy/taxonomy-module',
 ], function ($, _, Container,
+             AccessModule,
              BasicProductionModule,
              CoreModule,
              LandModule,
+             PostProductionModule,
              TaxonomyModule
 ) {
     return Container.extend({
@@ -22,8 +26,10 @@ define([
 
             var modules = {
                 'core': new CoreModule(),
+                'access': new AccessModule(),
                 'taxonomy': new TaxonomyModule(),
                 'basic-production': new BasicProductionModule(),
+                'post-production': new PostProductionModule(),
                 'land': new LandModule(),
             };
 

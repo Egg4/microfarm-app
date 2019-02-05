@@ -25,7 +25,9 @@ define([
                 body: this.buildBody.bind(this),
             });
 
-            this.listenTo(app.collections.get('task'), 'update', this.render);
+            if (app.modules.has('post-production')) {
+                this.listenTo(app.collections.get('task'), 'update', this.render);
+            }
         },
 
         buildTitle: function () {
@@ -37,7 +39,9 @@ define([
             var items = [];
             items.push(this.buildNavigation());
             items.push(this.buildOutputHtml());
-            items.push(this.buildTaskTable());
+            if (app.modules.has('post-production')) {
+                items.push(this.buildTaskTable());
+            }
 
             return new StackLayout({
                 items: items,
@@ -56,11 +60,18 @@ define([
         },
 
         buildNavigationButtons: function () {
-            return [
-                this.buildTaskButton(),
-                this.buildArticleButton(),
-                this.buildEditButton(),
-            ];
+            var buttons = [];
+            if (app.authentication.can('read', 'task')) {
+                buttons.push(this.buildTaskButton());
+            }
+            if (app.authentication.can('read', 'article')) {
+                buttons.push(this.buildArticleButton());
+            }
+            if (app.authentication.can('update', 'output')) {
+                buttons.push(this.buildEditButton());
+            }
+
+            return buttons;
         },
 
         buildTaskButton: function () {

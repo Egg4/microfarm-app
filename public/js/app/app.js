@@ -50,13 +50,7 @@ define([
         },
 
         run: function () {
-            var route = window.location.hash.substring(1) || this.router.defaultRoute;
             this.router.start();
-            if (this.authentication.isSet() && !_.isNull(app.authentication.getRole())) {
-                this.collections.fetchAll().done(function() {
-                    this.router.navigate(route);
-                }.bind(this));
-            }
         },
 
         onClientError: function (errors) {

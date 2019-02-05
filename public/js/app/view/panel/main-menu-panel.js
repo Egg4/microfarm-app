@@ -30,7 +30,7 @@ define([
             if (app.modules.has('basic-production')) {
                 buttons.push(this.buildCropsButton());
             }
-            if (app.modules.has('basic-production')) {
+            if (app.modules.has('post-production')) {
                 buttons.push(this.buildOutputsButton());
             }
             if (app.modules.has('trade')) {

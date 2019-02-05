@@ -105,8 +105,9 @@ td .right {
 }
 
 /********************************/
-/*  Login page                  */
+/*  Signup & Login page         */
 /********************************/
+#signup-page .body,
 #login-page .body {
     padding: 0.5em;
     max-width: 600px;

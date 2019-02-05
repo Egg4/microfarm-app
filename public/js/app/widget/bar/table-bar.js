@@ -24,7 +24,7 @@ define([
             Bar.prototype.initialize.call(this, $.extend(true, {
                 layout: new BorderLayout({
                     left: this.buildLabel(),
-                    right: this.buildCreationButton(),
+                    right: this.onCreationClick ? this.buildCreationButton() : false,
                 }),
             }, options));
 

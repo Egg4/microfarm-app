@@ -61,10 +61,15 @@ define([
         },
 
         buildNavigationButtons: function () {
-            return [
-                this.buildArticleButton(),
-                this.buildEditButton(),
-            ];
+            var buttons = [];
+            if (app.authentication.can('read', 'article')) {
+                buttons.push(this.buildArticleButton());
+            }
+            if (app.authentication.can('update', 'crop')) {
+                buttons.push(this.buildEditButton());
+            }
+
+            return buttons;
         },
 
         buildArticleButton: function () {

@@ -53,9 +53,12 @@ define([
         },
 
         buildNavigationButtons: function () {
-            return [
-                this.buildEditButton(),
-            ];
+            var buttons = [];
+            if (app.authentication.can('update', 'zone')) {
+                buttons.push(this.buildEditButton());
+            }
+
+            return buttons;
         },
 
         buildEditButton: function () {

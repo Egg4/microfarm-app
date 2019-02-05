@@ -9,27 +9,36 @@ define([
     return Backbone.Router.extend({
         routes: {
             '': 'home',
+            'activate/:key': 'activate',
         },
-        defaultRoute: 'entity',
+        defaultRoute: 'planner',
 
         start: function () {
-            Backbone.history.start();
+            if (app.authentication.isEntitySelected()) {
+                app.collections.fetchAll().done(function() {
+                    Backbone.history.start();
+                }.bind(this));
+            }
+            else {
+                Backbone.history.start();
+            }
         },
 
         execute: function(callback, args, name) {
-            if (name != 'login' && !app.authentication.isSet()) {
+            if (!_.contains(['login', 'signup', 'activate'], name) && !app.authentication.isUserLogged()) {
                 this.navigate('login');
                 return false;
             }
-            if (name != 'authentication' && app.authentication.isSet() && _.isNull(app.authentication.getRole())) {
+            if (name != 'authentication' && app.authentication.isUserLogged() && !app.authentication.isEntitySelected()) {
                 this.navigate('authentication');
                 return false;
             }
-            if (name == 'login' && app.authentication.isSet()) {
+            if (name == 'login' && app.authentication.isUserLogged()) {
                 this.navigate();
                 return false;
             }
-            if (_.contains(['login', 'authentication'], name) || app.collections.fetched()) {
+            if (_.contains(['login', 'signup', 'activate', 'authentication'], name)
+                || app.collections.fetched()) {
                 if (app.pages.has(name)) {
                     var page = app.pages.get(name);
                     if (page[callback]) page[callback].apply(page, args);
@@ -57,6 +66,12 @@ define([
             if (app.collections.fetched()) {
                 this.navigate(this.defaultRoute);
             }
+        },
+
+        activate: function (key) {
+            app.authentication.activate(key).done(function () {
+                this.navigate();
+            }.bind(this));
         },
 
         changePage: function (page) {

@@ -4,7 +4,7 @@ define([
     'jquery',
     'underscore',
     'lib/schema/schema',
-    'app/module/basic-production/page/outputs-page',
+    'app/module/core/page/signup-page',
 ], function ($, _, Schema, Page) {
 
     return Schema.extend({
@@ -14,7 +14,7 @@ define([
                 page: {
                     class: Page,
                     routes: [{
-                        pattern: 'outputs',
+                        pattern: 'signup',
                     }],
                 },
             });

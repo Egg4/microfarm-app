@@ -99,7 +99,9 @@ define([
                 },
                 events: {
                     click: function () {
-                        this.openTaskCreationMenuPopup(date);
+                        if (app.authentication.can('create', 'task')) {
+                            this.openTaskCreationMenuPopup(date);
+                        }
                     }.bind(this),
                 },
             });
@@ -115,10 +117,12 @@ define([
         },
 
         buildTaskCreationMenuPopupItems: function () {
-            return [
-                this.buildTaskCreationMenuPopupCropButton(),
-                this.buildTaskCreationMenuPopupOutputButton(),
-            ];
+            var items = [];
+            items.push(this.buildTaskCreationMenuPopupCropButton());
+            if (app.modules.has('post-production')) {
+                items.push(this.buildTaskCreationMenuPopupOutputButton());
+            }
+            return items;
         },
 
         buildTaskCreationMenuPopupCropButton: function () {
@@ -220,19 +224,21 @@ define([
         buildTaskList: function (date) {
             var dateISO = date.format('yy-mm-dd'),
                 currentMondayISO = new Date().getMonday().format('yy-mm-dd'),
-                mondayISO = this.monday.format('yy-mm-dd');
+                mondayISO = this.monday.format('yy-mm-dd'),
+                isCurrentWeek = (date.getDay() == 1 && mondayISO == currentMondayISO);
 
-            var tasks = app.collections.get('task').where({
-                date: dateISO,
+            var tasks = app.collections.get('task').filter(function (task) {
+                if (isCurrentWeek) {
+                    if (task.get('done') || task.get('date') > dateISO) return false;
+                }
+                else {
+                    if (task.get('date') !== dateISO) return false;
+                }
+                if (!_.isNull(task.get('crop_id')))  return true;
+                if (!_.isNull(task.get('output_id')) && app.modules.has('post-production'))  return true;
+                if (!_.isNull(task.get('organization_id')) && app.modules.has('trade'))  return true;
+                return false;
             });
-            // If current week add previous undone tasks on monday
-            if (date.getDay() == 1 && mondayISO == currentMondayISO) {
-                app.collections.get('task').each(function (task) {
-                    if (!task.get('done') && task.get('date') < dateISO) {
-                        tasks.push(task);
-                    };
-                });
-            }
 
             // Sort asc tasks by date & time
             tasks = _.sortBy(tasks, function (task) {
@@ -260,7 +266,10 @@ define([
                         app.router.navigate('task/' + task.get('id'));
                     },
                     taphold: function () {
-                        this.openTaskMenuPopup(task);
+                        if (app.authentication.can('update', 'task')
+                        || app.authentication.can('delete', 'task') ) {
+                            this.openTaskMenuPopup(task);
+                        }
                     }.bind(this),
                 },
             });

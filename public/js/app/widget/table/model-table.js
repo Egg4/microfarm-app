@@ -48,10 +48,12 @@ define([
         },
 
         buildHeader: function () {
+            var modelName = this.collection.modelName;
+
             return new Bar({
                 title: this.title,
                 icon: this.icon,
-                onCreationClick: this.onCreationClick,
+                onCreationClick: app.authentication.can('create', modelName) ? this.onCreationClick : false,
             });
         },
 
@@ -147,10 +149,19 @@ define([
         },
 
         navigateToModelPage: function (model) {
-            app.router.navigate(model.collection.modelName + '/' + model.get('id'));
+            var modelName = model.collection.modelName;
+            if (app.authentication.can('read', modelName)) {
+                app.router.navigate(modelName + '/' + model.get('id'));
+            }
         },
 
         openMenuPopup: function (model) {
+            var modelName = model.collection.modelName;
+            if (!app.authentication.can('update', modelName)
+                && !app.authentication.can('delete', modelName)) {
+                return;
+            }
+
             var popup = app.popups.get('menu');
             popup.setData({
                 title: model.getDisplayName(),

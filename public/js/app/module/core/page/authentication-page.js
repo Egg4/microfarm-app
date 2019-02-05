@@ -30,36 +30,29 @@ define([
                     ],
                 }),
             });
-
-            this.entityCollection = app.collections.get('entity');
-            this.userRoleCollection = app.collections.get('user_role');
         },
 
         render: function () {
             this.loadCollections().done(function () {
-                if (this.userRoleCollection.length == 1) {
-                    var userRole = this.userRoleCollection.at(0);
-                    this.authenticate(userRole.get('id'));
-                }
-                else {
-                    Page.prototype.render.call(this);
-                }
+                Page.prototype.render.call(this);
             }.bind(this));
         },
 
         loadCollections: function () {
-            this.entityCollection.reset();
-            this.userRoleCollection.reset();
+            app.collections.resetAll();
             var promises = [];
-            promises.push(this.entityCollection.fetch({data: {range: '0-1000'}}));
-            promises.push(this.userRoleCollection.fetch({data: {range: '0-1000'}}));
+            promises.push(app.collections.get('entity').fetch({data: {range: '0-1000'}}));
+            promises.push(app.collections.get('user_role').fetch({data: {
+                user_id: app.authentication.getUserId(),
+                range: '0-1000',
+            }}));
 
             return $.when.apply($, promises);
         },
 
         buildListItems: function () {
             var items = [];
-            this.userRoleCollection.each(function(userRole) {
+            app.collections.get('user_role').each(function(userRole) {
                 items.push(this.buildListItem(userRole));
             }.bind(this));
 

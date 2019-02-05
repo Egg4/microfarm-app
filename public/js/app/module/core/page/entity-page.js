@@ -37,31 +37,39 @@ define([
                 items: [
                     this.buildNavigation(),
                     this.buildEntityHtml(),
-                    this.buildIconGrid(),
                 ],
             });
         },
 
         /*---------------------------------------- Navigation ------------------------------------------*/
         buildNavigation: function () {
-            var items = this.buildNavigationButtons();
+            var row1Items = this.buildNavigationRow1Buttons(),
+                row2Items = this.buildNavigationRow2Buttons();
             return new Navigation({
-                layout: new GridLayout({
-                    column: items.length,
-                    items: items,
+                layout: new StackLayout({
+                    items: [
+                        new GridLayout({
+                            column: row1Items.length,
+                            items: row1Items,
+                        }),
+                        new GridLayout({
+                            column: row2Items.length,
+                            items: row2Items,
+                        }),
+                    ],
                 }),
             });
         },
 
-        buildNavigationButtons: function () {
+        buildNavigationRow1Buttons: function () {
             var buttons = [];
-            if (app.modules.has('taxonomy')) {
+            if (app.modules.has('taxonomy') && app.authentication.can('read', 'variety')) {
                 buttons.push(this.buildVarietiesButton());
             }
-            if (app.modules.has('basic-production')) {
+            if (app.modules.has('basic-production') && app.authentication.can('read', 'article')) {
                 buttons.push(this.buildArticlesButton());
             }
-            if (app.modules.has('land')) {
+            if (app.modules.has('land') && app.authentication.can('read', 'zone')) {
                 buttons.push(this.buildZonesButton());
             }
             return buttons;
@@ -112,6 +120,45 @@ define([
             });
         },
 
+        buildNavigationRow2Buttons: function () {
+            var buttons = [];
+            if (app.modules.has('access') && app.authentication.isAdmin()) {
+                buttons.push(this.buildUsersButton());
+                buttons.push(this.buildRolesButton());
+            }
+            return buttons;
+        },
+
+        buildUsersButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('users-page.title'),
+                    icon: new Icon({name: 'user'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('users');
+                    },
+                },
+            });
+        },
+
+        buildRolesButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('roles-page.title'),
+                    icon: new Icon({name: 'users'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('roles');
+                    },
+                },
+            });
+        },
+
         /*---------------------------------------- Entity ------------------------------------------*/
         buildEntityHtml: function () {
             return new Html({
@@ -125,76 +172,6 @@ define([
 
         buildEntityHtmlData: function () {
             return this.model.toJSON();
-        },
-
-        /*---------------------------------------- Icons ------------------------------------------*/
-        buildIconGrid: function () {
-            return new GridLayout({
-                css: {
-                    'text-align': 'center',
-                    'font-size': '2em',
-                },
-                column: 5,
-                items: [
-                    new Icon({name: 'hammer'}),
-                    new Icon({name: 'screwdriver'}),
-                    new Icon({name: 'wrench'}),
-                    new Icon({name: 'thermometer-half'}),
-                    new Icon({name: 'sitemap'}),
-                    new Icon({name: 'grip-horizontal'}),
-                    new Icon({name: 'grip-vertical'}),
-                    new Icon({name: 'th-large'}),
-                    new Icon({name: 'th'}),
-                    new Icon({name: 'bars'}),
-                    new Icon({name: 'align-justify'}),
-                    new Icon({name: 'vector-square'}),
-                    new Icon({name: 'leaf'}),
-                    new Icon({name: 'seedling'}),
-                    new Icon({name: 'cannabis'}),
-                    new Icon({name: 'apple-alt'}),
-                    new Icon({name: 'lemon'}),
-                    new Icon({name: 'eye'}),
-                    new Icon({name: 'book'}),
-                    new Icon({name: 'tree'}),
-                    new Icon({name: 'bug'}),
-                    new Icon({name: 'crow'}),
-                    new Icon({name: 'frog'}),
-                    new Icon({name: 'spider'}),
-                    new Icon({name: 'feather-alt'}),
-                    new Icon({name: 'project-diagram'}),
-                    new Icon({name: 'clipboard-list'}),
-                    new Icon({name: 'dna'}),
-                    new Icon({name: 'balance-scale'}),
-                    new Icon({name: 'barcode'}),
-                    new Icon({name: 'qrcode'}),
-                    new Icon({name: 'bong'}),
-                    new Icon({name: 'skull-crossbones'}),
-                    new Icon({name: 'flask'}),
-                    new Icon({name: 'fill-drip'}),
-                    new Icon({name: 'box-open'}),
-                    new Icon({name: 'briefcase-medical'}),
-                    new Icon({name: 'medkit'}),
-                    new Icon({name: 'first-aid'}),
-                    new Icon({name: 'certificate'}),
-                    new Icon({name: 'cloud-sun-rain'}),
-                    new Icon({name: 'cog'}),
-                    new Icon({name: 'database'}),
-                    new Icon({name: 'warehouse'}),
-                    new Icon({name: 'cubes'}),
-                    new Icon({name: 'dice-d6'}),
-                    new Icon({name: 'dolly'}),
-                    new Icon({name: 'file-invoice-dollar'}),
-                    new Icon({name: 'layer-group'}),
-                    new Icon({name: 'parachute-box'}),
-                    new Icon({name: 'shopping-bag'}),
-                    new Icon({name: 'shopping-basket'}),
-                    new Icon({name: 'shopping-cart'}),
-                    new Icon({name: 'clock'}),
-                    new Icon({name: 'camera-retro'}),
-                    new Icon({name: 'camera'}),
-                    new Icon({name: 'image'}),
-                ],
-            });
         },
     });
 });

@@ -52,10 +52,15 @@ define([
         },
 
         buildNavigationButtons: function () {
-            return [
-                this.buildZoneButton(),
-                this.buildEditButton(),
-            ];
+            var buttons = [];
+            if (app.authentication.can('read', 'zone')) {
+                buttons.push(this.buildZoneButton());
+            }
+            if (app.authentication.can('update', 'block')) {
+                buttons.push(this.buildEditButton());
+            }
+
+            return buttons;
         },
 
         buildZoneButton: function () {

@@ -56,9 +56,12 @@ define([
         },
 
         buildNavigationButtons: function () {
-            return [
-                this.buildEditButton(),
-            ];
+            var buttons = [];
+            if (app.authentication.can('update', 'article')) {
+                buttons.push(this.buildEditButton());
+            }
+
+            return buttons;
         },
 
         buildEditButton: function () {
