@@ -1,5 +1,6 @@
 .idea/
 desktop.ini
+cache/
 public/img/photo
 public/build
 builder.bat

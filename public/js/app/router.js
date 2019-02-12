@@ -25,6 +25,7 @@ define([
         },
 
         execute: function(callback, args, name) {
+            console.log('route: ' + name);
             if (!_.contains(['login', 'signup', 'activate'], name) && !app.authentication.isUserLogged()) {
                 this.navigate('login');
                 return false;

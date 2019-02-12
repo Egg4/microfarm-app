@@ -42,7 +42,7 @@ define([
 
         buildRoleFormData: function () {
             return {
-                entity_id: app.authentication.getEntityId(),
+                entity_id: app.authentication.get('entity_id'),
             };
         },
 

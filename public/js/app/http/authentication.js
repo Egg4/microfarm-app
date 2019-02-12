@@ -10,81 +10,45 @@ define([
 
         initialize: function (options) {
             $.extend(true, this, {
-                namespace: 'authentication',
-                headerKey: 'Authorization',
                 storage: localStorage,
+                storageKey: 'authentication',
+                headerKey: 'Authorization',
                 client: false,
             }, options);
 
             if (this.isUserLogged()) {
-                this.client.setHeader(this.headerKey, this.getKey());
+                this.client.setHeader(this.headerKey, this.get('key'));
             }
         },
 
-        set: function (key, data) {
-            this.storage.setItem(this.namespace + '.key', key);
-            this.storage.setItem(this.namespace + '.data', JSON.stringify(data));
-            this.client.setHeader(this.headerKey, key);
+        set: function (attributes) {
+            this.storage.setItem(this.storageKey, JSON.stringify(attributes));
+            this.client.setHeader(this.headerKey, attributes.key);
         },
 
-        getKey: function () {
-            return this.storage.getItem(this.namespace + '.key');
-        },
-
-        getData: function () {
-            return JSON.parse(this.storage.getItem(this.namespace + '.data'));
+        get: function (attribute) {
+            var data = JSON.parse(this.storage.getItem(this.storageKey));
+            if (attribute) {
+                return _.has(data, attribute) ? data[attribute] : undefined;
+            }
+            return data;
         },
 
         clear: function () {
-            this.storage.removeItem(this.namespace + '.key');
-            this.storage.removeItem(this.namespace + '.data');
+            this.storage.removeItem(this.storageKey);
             this.client.removeHeader(this.headerKey);
         },
 
         isUserLogged: function () {
-            return !_.isNull(this.storage.getItem(this.namespace + '.key'));
+            return (this.get('user_id'));
         },
 
         isEntitySelected: function () {
-            if (!this.isUserLogged()) return false;
-            var data = this.getData();
-            return !_.isUndefined(data.user_role);
-        },
-
-        getUserId: function () {
-            if (!this.isUserLogged()) {
-                throw new Error('User not logged');
-            }
-            var data = this.getData();
-            return data.user.id;
-        },
-
-        getUserRoleId: function () {
-            if (!this.isEntitySelected()) {
-                throw new Error('Entity not selected');
-            }
-            var data = this.getData();
-            return data.user_role.id;
-        },
-
-        getEntityId: function () {
-            if (!this.isEntitySelected()) {
-                throw new Error('Entity not selected');
-            }
-            var data = this.getData();
-            return data.user_role.entity_id;
-        },
-
-        getRoleId: function () {
-            if (!this.isEntitySelected()) {
-                throw new Error('Entity not selected');
-            }
-            var data = this.getData();
-            return data.user_role.role_id;
+            return (this.get('entity_id'));
         },
 
         isAdmin: function () {
-            return _.isNull(this.getRoleId());
+            return !(this.get('role_id'));
         },
 
         can: function (action, resource) {
@@ -92,7 +56,7 @@ define([
             if (action === 'read') return true;
 
             var roleAccess = app.collections.get('role_access').find({
-                role_id: this.getRoleId(),
+                role_id: this.get('role_id'),
                 resource: resource,
             });
 
@@ -110,19 +74,8 @@ define([
         logout: function () {
             var deferred = $.Deferred();
 
-            if (this.isUserLogged()) {
-                this.client.send({
-                    method: 'POST',
-                    url: '/user/logout',
-                }).done(function(data) {
-                    this.clear();
-                    deferred.resolve();
-                }.bind(this));
-            }
-            else {
-                this.clear();
-                deferred.resolve();
-            }
+            this.clear();
+            deferred.resolve();
 
             return deferred.promise();
         },

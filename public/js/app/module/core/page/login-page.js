@@ -99,7 +99,7 @@ define([
 
             loginForm.submit()
                 .done(function(data) {
-                    app.authentication.set(data.key, data);
+                    app.authentication.set(data);
                     app.router.navigate('authentication');
                 })
                 .always(function() {

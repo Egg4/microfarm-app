@@ -77,7 +77,7 @@ define([
 
         setSuppliersData: function () {
             this.filter = {
-                entity_id: app.authentication.getEntityId(),
+                entity_id: app.authentication.get('entity_id'),
                 supplier: true,
                 client: false,
             };
@@ -85,7 +85,7 @@ define([
 
         setClientsData: function () {
             this.filter = {
-                entity_id: app.authentication.getEntityId(),
+                entity_id: app.authentication.get('entity_id'),
                 supplier: false,
                 client: true,
             };

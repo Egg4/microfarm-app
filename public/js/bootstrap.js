@@ -21,12 +21,12 @@ require.config({
         },
     },
     paths: {
-        'jquery': '../vendor/js/jquery-min',
-        'jquery.mobile': '../vendor/js/jquery.mobile-min',
+        'jquery': '../vendor/js/jquery-1.12.4',
+        'jquery.mobile': '../vendor/js/jquery.mobile-1.4.5',
         'jquery.datepicker': '../vendor/js/jquery.datepicker',
-        'underscore': '../vendor/js/underscore-min',
-        'backbone': '../vendor/js/backbone-min',
-        'pako': '../vendor/js/pako-min',
+        'underscore': '../vendor/js/underscore-1.9.1',
+        'backbone': '../vendor/js/backbone-1.3.3',
+        'pako': '../vendor/js/pako-1.0.8.min',
         'polyglot': '../vendor/js/polyglot',
     },
 });

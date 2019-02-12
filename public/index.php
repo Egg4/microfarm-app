@@ -1,5 +1,5 @@
 <?php
-
+define('ROOT_DIR', dirname(__DIR__));
 define('PUBLIC_DIR', __DIR__);
 define('APP_ENV', isset($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : 'prod');
 //define('APP_ENV', 'test');
@@ -33,17 +33,37 @@ function apiUrl() {
     return sprintf('%s://%s:%d/v1.0', $api['scheme'], $api['host'], $api['port']);
 }
 
-function includeTemplates($dir, $extension = 'phtml') {
+function includeTemplates() {
+    $scanDir = PUBLIC_DIR . '/js/app';
+
+    if (APP_ENV === 'dev') {
+        echo getTemplates($scanDir);
+        return;
+    }
+    $cacheFilename = ROOT_DIR . '/cache/templates.phtml';
+    if (file_exists($cacheFilename)) {
+        include $cacheFilename;
+        return;
+    }
+    $content = getTemplates($scanDir);
+    file_put_contents($cacheFilename, $content);
+    echo $content;
+}
+
+function getTemplates($dir, $extension = 'phtml') {
+    $content = '';
     $files = array_diff(scandir($dir), array('..', '.'));
     foreach ($files as $file) {
         $path = $dir . DIRECTORY_SEPARATOR . $file;
         if (is_dir($path)) {
-            includeTemplates($path, $extension);
+            $content .= getTemplates($path, $extension);
         }
         elseif (substr($file, -5) == $extension) {
-            include $path;
+            $content .= file_get_contents($path) . PHP_EOL . PHP_EOL;
         }
     }
+
+    return $content;
 }
 ?>
 
@@ -59,9 +79,10 @@ function includeTemplates($dir, $extension = 'phtml') {
         <link rel="apple-touch-icon" sizes="180x180" href="<?= resourceUrl('/favicon/apple-touch-icon.png'); ?>">
         <link rel="icon" type="image/png" sizes="32x32" href="<?= resourceUrl('/favicon/favicon-32x32.png'); ?>">
         <link rel="icon" type="image/png" sizes="16x16" href="<?= resourceUrl('/favicon/favicon-16x16.png'); ?>">
-        <link rel="manifest" href="<?= resourceUrl('/favicon/manifest.json'); ?>">
+        <link rel="manifest" href="<?= resourceUrl('/favicon/site.webmanifest'); ?>">
         <link rel="mask-icon" href="<?= resourceUrl('/favicon/safari-pinned-tab.svg'); ?>" color="#5bbad5">
-        <meta name="theme-color" content="#ffffff">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#e06b18">
 
         <!-- Css -->
         <link
@@ -72,7 +93,7 @@ function includeTemplates($dir, $extension = 'phtml') {
         <script
             type="text/javascript"
             <?= APP_ENV === 'dev' ? 'data-main="js/bootstrap"' : ''; ?>
-            src="<?= APP_ENV === 'dev' ? '/vendor/js/require-min.js' : '/build/app-min.js'; ?>">
+            src="<?= APP_ENV === 'dev' ? '/vendor/js/require-2.3.6.js' : '/build/app-min.js'; ?>">
         </script>
         <script type="text/javascript">
             var env = '<?= APP_ENV; ?>';
@@ -98,7 +119,7 @@ function includeTemplates($dir, $extension = 'phtml') {
         </div>
 
         <!-- Templates -->
-        <? includeTemplates(PUBLIC_DIR . '/js/app'); ?>
+        <?php includeTemplates(); ?>
 
     </body>
 </html>

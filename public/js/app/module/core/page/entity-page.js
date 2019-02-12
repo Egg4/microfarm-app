@@ -28,7 +28,7 @@ define([
         },
 
         setData: function () {
-            var entityId = app.authentication.getEntityId();
+            var entityId = app.authentication.get('entity_id');
             this.model = this.collection.get(entityId);
         },
 

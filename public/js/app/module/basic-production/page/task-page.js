@@ -389,7 +389,7 @@ define([
                 case 'working': return {
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),
-                    user_id: app.authentication.getUserId(),
+                    user_id: app.authentication.get('user_id'),
                     duration: '01:00:00',
                 };
                 case 'seedling': return {

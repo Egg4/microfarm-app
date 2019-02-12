@@ -93,7 +93,7 @@ define([
 
         setData: function (organization_id) {
             this.filter = {
-                entity_id: app.authentication.getEntityId(),
+                entity_id: app.authentication.get('entity_id'),
                 organization_id: !_.isNull(organization_id) ? parseInt(organization_id) : null,
             };
         },

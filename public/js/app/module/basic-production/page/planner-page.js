@@ -177,7 +177,7 @@ define([
                 icon: new Icon({name: 'plus'}),
             });
             dialog.form.setData({
-                entity_id: app.authentication.getEntityId(),
+                entity_id: app.authentication.get('entity_id'),
                 crop_id: modelName === 'crop' ? '' : null,
                 output_id: modelName === 'output' ? '' : null,
                 organization_id: modelName === 'organization' ? '' : null,

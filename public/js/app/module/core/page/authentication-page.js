@@ -43,7 +43,7 @@ define([
             var promises = [];
             promises.push(app.collections.get('entity').fetch({data: {range: '0-1000'}}));
             promises.push(app.collections.get('user_role').fetch({data: {
-                user_id: app.authentication.getUserId(),
+                user_id: app.authentication.get('user_id'),
                 range: '0-1000',
             }}));
 
@@ -89,7 +89,7 @@ define([
                     id: user_role_id,
                 },
             }).done(function(data) {
-                app.authentication.set(data.key, data);
+                app.authentication.set(data);
                 app.collections.fetchAll().done(function() {
                     app.router.navigate();
                 }).always(function() {
