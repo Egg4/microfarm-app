@@ -48,12 +48,18 @@ define([
         },
 
         buildHeader: function () {
-            var modelName = this.collection.modelName;
+            var onCreationClick = this.onCreationClick;
+            if (this.collection) {
+                var modelName = this.collection.modelName;
+                if (!app.authentication.can('create', modelName)) {
+                    onCreationClick = false;
+                }
+            }
 
             return new Bar({
                 title: this.title,
                 icon: this.icon,
-                onCreationClick: app.authentication.can('create', modelName) ? this.onCreationClick : false,
+                onCreationClick: onCreationClick,
             });
         },
 
@@ -165,6 +171,8 @@ define([
             var popup = app.popups.get('menu');
             popup.setData({
                 title: model.getDisplayName(),
+                edit: app.authentication.can('update', modelName),
+                delete: app.authentication.can('delete', modelName),
             });
             popup.open().done(function (action) {
                 switch (action) {

@@ -81,13 +81,13 @@ function getTemplates($dir, $extension = 'phtml') {
         <link rel="icon" type="image/png" sizes="16x16" href="<?= resourceUrl('/favicon/favicon-16x16.png'); ?>">
         <link rel="manifest" href="<?= resourceUrl('/favicon/site.webmanifest'); ?>">
         <link rel="mask-icon" href="<?= resourceUrl('/favicon/safari-pinned-tab.svg'); ?>" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="msapplication-TileColor" content="#e06b18">
         <meta name="theme-color" content="#e06b18">
 
         <!-- Css -->
         <link
             rel="stylesheet"
-            href="<?= APP_ENV === 'dev' ? '/css/main.css' : '/build/app-min.css'; ?>"/>
+            href="<?= APP_ENV === 'dev' ? '/css/style.css' : '/build/app-min.css'; ?>"/>
 
         <!-- Javascript -->
         <script

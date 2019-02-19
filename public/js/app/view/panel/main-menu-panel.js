@@ -15,7 +15,7 @@ define([
             Panel.prototype.initialize.call(this, $.extend(true, {
                 id: 'main-menu-panel',
                 position: 'right',
-                items: this.buildButtons(),
+                items: this.buildButtons.bind(this),
             }, options));
         },
 

@@ -11,7 +11,30 @@ define([
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            timeout: 10000,
+            timeout: 25000,
+        },
+        demo: {
+            email: 'demo.user@demo.org',
+            password: 'Démo1234',
+        },
+        account: {
+            basic: [
+                'taxonomy',
+                'land',
+                'basic-production',
+            ],
+            demo: [
+                'taxonomy',
+                'land',
+                'basic-production',
+            ],
+            advanced: [
+                'access',
+                'taxonomy',
+                'land',
+                'basic-production',
+                'post-production',
+            ],
         },
     };
 

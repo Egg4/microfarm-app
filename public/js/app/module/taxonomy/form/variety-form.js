@@ -8,10 +8,9 @@ define([
     'lib/widget/form/element/input-hidden-form-element',
     'lib/widget/form/element/select-form-element',
     'lib/widget/form/element/input-text-form-element',
-    'lib/widget/form/element/textarea-form-element',
     'lib/widget/form/element/checkbox-form-element',
     'lib/widget/form/label/form-label',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputText, Textarea, Checkbox, FormLabel) {
+], function ($, _, Form, FormGroup, InputHidden, Select, InputText, Checkbox, FormLabel) {
 
     return Form.extend({
 
@@ -40,11 +39,6 @@ define([
                         new InputText({
                             name: 'name',
                             placeholder: polyglot.t('form.placeholder.name'),
-                        }),
-                        new Textarea({
-                            name: 'description',
-                            placeholder: polyglot.t('form.placeholder.description'),
-                            nullable: true,
                         }),
                         new FormGroup({
                             items: [

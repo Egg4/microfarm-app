@@ -18,17 +18,15 @@ define([
 
             Panel.prototype.initialize.call(this, $.extend(true, {
                 dismissible: true,
-                layout: this.buildList(),
+                swipeClose: true,
+                layout: this.buildList.bind(this),
             }, options));
         },
 
         buildList: function () {
+            var items = _.isFunction(this.items) ? this.items() : this.items;
             return new List({
-                items: function () {
-                    return _.map(this.items, function(item) {
-                        return this.buildListItem(item);
-                    }.bind(this));
-                }.bind(this),
+                items: _.map(items, this.buildListItem.bind(this)),
             });
         },
 

@@ -115,28 +115,33 @@ define([
 
         buildTaskData: function () {
             var data = [];
-            var harvestCategory = app.collections.get('category').findRoot('task_category_id').findChild({
+            var categories = app.collections.get('category').findRoot('task_category_id').findChild({
                 key: 'crop_production',
             }).findChild({
                 key: 'primary',
-            }).findChild({
-                key: 'harvest',
+            }).findChildren({
+                key: ['harvest', 'harvest_plant', 'harvest_seed'],
             });
             var tasks = app.collections.get('task').where({
-                category_id: harvestCategory.get('id'),
+                category_id: _.map(categories, function(category) {
+                    return category.get('id');
+                }),
             });
             tasks = _.sortBy(tasks, function (task) {
                 return task.getDisplayName();
             });
             _.each(tasks, function(task) {
-                var date = task.get('date'),
+                var crop = task.find('crop'),
+                    article = crop.find('article'),
+                    category = task.find('category'),
+                    date = task.get('date'),
                     day = date.dateFormat('d'),
                     month = polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()),
                     time = task.get('time').substring(0, 5);
                 data.push({
-                    optgroup: task.find('crop').find('article').getDisplayName(),
+                    optgroup: article.getDisplayName(),
                     value: task.get('id'),
-                    label: day + ' ' + month + ' ' + time + ' - '  + task.find('crop').getDisplayName(),
+                    label: day + ' ' + month + ' ' + time + ' - '  + crop.getDisplayName() + ' - ' + category.get('value'),
                 });
             });
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
@@ -150,14 +155,17 @@ define([
             if (!task) return [];
 
             var cropArticle = task.find('crop').find('article'),
-                categories = app.collections.get('category').findRoot('article_category_id').findChildren({
-                    key: ['seed', 'plant', 'harvest'],
+                keyMap = {
+                    harvest: 'harvest',
+                    harvest_plant: 'plant',
+                    harvest_seed: 'seed',
+                },
+                category = app.collections.get('category').findRoot('article_category_id').findChild({
+                    key: keyMap[task.find('category').get('key')],
                 }),
                 articles = app.collections.get('article').where({
                     organization_id: null,
-                    category_id: _.map(categories, function(category) {
-                        return category.get('id');
-                    }),
+                    category_id: category.get('id'),
                     active: true,
                 });
             var cropArticleVarieties = cropArticle.findAll('article_variety');
@@ -170,9 +178,6 @@ define([
                 })
                 return articleVarieties.length > 0;
             });
-            if (!_.contains(articles, cropArticle)) {
-                articles.push(cropArticle);
-            }
             articles = _.sortBy(articles, function (article) {
                 return article.getDisplayName();
             });
@@ -187,7 +192,19 @@ define([
         },
 
         openArticleCreationDialog: function () {
-            var dialog = app.dialogs.get('article');
+            var taskId = this.getElement('task_id').getValue(),
+                task = app.collections.get('task').get(taskId),
+                keyMap = {
+                    harvest: 'harvest',
+                    harvest_plant: 'plant',
+                    harvest_seed: 'seed',
+                },
+                dialog = app.dialogs.get('article');
+            if (task) {
+                var category = app.collections.get('category').findRoot('article_category_id').findChild({
+                    key: keyMap[task.find('category').get('key')],
+                });
+            }
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
                     model: polyglot.t('model.name.article').toLowerCase(),
@@ -197,11 +214,12 @@ define([
             dialog.form.setData({
                 entity_id: this.getElement('entity_id').getValue(),
                 organization_id: null,
+                category_id: category ? category.get('id') : undefined,
                 active: true,
             });
             dialog.form.setVisible({
                 organization_id: false,
-                category_id: true,
+                category_id: !category,
                 name: true,
                 quantity_unit_id: true,
                 default_unit_price: true,

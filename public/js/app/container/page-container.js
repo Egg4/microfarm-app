@@ -8,19 +8,11 @@ define([
 
     return Container.extend({
 
-        initialize: function (options) {
-            Container.prototype.initialize.call(this);
-
-            this.router = options.router;
-
-            options.modules.schemas.each(function (schema, key) {
-                if (schema.page) {
-                    this.registerRoutes(key, schema.page.routes);
-                    this.set(key, function () {
-                        return new schema.page.class();
-                    });
-                }
-            }.bind(this));
+        build: function (name, pageSchema) {
+            this.registerRoutes(name, pageSchema.routes);
+            return function () {
+                return new pageSchema.class();
+            };
         },
 
         registerRoutes: function (key, routes) {
@@ -34,7 +26,7 @@ define([
                 pattern: '',
                 callback: 'setData',
             }, route);
-            this.router.route(route.pattern, key, route.callback);
+            app.router.route(route.pattern, key, route.callback);
         },
     });
 });

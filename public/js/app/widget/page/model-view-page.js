@@ -20,6 +20,11 @@ define([
 
             Page.prototype.initialize.call(this, $.extend(true, {
                 header: this.buildHeader.bind(this),
+                events: {
+                    swipeleft: function() {
+                        app.panels.get('main-menu').open();
+                    }.bind(this),
+                },
             }, options));
         },
 
@@ -64,6 +69,12 @@ define([
             if (this.model) this.stopListening(this.model);
             this.model = this.collection.get(id);
             this.listenTo(this.model, 'change', this.render);
+        },
+
+        render: function () {
+            if (this.collection.get(this.model)) {
+                Page.prototype.render.call(this);
+            }
         },
     });
 });

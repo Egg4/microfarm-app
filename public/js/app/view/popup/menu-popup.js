@@ -12,16 +12,30 @@ define([
     return Popup.extend({
 
         initialize: function (options) {
+            var defaults = {
+                edit: true,
+                delete: true,
+            };
+            $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
+
             Popup.prototype.initialize.call(this, $.extend(true, {
                 id: 'menu-popup',
-                items: [
-                    this.buildEditionButton(),
-                    this.buildDeletionButton(),
-                ],
+                items: this.buildItems.bind(this),
             }, options));
         },
 
-        buildEditionButton: function () {
+        buildItems: function () {
+            var items = [];
+            if (this.edit) {
+                items.push(this.buildEditButton());
+            }
+            if (this.delete) {
+                items.push(this.buildDeleteButton());
+            }
+            return items;
+        },
+
+        buildEditButton: function () {
             return new Button({
                 label: new Label({
                     text: polyglot.t('menu-popup.button.edit'),
@@ -35,7 +49,7 @@ define([
             });
         },
 
-        buildDeletionButton: function () {
+        buildDeleteButton: function () {
             return new Button({
                 label: new Label({
                     text: polyglot.t('menu-popup.button.delete'),

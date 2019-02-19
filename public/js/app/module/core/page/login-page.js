@@ -48,9 +48,35 @@ define([
                 layout: new GridLayout({
                     column: 1,
                     items: [
-                        this.buildSignupButton(),
+                        this.buildDemoButton(),
+                        //this.buildSignupButton(),
                     ],
                 }),
+            });
+        },
+
+        buildDemoButton: function() {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('login-page.button.demo'),
+                    icon: new Icon({name: 'dot-circle'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.client.send({
+                            method: 'POST',
+                            url: '/user/login',
+                            data: {
+                                email: app.config.demo.email,
+                                password: app.config.demo.password,
+                            },
+                        }).done(function(data) {
+                            app.authentication.set(data);
+                            app.router.navigate('authentication');
+                        });
+                    },
+                },
             });
         },
 

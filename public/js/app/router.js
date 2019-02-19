@@ -11,21 +11,12 @@ define([
             '': 'home',
             'activate/:key': 'activate',
         },
-        defaultRoute: 'planner',
 
         start: function () {
-            if (app.authentication.isEntitySelected()) {
-                app.collections.fetchAll().done(function() {
-                    Backbone.history.start();
-                }.bind(this));
-            }
-            else {
-                Backbone.history.start();
-            }
+            Backbone.history.start();
         },
 
         execute: function(callback, args, name) {
-            console.log('route: ' + name);
             if (!_.contains(['login', 'signup', 'activate'], name) && !app.authentication.isUserLogged()) {
                 this.navigate('login');
                 return false;
@@ -65,7 +56,8 @@ define([
 
         home: function () {
             if (app.collections.fetched()) {
-                this.navigate(this.defaultRoute);
+                var defaultRoute = app.modules.has('basic-production') ? 'planner' : 'entity';
+                this.navigate(defaultRoute);
             }
         },
 

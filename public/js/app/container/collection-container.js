@@ -8,31 +8,23 @@ define([
 
     return Container.extend({
 
-        initialize: function (options) {
+        initialize: function () {
             Container.prototype.initialize.call(this);
-
-            options.modules.schemas.each(function (schema, key) {
-                if (schema.collection) {
-                    this.set(key, this.buildCollection(key, schema));
-                }
-            }.bind(this));
-
-            this.registerForeignKeysHandlers();
             this.fetchFlag = false;
         },
 
-        buildCollection: function (key, schema) {
-            var collection = new schema.collection.class(null, {
+        build: function (name, collectionSchema, modelSchema) {
+            var collection = new collectionSchema.class(null, {
                 collections: this,
-                modelName: key,
-                url: schema.collection.url || '/' + key,
-                comparator: schema.collection.comparator || 'id',
-                foreignKeys: schema.collection.foreignKeys || {},
-                uniqueKey: schema.collection.uniqueKey || [],
+                modelName: name,
+                url: collectionSchema.url || '/' + name,
+                comparator: collectionSchema.comparator || 'id',
+                foreignKeys: collectionSchema.foreignKeys || {},
+                uniqueKey: collectionSchema.uniqueKey || [],
             });
-            collection.model = schema.model.class.extend({
+            collection.model = modelSchema.class.extend({
                 collection: collection,
-                displayName: schema.model.displayName || 'id',
+                displayName: modelSchema.displayName || 'id',
             });
 
             return collection;
@@ -41,11 +33,15 @@ define([
         registerForeignKeysHandlers: function () {
             this.each(function(collection) {
                 var foreignCollections = this.getForeignCollections(collection);
-                _.each(foreignCollections, function(foreignCollection) {
-                    collection.on({
-                        remove: foreignCollection.handleForeignKeys.bind(foreignCollection),
-                    });
-                });
+                _.each(foreignCollections, function (foreignCollection) {
+                    this.listenTo(collection, 'remove', foreignCollection.handleForeignKeys.bind(foreignCollection));
+                }.bind(this));
+            }.bind(this));
+        },
+
+        unregisterForeignKeysHandlers: function () {
+            this.each(function(collection) {
+                this.stopListening(collection, 'remove');
             }.bind(this));
         },
 

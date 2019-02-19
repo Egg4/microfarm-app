@@ -13,17 +13,16 @@ define([
                 storage: localStorage,
                 storageKey: 'authentication',
                 headerKey: 'Authorization',
-                client: false,
             }, options);
 
             if (this.isUserLogged()) {
-                this.client.setHeader(this.headerKey, this.get('key'));
+                app.client.setHeader(this.headerKey, this.get('key'));
             }
         },
 
         set: function (attributes) {
             this.storage.setItem(this.storageKey, JSON.stringify(attributes));
-            this.client.setHeader(this.headerKey, attributes.key);
+            app.client.setHeader(this.headerKey, attributes.key);
         },
 
         get: function (attribute) {
@@ -36,7 +35,7 @@ define([
 
         clear: function () {
             this.storage.removeItem(this.storageKey);
-            this.client.removeHeader(this.headerKey);
+            app.client.removeHeader(this.headerKey);
         },
 
         isUserLogged: function () {
@@ -64,7 +63,7 @@ define([
         },
 
         activate: function (key) {
-            return this.client.send({
+            return app.client.send({
                 method: 'POST',
                 url: '/user/activate',
                 data: {key: key},
@@ -74,6 +73,9 @@ define([
         logout: function () {
             var deferred = $.Deferred();
 
+            app.unregisterModules();
+            app.modules.unregister('core');
+            app.modules.register('core');
             this.clear();
             deferred.resolve();
 

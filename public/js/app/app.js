@@ -33,24 +33,62 @@ define([
         initialize: function () {
             window.app = this; // Set 'app' as global var
 
+            this.config = config;
             this.loader = new Loader();
             this.client = new Client($.extend(true, {
                 errorHandler: this.onClientError.bind(this),
             }, config.api));
-            this.authentication = new Authentication({
-                client: this.client,
-            });
+            this.authentication = new Authentication();
             this.router = new Router();
             this.modules = new ModuleContainer();
-            this.collections = new CollectionContainer({modules: this.modules});
-            this.dialogs = new DialogContainer({modules: this.modules});
+            this.collections = new CollectionContainer();
+            this.dialogs = new DialogContainer();
             this.popups = new PopupContainer();
             this.panels = new PanelContainer();
-            this.pages = new PageContainer({modules: this.modules, router: this.router});
+            this.pages = new PageContainer();
         },
 
         run: function () {
-            this.router.start();
+            this.modules.register('core');
+
+            if (!this.authentication.isEntitySelected()) {
+                this.router.start();
+                this.router.navigate();
+            }
+            else {
+                var entityId = this.authentication.get('entity_id');
+                this.collections.get('entity').fetch({data: {
+                    id: entityId,
+                    range: '0-1',
+                }}).done(function () {
+                    this.registerModules();
+                    this.collections.fetchAll().done(function() {
+                        this.router.start();
+                    }.bind(this));
+                }.bind(this));
+            }
+        },
+
+        registerModules: function () {
+            var entityId = this.authentication.get('entity_id'),
+                entity = this.collections.get('entity').get(entityId),
+                moduleNames = this.config.account[entity.get('account')];
+
+            _.each(moduleNames, function (name) {
+                this.modules.register(name);
+            }.bind(this));
+            this.collections.registerForeignKeysHandlers();
+        },
+
+        unregisterModules: function () {
+            var entityId = this.authentication.get('entity_id'),
+                entity = this.collections.get('entity').get(entityId),
+                moduleNames = this.config.account[entity.get('account')];
+
+            this.collections.unregisterForeignKeysHandlers();
+            _.each(moduleNames, function (name) {
+                this.modules.unregister(name);
+            }.bind(this));
         },
 
         onClientError: function (errors) {

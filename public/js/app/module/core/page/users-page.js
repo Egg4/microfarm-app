@@ -54,8 +54,8 @@ define([
         },
 
         openUserRoleMenuPopup: function (userRole) {
-            var userRoleId = app.authentication.getUserRoleId();
-            if (userRole.get('id') === userRoleId) return;
+            var userId = app.authentication.get('user_id');
+            if (userRole.get('user_id') === userId) return;
 
             var popup = app.popups.get('menu');
             popup.setData({

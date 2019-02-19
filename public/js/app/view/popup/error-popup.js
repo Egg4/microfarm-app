@@ -41,10 +41,18 @@ define([
         },
 
         buildListItem: function (error) {
+            var data = error,
+                template = '<%- name %>: <%- description %>',
+                key = 'error.' + error.name;
+            if (polyglot.has(key)) {
+                template = '<%- message %>';
+                data = {message: polyglot.t(key)};
+            }
+
             return new ListItem({
                 content: new Html({
-                    template: '<%- name %>: <%- description %>',
-                    data: error,
+                    template: template,
+                    data: data,
                 }),
             });
         },

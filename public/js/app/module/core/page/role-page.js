@@ -82,7 +82,7 @@ define([
             });
         },
 
-        /*---------------------------------------- Entity ------------------------------------------*/
+        /*---------------------------------------- Role ------------------------------------------*/
         buildRoleHtml: function () {
             return new Html({
                 className: 'model-view',
@@ -119,7 +119,9 @@ define([
         },
 
         buildRoleAccess: function () {
-            return app.collections.get('role_access').toArray();
+            return app.collections.get('role_access').where({
+                role_id: this.model.get('id'),
+            });
         },
 
         buildRoleAccessRowData: function (roleAccess) {

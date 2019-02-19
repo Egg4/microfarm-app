@@ -29,6 +29,11 @@ define([
             Page.prototype.initialize.call(this, $.extend(true, {
                 header: this.buildHeader.bind(this),
                 body: this.buildBody.bind(this),
+                events: {
+                    swipeleft: function() {
+                        app.panels.get('main-menu').open();
+                    }.bind(this),
+                },
             }, options));
 
             this.listenTo(this.collection, 'update', this.render);

@@ -182,13 +182,16 @@ define([
             if (app.authentication.can('create', 'working')) {
                 items.push(this.buildMenuPopupWorkingButton());
             }
-            if (category.get('key') == 'seedling' && app.authentication.can('create', 'seedling')) {
+            if (_.contains(['seedling'], category.get('key'))
+                && app.authentication.can('create', 'seedling')) {
                 items.push(this.buildMenuPopupSeedlingButton());
             }
-            if (category.get('key') == 'planting' && app.authentication.can('create', 'planting')) {
+            if (_.contains(['planting'], category.get('key'))
+                && app.authentication.can('create', 'planting')) {
                 items.push(this.buildMenuPopupPlantingButton());
             }
-            if (category.get('key') == 'harvest' && app.authentication.can('create', 'harvest')) {
+            if (_.contains(['harvest', 'harvest_plant', 'harvest_seed'], category.get('key'))
+                    && app.authentication.can('create', 'output')) {
                 items.push(this.buildMenuPopupOutputButton());
             }
             return items;
@@ -279,17 +282,17 @@ define([
             models = _.union(models, app.collections.get('working').where({
                 task_id: this.model.get('id'),
             }));
-            if (category.get('key') == 'seedling') {
+            if (_.contains(['seedling'], category.get('key'))) {
                 models = _.union(models, app.collections.get('seedling').where({
                     task_id: this.model.get('id'),
                 }));
             }
-            if (category.get('key') == 'planting') {
+            if (_.contains(['planting'], category.get('key'))) {
                 models = _.union(models, app.collections.get('planting').where({
                     task_id: this.model.get('id'),
                 }));
             }
-            if (category.get('key') == 'harvest') {
+            if (_.contains(['harvest', 'harvest_plant', 'harvest_seed'], category.get('key'))) {
                 models = _.union(models, app.collections.get('output').where({
                     task_id: this.model.get('id'),
                 }));
@@ -299,16 +302,22 @@ define([
         },
 
         buildModelRow: function (model) {
+            var modelName = model.collection.modelName;
             return new Html({
                 tagName: 'tr',
-                template: this.template[model.collection.modelName],
+                template: this.template[modelName],
                 data: this.buildModelRowData(model),
                 events: {
                     click: function () {
-                        this.navigateToModelPage(model);
+                        if (app.authentication.can('read', modelName)) {
+                            this.navigateToModelPage(model);
+                        }
                     }.bind(this),
                     taphold: function () {
-                        this.openMenuPopup(model);
+                        if (app.authentication.can('update', modelName)
+                        || app.authentication.can('delete', modelName)) {
+                            this.openMenuPopup(model);
+                        }
                     }.bind(this),
                 },
             });
@@ -327,15 +336,18 @@ define([
         },
 
         openMenuPopup: function (model) {
-            var popup = app.popups.get('menu');
+            var modelName = model.collection.modelName,
+                popup = app.popups.get('menu');
             popup.setData({
                 title: model.getDisplayName(),
+                edit: app.authentication.can('update', modelName),
+                delete: app.authentication.can('delete', modelName),
             });
             popup.open().done(function (action) {
                 switch (action) {
                     case 'edit': return this.openEditionDialog({
                         model: model,
-                        formVisible: this.buildModelFormVisible(model.collection.modelName),
+                        formVisible: this.buildModelFormVisible(modelName),
                     });
                     case 'delete': return this.openDeletionPopup({
                         model: model,
@@ -403,7 +415,6 @@ define([
                 case 'output': return {
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),
-                    article_id: this.model.find('crop').find('article').get('id'),
                 };
             }
         },

@@ -67,14 +67,12 @@ define([
                                     name: 'default_unit_price',
                                     css: {flex: '1'},
                                     placeholder: polyglot.t('form.placeholder.unit_price'),
-                                    defaultValue: 0,
                                     min: 0,
                                     cast: 'float',
                                 }),
                                 new Select({
                                     name: 'default_tax',
                                     placeholder: polyglot.t('form.placeholder.tax'),
-                                    defaultValue: 0,
                                     css: {width: '8em'},
                                     cast: 'float',
                                     data: [

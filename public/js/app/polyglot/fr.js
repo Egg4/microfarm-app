@@ -11,6 +11,11 @@ define([], function () {
         'main-menu-panel.button.clients': 'Clients',
         'main-menu-panel.button.logout': 'Déconnexion',
 
+        // Error
+        'error.not_allowed': 'Accès refusé',
+        'error.invalid_response': 'Erreur réseau',
+        'error.timeout': 'Site distant non joingnable',
+
         // Page
         'authentication-page.title': 'Fermes',
         'article-page.title': 'Article',
@@ -24,6 +29,7 @@ define([], function () {
         'crops-page.title': 'Cultures',
         'dashboard-page.title': 'Tableau de bord',
         'login-page.title': 'Connexion',
+        'login-page.button.demo': 'Démo',
         'login-page.button.signup': 'Inscription',
         'login-page.button.login': 'Connexion',
         'model-view-page.button.edit': 'Editer',

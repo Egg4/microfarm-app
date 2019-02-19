@@ -1,0 +1,7 @@
+@import url('../vendor/css/jquery.mobile-min.css');
+@import url('../vendor/css/fontawesome.min.css');
+@import url('../vendor/css/fontawesome-solid.min.css');
+@import url('lib-widget.css');
+@import url('app-widget.css');
+@import url('main.css');
+@import url('theme/orange.css');

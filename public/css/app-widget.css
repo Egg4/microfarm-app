@@ -41,6 +41,13 @@
 /********************************/
 /*  Popup                       */
 /********************************/
+.popup-widget .ui-header {
+    -webkit-border-top-left-radius: .3125em;
+    -webkit-border-top-right-radius: .3125em;
+    border-top-left-radius: .3125em;
+    border-top-right-radius: .3125em;
+}
+
 .popup-widget .body {
     padding: .5em;
 }
@@ -55,6 +62,17 @@
 
 .popup-widget .buttons div:last-child .button-widget {
     margin-right: .5em;
+    -webkit-border-top-left-radius: .3125em;
+    -webkit-border-top-right-radius: .3125em;
+    border-top-left-radius: .3125em;
+    border-top-right-radius: .3125em;
+}
+
+.popup-widget .list-item-widget:last-child .button-widget {
+    -webkit-border-bottom-left-radius: .3125em;
+    -webkit-border-bottom-right-radius: .3125em;
+    border-bottom-left-radius: .3125em;
+    border-bottom-right-radius: .3125em;
 }
 
 /********************************/
@@ -72,9 +90,12 @@
 /********************************/
 /*  Bar                         */
 /********************************/
+.ui-header-fixed {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, .15);
+}
+
 .bar-widget .ui-title {
     margin: 0;
-    text-shadow: 0 1px 0 #fff;
 }
 
 .bar-widget .ui-title .text {
@@ -103,6 +124,10 @@
     font-size: inherit;
     display: inherit;
     vertical-align: inherit;
+}
+
+.bar-widget .button-widget.ui-btn-icon-notext {
+    border: none;
 }
 
 /********************************/

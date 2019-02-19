@@ -33,13 +33,7 @@ define([
         },
 
         buildTitle: function () {
-            var name = '';
-            if (_.isNull(this.filter.organization_id)) {
-                name = app.collections.get('entity').get(this.filter.entity_id).getDisplayName();
-            } else {
-                name = app.collections.get('organization').get(this.filter.organization_id).getDisplayName();
-            }
-            return polyglot.t('articles-page.title') + ' - ' + name;
+            return polyglot.t('articles-page.title');
         },
 
         buildArticles: function () {

@@ -20,28 +20,70 @@ define([
 ) {
     return Container.extend({
 
-        initialize: function () {
-            Container.prototype.initialize.call(this);
-            this.schemas = new Container();
+        register: function (name) {
+            var module = this.build(name);
+            this.set(name, module);
 
-            var modules = {
-                'core': new CoreModule(),
-                'access': new AccessModule(),
-                'taxonomy': new TaxonomyModule(),
-                'basic-production': new BasicProductionModule(),
-                'post-production': new PostProductionModule(),
-                'land': new LandModule(),
-            };
+            _.each(module.schemas, function (schema, key) {
+                if (schema.collection) {
+                    var collection = app.collections.build(key, schema.collection, schema.model);
+                    app.collections.set(key, collection);
+                }
+                if (schema.dialog) {
+                    var dialog = app.dialogs.build(key, schema.dialog, schema.form);
+                    app.dialogs.set(key, dialog);
+                }
+                if (schema.page) {
+                    var page = app.pages.build(key, schema.page);
+                    app.pages.set(key, page);
+                }
+            });
+        },
 
-            _.each(modules, function (module, name) {
-                this.set(name, module);
-            }.bind(this));
+        unregister: function (name) {
+            var module = this.get(name);
+
+            _.each(module.schemas, function (schema, key) {
+                if (schema.collection) {
+                    if (!app.collections.isFunction(key)) {
+                        app.collections.get(key).reset();
+                    }
+                    app.collections.unset(key);
+                }
+                if (schema.dialog) {
+                    if (!app.dialogs.isFunction(key)) {
+                        app.dialogs.get(key).remove();
+                    }
+                    app.dialogs.unset(key);
+                }
+                if (schema.page) {
+                    if (!app.pages.isFunction(key)) {
+                        app.pages.get(key).remove();
+                    }
+                    app.pages.unset(key);
+                }
+            });
+
+            module.remove();
+            this.unset(name);
+        },
+
+        build: function (name) {
+            switch (name) {
+                case 'access':              return new AccessModule();
+                case 'basic-production':    return new BasicProductionModule();
+                case 'core':                return new CoreModule();
+                case 'land':                return new LandModule();
+                case 'post-production':     return new PostProductionModule();
+                case 'taxonomy':            return new TaxonomyModule();
+                default:
+                    throw new Error('Module ' + name + ' not found');
+            }
         },
 
         set: function (name, module) {
             Container.prototype.set.call(this, name, module);
             this.checkModuleDependencies(name, module);
-            this.registerModuleSchemas(module.schemas);
         },
 
         checkModuleDependencies: function (name, module) {
@@ -49,15 +91,6 @@ define([
                 if (!this.has(depName)) {
                     throw new Error('Module "' + name + '" require module "' + depName + '"');
                 }
-            }.bind(this));
-        },
-
-        registerModuleSchemas: function (schemas) {
-            _.each(schemas, function (schema, key) {
-                if (this.schemas.has(key)) {
-                    throw new Error('Schema "' + key + '" already set');
-                }
-                this.schemas.set(key, schema);
             }.bind(this));
         },
     });

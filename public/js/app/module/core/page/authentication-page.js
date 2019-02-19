@@ -33,13 +33,21 @@ define([
         },
 
         render: function () {
+            app.collections.resetAll();
+            this.body.items[0].render(); // Empty list
+
             this.loadCollections().done(function () {
-                Page.prototype.render.call(this);
+                var userRoles = app.collections.get('user_role').toArray();
+                if (userRoles.length == 1) {
+                    this.authenticate(userRoles[0].get('id'));
+                }
+                else {
+                    Page.prototype.render.call(this);
+                }
             }.bind(this));
         },
 
         loadCollections: function () {
-            app.collections.resetAll();
             var promises = [];
             promises.push(app.collections.get('entity').fetch({data: {range: '0-1000'}}));
             promises.push(app.collections.get('user_role').fetch({data: {
@@ -90,6 +98,7 @@ define([
                 },
             }).done(function(data) {
                 app.authentication.set(data);
+                app.registerModules();
                 app.collections.fetchAll().done(function() {
                     app.router.navigate();
                 }).always(function() {

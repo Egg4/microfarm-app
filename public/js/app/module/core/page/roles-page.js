@@ -14,7 +14,7 @@ define([
             Page.prototype.initialize.call(this, {
                 id: 'roles-page',
                 title: polyglot.t('roles-page.title'),
-                icon: new Icon({name: 'role'}),
+                icon: new Icon({name: 'users'}),
                 collection: app.collections.get('role'),
                 tableOptions: {
                     models: this.buildRoles.bind(this),

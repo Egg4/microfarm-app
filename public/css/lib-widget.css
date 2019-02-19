@@ -133,6 +133,7 @@
     left: 4px;
     text-indent: 0px;
     color: #fff;
+    text-shadow: none;
 }
 
 .button-widget.ui-btn-icon-left .fa-icon-widget {

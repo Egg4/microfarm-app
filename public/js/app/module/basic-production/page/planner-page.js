@@ -263,7 +263,9 @@ define([
                 data: this.buildTaskHtmlData(task),
                 events: {
                     click: function () {
-                        app.router.navigate('task/' + task.get('id'));
+                        if (app.authentication.can('read', 'task')) {
+                            app.router.navigate('task/' + task.get('id'));
+                        }
                     },
                     taphold: function () {
                         if (app.authentication.can('update', 'task')
@@ -328,6 +330,8 @@ define([
             var popup = app.popups.get('menu');
             popup.setData({
                 title: task.getDisplayName() + ' - ' + suffix,
+                edit: app.authentication.can('update', 'task'),
+                delete: app.authentication.can('delete', 'task'),
             });
             popup.open().done(function (action) {
                 switch (action) {

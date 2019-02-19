@@ -1,0 +1,140 @@
+/********************************/
+/*  Home page                   */
+/********************************/
+#home-page {
+    background-color: #e06b18;
+    color: #fff;
+    text-shadow: 0px -1px 0 #b95705;
+}
+
+/********************************/
+/*  Page                        */
+/********************************/
+.ui-overlay-a,
+.ui-page-theme-a,
+.ui-page-theme-a .ui-panel-wrapper {
+    background-color: #f9f9f9;
+    border-color: #bbb;
+    color: #333;
+    text-shadow: 0 1px 0 #f3f3f3;
+}
+
+.ui-body-a,
+.ui-page-theme-a .ui-body-inherit,
+html .ui-bar-a .ui-body-inherit,
+html .ui-body-a .ui-body-inherit,
+html body .ui-group-theme-a .ui-body-inherit,
+html .ui-panel-page-container-a {
+    background-color: #fff;
+    border-color: #dac455;
+}
+
+/********************************/
+/*  Bar                         */
+/********************************/
+.ui-bar-a,
+.ui-page-theme-a .ui-bar-inherit,
+html .ui-bar-a .ui-bar-inherit,
+html .ui-body-a .ui-bar-inherit,
+html body .ui-group-theme-a .ui-bar-inherit {
+    background-color: #e06b18;
+    border-color: #ddd;
+}
+
+.ui-bar-a,
+.ui-page-theme-a .ui-bar-inherit,
+html .ui-bar-a .ui-bar-inherit,
+html .ui-body-a .ui-bar-inherit,
+html body .ui-group-theme-a .ui-bar-inherit,
+.table-widget tr.separator {
+    font-weight: normal;
+    color: #fff;
+    text-shadow: 0px -1px 0 #b95705;
+}
+
+/********************************/
+/*  Table                       */
+/********************************/
+.table-widget tr.separator {
+    background-color: #e06b18;
+}
+
+.table-widget tr {
+    border-bottom: 1px solid #dac455;
+}
+
+/********************************/
+/*  Button                      */
+/********************************/
+.ui-page-theme-a .ui-btn,
+html .ui-bar-a .ui-btn,
+html .ui-body-a .ui-btn,
+html body .ui-group-theme-a .ui-btn,
+html head + body .ui-btn.ui-btn-a,
+.ui-page-theme-a .ui-btn:visited,
+html .ui-bar-a .ui-btn:visited,
+html .ui-body-a .ui-btn:visited,
+html body .ui-group-theme-a .ui-btn:visited,
+html head + body .ui-btn.ui-btn-a:visited {
+    background-color: #fff0d4;
+    border-color: #dac455;
+    color: #333;
+    text-shadow: 0 1px 0 #f3f3f3;
+}
+
+.ui-page-theme-a .ui-btn:hover,
+html .ui-bar-a .ui-btn:hover,
+html .ui-body-a .ui-btn:hover,
+html body .ui-group-theme-a .ui-btn:hover,
+html head + body .ui-btn.ui-btn-a:hover {
+    background-color: #f4e5c9;
+    border-color: #dac455;
+}
+
+.ui-page-theme-b .ui-btn,
+html .ui-bar-b .ui-btn,
+html .ui-body-b .ui-btn,
+html body .ui-group-theme-b .ui-btn,
+html head + body .ui-btn.ui-btn-b,
+.ui-page-theme-b .ui-btn:visited,
+html .ui-bar-b .ui-btn:visited,
+html .ui-body-b .ui-btn:visited,
+html body .ui-group-theme-b .ui-btn:visited,
+html head + body .ui-btn.ui-btn-b:visited {
+    background-color: #bd5f16;
+    border-color: #904813;
+    color: #fff;
+    text-shadow: 0px -1px 0 #b95705;
+}
+
+.ui-page-theme-b .ui-btn:hover,
+html .ui-bar-b .ui-btn:hover,
+html .ui-body-b .ui-btn:hover,
+html body .ui-group-theme-b .ui-btn:hover,
+html head + body .ui-btn.ui-btn-b:hover {
+    background-color: #904813;
+    border-color: #904813;
+}
+
+.ui-btn-icon-left::after,
+.ui-btn-icon-right::after,
+.ui-btn-icon-top::after,
+.ui-btn-icon-bottom::after,
+.ui-btn-icon-notext::after {
+    background-color: #e06b18;
+}
+
+/********************************/
+/*  Popup                       */
+/********************************/
+.popup-widget.ui-body-a {
+    border: 1px solid #e06b18;
+}
+
+/********************************/
+/*  Planner                     */
+/********************************/
+#planner-page .planner-table-header td {
+    background-color: #fefefe;
+    color: #005599;
+}
