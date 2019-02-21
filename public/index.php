@@ -87,13 +87,13 @@ function getTemplates($dir, $extension = 'phtml') {
         <!-- Css -->
         <link
             rel="stylesheet"
-            href="<?= APP_ENV === 'dev' ? '/css/style.css' : '/build/app-min.css'; ?>"/>
+            href="<?= APP_ENV === 'dev' ? '/css/style.css' : resourceUrl('/build/app-min.css'); ?>"/>
 
         <!-- Javascript -->
         <script
             type="text/javascript"
             <?= APP_ENV === 'dev' ? 'data-main="js/bootstrap"' : ''; ?>
-            src="<?= APP_ENV === 'dev' ? '/vendor/js/require-2.3.6.js' : '/build/app-min.js'; ?>">
+            src="<?= APP_ENV === 'dev' ? '/vendor/js/require-2.3.6.js' : resourceUrl('/build/app-min.js'); ?>">
         </script>
         <script type="text/javascript">
             var env = '<?= APP_ENV; ?>';
