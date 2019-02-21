@@ -14,8 +14,8 @@ define([
             timeout: 25000,
         },
         demo: {
-            email: 'demo.user@demo.org',
-            password: 'Démo1234',
+            email: 'demo.user@maraichage.org',
+            password: 'tAe1DSEXKCKskaHf',
         },
         account: {
             basic: [

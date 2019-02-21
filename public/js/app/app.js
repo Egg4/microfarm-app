@@ -53,7 +53,7 @@ define([
 
             if (!this.authentication.isEntitySelected()) {
                 this.router.start();
-                this.router.navigate();
+                this.router.navigate('login');
             }
             else {
                 var entityId = this.authentication.get('entity_id');

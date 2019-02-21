@@ -2,8 +2,7 @@
 define('ROOT_DIR', dirname(__DIR__));
 define('PUBLIC_DIR', __DIR__);
 define('CACHE_DIR', ROOT_DIR . '/cache');
-define('APP_ENV', isset($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : 'prod');
-//define('APP_ENV', 'test');
+define('APP_ENV', $_SERVER['APP_ENV']);
 
 function resourceUrl($publicFilePath, array $params = array()) {
     $filename = __DIR__ . $publicFilePath;
