@@ -1,6 +1,7 @@
 <?php
 define('ROOT_DIR', dirname(__DIR__));
 define('PUBLIC_DIR', __DIR__);
+define('CACHE_DIR', ROOT_DIR . '/cache');
 define('APP_ENV', isset($_SERVER['APP_ENV']) ? $_SERVER['APP_ENV'] : 'prod');
 //define('APP_ENV', 'test');
 
@@ -40,7 +41,7 @@ function includeTemplates() {
         echo getTemplates($scanDir);
         return;
     }
-    $cacheFilename = ROOT_DIR . '/cache/templates.phtml';
+    $cacheFilename = CACHE_DIR . '/templates.phtml';
     if (file_exists($cacheFilename)) {
         include $cacheFilename;
         return;
@@ -73,7 +74,7 @@ function getTemplates($dir, $extension = 'phtml') {
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="initial-scale=1,minimum-scale=1,maximum-scale=1,width=device-width,height=device-height,target-densitydpi=device-dpi,user-scalable=yes">
-        <title>MicroFarm App</title>
+        <title>App Maraichage</title>
 
         <!-- Favicon -->
         <link rel="apple-touch-icon" sizes="180x180" href="<?= resourceUrl('/favicon/apple-touch-icon.png'); ?>">
@@ -113,8 +114,8 @@ function getTemplates($dir, $extension = 'phtml') {
 
         <div id="home-page">
             <div class="pane">
-                <h1>Micro ferme</h1>
                 <h3>App</h3>
+                <h1>Maraichage</h1>
             </div>
         </div>
 
