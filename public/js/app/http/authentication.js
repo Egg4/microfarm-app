@@ -12,7 +12,7 @@ define([
             $.extend(true, this, {
                 storage: localStorage,
                 storageKey: 'authentication',
-                headerKey: 'Authorization',
+                headerKey: 'Auth-Token',
             }, options);
 
             if (this.isUserLogged()) {
