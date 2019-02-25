@@ -54,11 +54,29 @@ define([
 
         buildNavigationButtons: function () {
             var buttons = [];
+            if (app.authentication.can('read', 'zone')) {
+                buttons.push(this.buildZonesButton());
+            }
             if (app.authentication.can('update', 'zone')) {
                 buttons.push(this.buildEditButton());
             }
 
             return buttons;
+        },
+
+        buildZonesButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('zones-page.title'),
+                    icon: new Icon({name: 'sitemap'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('zones');
+                    },
+                },
+            });
         },
 
         buildEditButton: function () {

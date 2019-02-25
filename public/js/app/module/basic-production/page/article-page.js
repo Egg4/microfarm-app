@@ -57,11 +57,29 @@ define([
 
         buildNavigationButtons: function () {
             var buttons = [];
+            if (app.authentication.can('read', 'article')) {
+                buttons.push(this.buildArticlesButton());
+            }
             if (app.authentication.can('update', 'article')) {
                 buttons.push(this.buildEditButton());
             }
 
             return buttons;
+        },
+
+        buildArticlesButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('articles-page.title'),
+                    icon: new Icon({name: 'shopping-cart'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('entity/articles');
+                    },
+                },
+            });
         },
 
         buildEditButton: function () {

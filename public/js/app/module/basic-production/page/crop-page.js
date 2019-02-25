@@ -62,6 +62,9 @@ define([
 
         buildNavigationButtons: function () {
             var buttons = [];
+            if (app.authentication.can('read', 'crop')) {
+                buttons.push(this.buildCropsButton());
+            }
             if (app.authentication.can('read', 'article')) {
                 buttons.push(this.buildArticleButton());
             }
@@ -70,6 +73,21 @@ define([
             }
 
             return buttons;
+        },
+
+        buildCropsButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('crops-page.title'),
+                    icon: new Icon({name: 'leaf'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('crops');
+                    }.bind(this),
+                },
+            });
         },
 
         buildArticleButton: function () {

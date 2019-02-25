@@ -61,6 +61,9 @@ define([
 
         buildNavigationButtons: function () {
             var buttons = [];
+            if (app.authentication.can('read', 'output')) {
+                buttons.push(this.buildOutputsButton());
+            }
             if (app.authentication.can('read', 'task')) {
                 buttons.push(this.buildTaskButton());
             }
@@ -72,6 +75,21 @@ define([
             }
 
             return buttons;
+        },
+
+        buildOutputsButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('outputs-page.title'),
+                    icon: new Icon({name: 'dolly'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('outputs');
+                    }.bind(this),
+                },
+            });
         },
 
         buildTaskButton: function () {

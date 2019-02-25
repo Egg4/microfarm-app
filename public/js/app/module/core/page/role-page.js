@@ -58,11 +58,29 @@ define([
 
         buildNavigationButtons: function () {
             var buttons = [];
+            if (app.authentication.can('read', 'role')) {
+                buttons.push(this.buildRolesButton());
+            }
             if (app.authentication.can('update', 'role')) {
                 buttons.push(this.buildEditButton());
             }
 
             return buttons;
+        },
+
+        buildRolesButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('roles-page.title'),
+                    icon: new Icon({name: 'users'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('roles');
+                    },
+                },
+            });
         },
 
         buildEditButton: function () {
