@@ -83,6 +83,21 @@ define([
             });
         },
 
+        getDefaultDisabled: function() {
+            var disabled = {};
+            _.each(this.elements, function(element) {
+                disabled[element.getName()] = false;
+            });
+            return disabled;
+        },
+
+        setDisabled: function(disabled) {
+            disabled = $.extend({}, this.getDefaultDisabled(), disabled);
+            _.each(this.elements, function(element) {
+                element.setDisabled(disabled[element.getName()]);
+            });
+        },
+
         validate: function () {
             this.hideErrors();
 

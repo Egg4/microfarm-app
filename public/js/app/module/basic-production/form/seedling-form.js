@@ -149,6 +149,8 @@ define([
 
         buildArticleData: function () {
             var data = [],
+                entityId = app.authentication.get('entity_id'),
+                entity = app.collections.get('entity').get(entityId),
                 taskId = this.getElement('task_id').getValue(),
                 task = app.collections.get('task').get(taskId),
                 seedCategory = app.collections.get('category').findRoot('article_category_id').findChild({
@@ -180,7 +182,7 @@ define([
             _.each(articles, function(article) {
                 var organization = article.find('organization');
                 data.push({
-                    optgroup: _.isNull(organization) ? '-' : organization.getDisplayName(),
+                    optgroup: _.isNull(organization) ? entity.getDisplayName() : organization.getDisplayName(),
                     value: article.get('id'),
                     label: article.getDisplayName(),
                 });
@@ -202,12 +204,12 @@ define([
             });
             dialog.form.setData({
                 entity_id: this.getElement('entity_id').getValue(),
-                organization_id: null,
+                organization_id: app.modules.has('trade') ? undefined : null,
                 category_id: seedCategory.get('id'),
                 active: true,
             });
             dialog.form.setVisible({
-                organization_id: false,
+                organization_id: app.modules.has('trade'),
                 category_id: false,
                 active: false,
             });

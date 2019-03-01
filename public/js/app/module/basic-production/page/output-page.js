@@ -61,7 +61,7 @@ define([
 
         buildNavigationButtons: function () {
             var buttons = [];
-            if (app.authentication.can('read', 'output')) {
+            if (app.modules.has('post-production') && app.authentication.can('read', 'output')) {
                 buttons.push(this.buildOutputsButton());
             }
             if (app.authentication.can('read', 'task')) {

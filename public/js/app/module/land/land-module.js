@@ -9,7 +9,6 @@ define([
     'app/module/land/schema/crop_location-schema',
     'app/module/land/schema/zone-schema',
     'app/module/land/schema/zones-schema',
-
 ], function ($, _, Module,
              BedSchema,
              BlockSchema,

@@ -22,16 +22,13 @@ define([
         buildButtons: function () {
             var buttons = [];
             if (app.modules.has('basic-production')) {
-                buttons.push(this.buildPlannerButton());
+                buttons.push(this.buildCalendarButton());
+            }
+            if (app.modules.has('basic-production') && app.modules.has('land')) {
+                //buttons.push(this.buildPlannerButton());
             }
             if (app.modules.has('core')) {
                 buttons.push(this.buildEntityButton());
-            }
-            if (app.modules.has('basic-production')) {
-                buttons.push(this.buildCropsButton());
-            }
-            if (app.modules.has('post-production')) {
-                buttons.push(this.buildOutputsButton());
             }
             if (app.modules.has('trade')) {
                 buttons.push(this.buildSuppliersButton());
@@ -45,11 +42,26 @@ define([
             return buttons;
         },
 
+        buildCalendarButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('main-menu-panel.button.calendar'),
+                    icon: new Icon({name: 'calendar-alt'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        this.redirect('calendar');
+                    }.bind(this),
+                },
+            });
+        },
+
         buildPlannerButton: function () {
             return new Button({
                 label: new Label({
                     text: polyglot.t('main-menu-panel.button.planner'),
-                    icon: new Icon({name: 'calendar-alt'}),
+                    icon: new Icon({name: 'map'}),
                 }),
                 iconAlign: 'top',
                 events: {
@@ -61,45 +73,17 @@ define([
         },
 
         buildEntityButton: function () {
+            var entityId = app.authentication.get('entity_id'),
+                entity = app.collections.get('entity').get(entityId);
             return new Button({
                 label: new Label({
-                    text: polyglot.t('main-menu-panel.button.entity'),
+                    text: entity.getDisplayName(),
                     icon: new Icon({name: 'home'}),
                 }),
                 iconAlign: 'top',
                 events: {
                     click: function () {
                         this.redirect('entity');
-                    }.bind(this),
-                },
-            });
-        },
-
-        buildCropsButton: function () {
-            return new Button({
-                label: new Label({
-                    text: polyglot.t('main-menu-panel.button.crops'),
-                    icon: new Icon({name: 'leaf'}),
-                }),
-                iconAlign: 'top',
-                events: {
-                    click: function () {
-                        this.redirect('crops');
-                    }.bind(this),
-                },
-            });
-        },
-
-        buildOutputsButton: function () {
-            return new Button({
-                label: new Label({
-                    text: polyglot.t('main-menu-panel.button.outputs'),
-                    icon: new Icon({name: 'dolly'}),
-                }),
-                iconAlign: 'top',
-                events: {
-                    click: function () {
-                        this.redirect('outputs');
                     }.bind(this),
                 },
             });

@@ -22,6 +22,7 @@ define([
                 cast: false,
                 visible: true,
                 defaultVisible: true,
+                disabled: false,
                 validator: false,
                 required: true,
             };
@@ -102,6 +103,14 @@ define([
             return this.required;
         },
 
+        setDisabled: function (disabled) {
+            this.disabled = disabled;
+        },
+
+        isDisabled: function () {
+            return this.disabled;
+        },
+
         getValidator: function () {
             return this.validator;
         },
@@ -112,6 +121,12 @@ define([
             $(this.el).empty();
             if (this.visible) {
                 $(this.el).removeClass('hidden');
+                if (this.disabled) {
+                    $(this.element).attr('disabled', 'disabled');
+                }
+                else {
+                    $(this.element).removeAttr('disabled');
+                }
                 if (this.label) {
                     $(this.el).append(this.label.el);
                     this.label.render();

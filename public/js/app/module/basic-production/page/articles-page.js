@@ -33,7 +33,21 @@ define([
         },
 
         buildTitle: function () {
-            return polyglot.t('articles-page.title');
+            var entityId = this.filter.entity_id,
+                entity = app.collections.get('entity').get(entityId);
+
+            if (!app.modules.has('trade')) {
+                return entity.getDisplayName() + ' - ' + polyglot.t('articles-page.title');
+            }
+
+            var organizationId = this.filter.organization_id,
+                organization = app.collections.get('organization').get(organizationId);
+            if (!organization) {
+                return entity.getDisplayName() + ' - ' + polyglot.t('articles-page.title');
+            }
+            else {
+                return organization.getDisplayName() + ' - ' + polyglot.t('articles-page.title');
+            }
         },
 
         buildArticles: function () {
@@ -76,12 +90,6 @@ define([
         buildArticleFormVisible: function () {
             return {
                 organization_id: false,
-                category_id: true,
-                name: true,
-                quantity_unit_id: true,
-                default_unit_price: true,
-                default_tax: true,
-                active: true,
             };
         },
 

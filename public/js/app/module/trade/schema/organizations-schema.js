@@ -4,7 +4,7 @@ define([
     'jquery',
     'underscore',
     'lib/schema/schema',
-    'app/view/page/organizations-page',
+    'app/module/trade/page/organizations-page',
 ], function ($, _, Schema, Page) {
 
     return Schema.extend({

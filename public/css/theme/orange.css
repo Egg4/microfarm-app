@@ -132,9 +132,9 @@ html head + body .ui-btn.ui-btn-b:hover {
 }
 
 /********************************/
-/*  Planner                     */
+/*  Calendar                    */
 /********************************/
-#planner-page .planner-table-header td {
+#calendar-page .calendar-table-header td {
     background-color: #fefefe;
     color: #005599;
 }

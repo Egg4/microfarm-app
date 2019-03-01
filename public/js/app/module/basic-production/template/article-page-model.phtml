@@ -2,6 +2,18 @@
     <table>
         <tr>
             <td>
+                <div class="label"><%- polyglot.t('model.field.organization_id') %></div>
+            </td>
+            <td>
+                <% if (organization) { %>
+                <div class="value"><%- organization.name %></div>
+                <% } else { %>
+                <div class="value"><%- entity.name %></div>
+                <% } %>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <div class="label"><%- polyglot.t('model.field.category_id') %></div>
             </td>
             <td>

@@ -30,30 +30,23 @@ define([
                             name: 'article_id',
                             cast: 'integer',
                         }),
-                        new FormGroup({
-                            type: 'horizontal',
-                            items: [
-                                new Select({
-                                    name: 'plant_id',
-                                    placeholder: polyglot.t('form.placeholder.plant_id'),
-                                    optgroup: true,
-                                    cast: 'integer',
-                                    css: {flex: '0.5'},
-                                    data: this.buildPlantData.bind(this),
-                                    events: {
-                                        change: this.onChangePlant.bind(this),
-                                    },
-                                }),
-                                new Select({
-                                    name: 'variety_id',
-                                    placeholder: polyglot.t('form.placeholder.variety_id'),
-                                    optgroup: true,
-                                    nullable: true,
-                                    cast: 'integer',
-                                    css: {flex: '0.5'},
-                                    data: this.buildVarietyData.bind(this),
-                                }),
-                            ],
+                        new Select({
+                            name: 'plant_id',
+                            placeholder: polyglot.t('form.placeholder.plant_id'),
+                            optgroup: true,
+                            cast: 'integer',
+                            data: this.buildPlantData.bind(this),
+                            events: {
+                                change: this.onChangePlant.bind(this),
+                            },
+                        }),
+                        new Select({
+                            name: 'variety_id',
+                            placeholder: polyglot.t('form.placeholder.variety_id'),
+                            optgroup: true,
+                            nullable: true,
+                            cast: 'integer',
+                            data: this.buildVarietyData.bind(this),
                         }),
                     ],
                 }),

@@ -109,69 +109,85 @@ td .right {
 }
 
 /********************************/
-/*  Planner page                */
+/*  Calendar page               */
 /********************************/
-#planner-page .table-widget {
+#calendar-page .table-widget {
     table-layout: fixed;
     font-size: 1em;
     font-weight: normal;
     text-shadow: none;
 }
 
-#planner-page .table-widget tr {
+#calendar-page .table-widget tr {
     border-bottom: none;
 }
 
-#planner-page .planner-table-header td {
+#calendar-page .calendar-table-header td {
     text-align: center;
     line-height: inherit;
     background-color: #fefefe;
     color: #333;
 }
 
-#planner-page .planner-table-header td:hover {
+#calendar-page .calendar-table-header td:hover {
     background-color: #ededed;
     cursor: pointer;
 }
 
-#planner-page .planner-table-header .weekday {
+#calendar-page .calendar-table-header .weekday {
     font-size: 0.6em;
 }
 
-#planner-page .planner-table-body tr:hover {
+#calendar-page .calendar-table-body tr:hover {
     background-color: inherit;
     cursor: inherit;
 }
 
-#planner-page .planner-table-body td {
+#calendar-page .calendar-table-body td {
     padding: 0;
     vertical-align: top;
 }
 
-#planner-page .task {
+#calendar-page .task {
     padding: 0.5em 0.2em;
     white-space: nowrap;
     overflow: hidden;
     line-height: normal;
 }
 
-#planner-page .task.reported {
+#calendar-page .task.reported {
     background-color: #ebebeb;
 }
 
-#planner-page .task:hover {
+#calendar-page .task:hover {
     background-color: #ededed;
     cursor: pointer;
 }
 
-#planner-page .task.reported:hover {
+#calendar-page .task.reported:hover {
     background-color: #e0e0e0;
 }
 
-#planner-page .task .title {
+#calendar-page .task .title {
     font-size: 0.6em;
 }
 
-#planner-page .task .description {
+#calendar-page .task .description {
     font-size: 0.5em;
+}
+
+/********************************/
+/*  Planner page                */
+/********************************/
+#planner-page .planner-body {
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 0.6em;
+    font-weight: normal;
+    text-shadow: none;
+}
+
+#planner-page .zone {
+    writing-mode: vertical-rl;
+    padding-right: 1em;
 }

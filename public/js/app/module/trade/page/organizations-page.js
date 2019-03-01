@@ -68,8 +68,6 @@ define([
 
         buildOrganizationFormVisible: function () {
             return {
-                name: true,
-                number: true,
                 supplier: !this.filter.supplier,
                 client: !this.filter.client,
             };

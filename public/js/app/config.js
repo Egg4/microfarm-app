@@ -34,6 +34,7 @@ define([
                 'land',
                 'basic-production',
                 'post-production',
+                'trade',
             ],
         },
     };

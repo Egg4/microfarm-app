@@ -10,13 +10,15 @@ define([
     'app/module/land/land-module',
     'app/module/post-production/post-production-module',
     'app/module/taxonomy/taxonomy-module',
+    'app/module/trade/trade-module',
 ], function ($, _, Container,
              AccessModule,
              BasicProductionModule,
              CoreModule,
              LandModule,
              PostProductionModule,
-             TaxonomyModule
+             TaxonomyModule,
+             TradeModule
 ) {
     return Container.extend({
 
@@ -76,6 +78,7 @@ define([
                 case 'land':                return new LandModule();
                 case 'post-production':     return new PostProductionModule();
                 case 'taxonomy':            return new TaxonomyModule();
+                case 'trade':               return new TradeModule();
                 default:
                     throw new Error('Module ' + name + ' not found');
             }

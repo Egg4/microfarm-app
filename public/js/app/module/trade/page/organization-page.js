@@ -22,7 +22,9 @@ define([
                     return this.model.getDisplayName();
                 }.bind(this),
                 icon: function () {
-                    return this.model.get('supplier') ? new Icon({name: 'truck'}) : new Icon({name: 'store-alt'});
+                    return this.model.get('supplier') ?
+                        new Icon({name: 'truck'}) :
+                        new Icon({name: 'store-alt'});
                 }.bind(this),
                 collection: app.collections.get('organization'),
                 body: this.buildBody.bind(this),
@@ -40,28 +42,67 @@ define([
 
         /*---------------------------------------- Navigation ------------------------------------------*/
         buildNavigation: function () {
+            var items = this.buildNavigationButtons();
             return new Navigation({
-                layout: function () {
-                    var items = [];
-                    if (this.model.get('supplier')) {
-                        items.push(this.buildArticlesButton());
-                        items.push(this.buildPurchasesButton());
-                    }
-                    if (this.model.get('client')) {
-                        items.push(this.buildSalesButton());
-                    }
-                    return new GridLayout({
-                        column: items.length,
-                        items: items,
-                    })
-                }.bind(this),
+                layout: new GridLayout({
+                    column: items.length,
+                    items: items,
+                }),
+            });
+        },
+
+        buildNavigationButtons: function () {
+            var buttons = [];
+            if (app.authentication.can('read', 'organization') && this.model.get('supplier')) {
+                buttons.push(this.buildSuppliersButton());
+            }
+            if (app.authentication.can('read', 'organization') && this.model.get('client')) {
+                buttons.push(this.buildClientsButton());
+            }
+            if (app.authentication.can('read', 'article') && this.model.get('supplier')) {
+                buttons.push(this.buildArticlesButton());
+            }
+            if (app.authentication.can('update', 'organization')) {
+                buttons.push(this.buildEditButton());
+            }
+
+            return buttons;
+        },
+
+        buildSuppliersButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('suppliers-page.title'),
+                    icon: new Icon({name: 'truck'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('suppliers');
+                    },
+                },
+            });
+        },
+
+        buildClientsButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('clients-page.title'),
+                    icon: new Icon({name: 'store-alt'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('clients');
+                    },
+                },
             });
         },
 
         buildArticlesButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('organization-page.button.articles'),
+                    text: polyglot.t('articles-page.title'),
                     icon: new Icon({name: 'shopping-cart'}),
                 }),
                 iconAlign: 'top',
@@ -73,6 +114,22 @@ define([
             });
         },
 
+        buildEditButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('model-view-page.button.edit'),
+                    icon: new Icon({name: 'pencil-alt'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        this.openEditionDialog();
+                    }.bind(this),
+                },
+            });
+        },
+
+        /*
         buildPurchasesButton: function () {
             return new Button({
                 label: new Label({
@@ -102,10 +159,12 @@ define([
                 },
             });
         },
+        */
 
         /*---------------------------------------- Organization ------------------------------------------*/
         buildOrganizationHtml: function () {
             return new Html({
+                className: 'model-view',
                 template: $('#organization-page-model-template').html(),
                 data: function () {
                     return this.buildOrganizationHtmlData();

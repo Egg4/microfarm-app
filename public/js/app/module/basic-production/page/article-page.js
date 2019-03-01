@@ -76,8 +76,14 @@ define([
                 iconAlign: 'top',
                 events: {
                     click: function () {
-                        app.router.navigate('entity/articles');
-                    },
+                        var organizationId = this.model.get('organization_id');
+                        if (organizationId) {
+                            app.router.navigate('organization/' + organizationId + '/articles');
+                        }
+                        else {
+                            app.router.navigate('entity/articles');
+                        }
+                    }.bind(this),
                 },
             });
         },
@@ -94,12 +100,6 @@ define([
                         this.openEditionDialog({
                             formVisible: {
                                 organization_id: false,
-                                category_id: true,
-                                name: true,
-                                quantity_unit_id: true,
-                                default_unit_price: true,
-                                default_tax: true,
-                                active: true,
                             },
                         });
                     }.bind(this),
@@ -117,9 +117,13 @@ define([
         },
 
         buildArticleHtmlData: function () {
-            var category = this.model.find('category'),
+            var entity = this.model.find('entity'),
+                organization = this.model.find('organization'),
+                category = this.model.find('category'),
                 quantityUnit = this.model.find('category', {selfAttribute: 'quantity_unit_id'});
             return $.extend(this.model.toJSON(), {
+                entity: entity.toJSON(),
+                organization: !_.isNull(organization) ? organization.toJSON() : null,
                 category: category.toJSON(),
                 quantity_unit: quantityUnit.toJSON(),
             });
@@ -183,8 +187,6 @@ define([
         buildVarietyFormVisible: function () {
             return {
                 article_id: false,
-                plant_id: true,
-                variety_id: true,
             };
         },
     });

@@ -44,7 +44,8 @@ define([
         /*---------------------------------------- Navigation ------------------------------------------*/
         buildNavigation: function () {
             var row1Items = this.buildNavigationRow1Buttons(),
-                row2Items = this.buildNavigationRow2Buttons();
+                row2Items = this.buildNavigationRow2Buttons(),
+                row3Items = this.buildNavigationRow3Buttons();
             return new Navigation({
                 layout: new StackLayout({
                     items: [
@@ -55,6 +56,10 @@ define([
                         new GridLayout({
                             column: row2Items.length,
                             items: row2Items,
+                        }),
+                        new GridLayout({
+                            column: row3Items.length,
+                            items: row3Items,
                         }),
                     ],
                 }),
@@ -121,6 +126,47 @@ define([
         },
 
         buildNavigationRow2Buttons: function () {
+            var buttons = [];
+            if (app.modules.has('basic-production') && app.authentication.can('crop', 'article')) {
+                buttons.push(this.buildCropsButton());
+            }
+            if (app.modules.has('post-production') && app.authentication.can('output', 'article')) {
+                buttons.push(this.buildOutputsButton());
+            }
+            return buttons;
+        },
+
+        buildCropsButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('crops-page.title'),
+                    icon: new Icon({name: 'leaf'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('crops');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildOutputsButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('outputs-page.title'),
+                    icon: new Icon({name: 'dolly'}),
+                }),
+                iconAlign: 'top',
+                events: {
+                    click: function () {
+                        app.router.navigate('outputs');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildNavigationRow3Buttons: function () {
             var buttons = [];
             if (app.modules.has('access') && app.authentication.isAdmin()) {
                 buttons.push(this.buildUsersButton());

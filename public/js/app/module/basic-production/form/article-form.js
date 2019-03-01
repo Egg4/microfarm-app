@@ -33,16 +33,10 @@ define([
                         new Select({
                             name: 'organization_id',
                             placeholder: polyglot.t('form.placeholder.organization_id'),
-                            defaultValue: 0,
                             optgroup: true,
                             nullable: true,
                             cast: 'integer',
                             data: this.buildOrganizationData.bind(this),
-                            validator: function (value) {
-                                if (!_.isNull(value) && value <= 0) {
-                                    return 'Invalid';
-                                }
-                            },
                         }),
                         new Select({
                             name: 'category_id',
@@ -101,15 +95,23 @@ define([
         },
 
         buildOrganizationData: function () {
-            var organizations = app.collections.get('organization').where({
-                supplier: true,
+            var data = [],
+                entityId = app.authentication.get('entity_id'),
+                entity = app.collections.get('entity').get(entityId),
+                organizations = app.collections.get('organization').where({
+                    supplier: true,
+                });
+            data.push({
+                optgroup: entity.getDisplayName().charAt(0).removeDiacritics().toUpperCase(),
+                value: null,
+                label: entity.getDisplayName(),
             });
-            var data = _.map(organizations, function(organization) {
-                return {
+            _.each(organizations, function(organization) {
+                data.push({
                     optgroup: organization.getDisplayName().charAt(0).removeDiacritics().toUpperCase(),
                     value: organization.get('id'),
                     label: organization.getDisplayName(),
-                };
+                });
             });
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
         },

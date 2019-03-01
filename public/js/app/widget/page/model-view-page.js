@@ -41,6 +41,7 @@ define([
             options = $.extend(true, {
                 model: this.model,
                 formVisible: {},
+                formDisabled: {},
             }, options);
             var dialog = app.dialogs.get(options.model.collection.modelName);
             dialog.setData({
@@ -51,6 +52,7 @@ define([
             });
             dialog.form.setData(options.model.toJSON());
             dialog.form.setVisible(options.formVisible);
+            dialog.form.setDisabled(options.formDisabled);
             return dialog.open();
         },
 

@@ -36,6 +36,7 @@ define([
                 modelForm: {
                     data: {},
                     visible: {},
+                    disabled: {},
                 },
                 onCreationClick: this.openCreationDialog.bind(this),
             };
@@ -77,6 +78,9 @@ define([
             var modelFormVisible = _.isFunction(this.modelForm.visible) ?
                 this.modelForm.visible() : this.modelForm.visible;
             dialog.form.setVisible(modelFormVisible);
+            var modelFormDisabled = _.isFunction(this.modelForm.disabled) ?
+                this.modelForm.disabled() : this.modelForm.disabled;
+            dialog.form.setDisabled(modelFormDisabled);
             dialog.open();
         },
 
@@ -194,6 +198,9 @@ define([
             var modelFormVisible = _.isFunction(this.modelForm.visible) ?
                 this.modelForm.visible(model) : this.modelForm.visible;
             dialog.form.setVisible(modelFormVisible);
+            var modelFormDisabled = _.isFunction(this.modelForm.disabled) ?
+                this.modelForm.disabled(model) : this.modelForm.disabled;
+            dialog.form.setDisabled(modelFormDisabled);
             dialog.open();
         },
 

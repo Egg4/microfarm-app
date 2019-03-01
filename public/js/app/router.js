@@ -56,7 +56,7 @@ define([
 
         home: function () {
             if (app.collections.fetched()) {
-                var defaultRoute = app.modules.has('basic-production') ? 'planner' : 'entity';
+                var defaultRoute = app.modules.has('basic-production') ? 'calendar' : 'entity';
                 this.navigate(defaultRoute);
             }
         },

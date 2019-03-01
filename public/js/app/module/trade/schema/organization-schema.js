@@ -6,9 +6,9 @@ define([
     'lib/schema/schema',
     'lib/model/model',
     'lib/collection/collection',
-    'app/view/form/organization-form',
+    'app/module/trade/form/organization-form',
     'app/widget/dialog/model-dialog',
-    'app/view/page/organization-page',
+    'app/module/trade/page/organization-page',
 ], function ($, _, Schema, Model, Collection, Form, Dialog, Page) {
 
     return Schema.extend({
@@ -21,9 +21,7 @@ define([
                 },
                 collection: {
                     class: Collection,
-                    foreignKeys: {
-                        entity_id: 'entity',
-                    },
+                    foreignKeys: {},
                     uniqueKey: ['name'],
                     comparator: 'name',
                 },

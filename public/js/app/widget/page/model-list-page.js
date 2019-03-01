@@ -88,6 +88,9 @@ define([
             var modelFormVisible = _.isFunction(this.tableOptions.modelForm.visible) ?
                 this.tableOptions.modelForm.visible() : this.tableOptions.modelForm.visible;
             dialog.form.setVisible(modelFormVisible);
+            var modelFormDisabled = _.isFunction(this.tableOptions.modelForm.disabled) ?
+                this.tableOptions.modelForm.disabled() : this.tableOptions.modelForm.disabled;
+            dialog.form.setDisabled(modelFormDisabled);
             return dialog.open();
         },
 
