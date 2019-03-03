@@ -21,6 +21,7 @@ define([
             seedling: _.template($('#task-page-seedling-table-row-template').html()),
             planting: _.template($('#task-page-planting-table-row-template').html()),
             output: _.template($('#task-page-output-table-row-template').html()),
+            photo: _.template($('#task-page-photo-table-row-template').html()),
         },
 
         initialize: function () {
@@ -37,6 +38,7 @@ define([
             this.listenTo(app.collections.get('seedling'), 'update', this.render);
             this.listenTo(app.collections.get('planting'), 'update', this.render);
             this.listenTo(app.collections.get('output'), 'update', this.render);
+            this.listenTo(app.collections.get('photo'), 'update', this.render);
         },
 
         buildTitle: function () {
@@ -48,7 +50,7 @@ define([
                 items: [
                     this.buildNavigation(),
                     this.buildTaskHtml(),
-                    this.buildModelTable(),
+                    this.buildFeaturesTable(),
                 ],
             });
         },
@@ -124,11 +126,6 @@ define([
                                 crop_id: false,
                                 output_id: false,
                                 organization_id: false,
-                                category_id: true,
-                                date: true,
-                                time: true,
-                                description: true,
-                                done: true,
                             },
                         });
                     }.bind(this),
@@ -153,10 +150,10 @@ define([
             });
         },
 
-        /*---------------------------------------- Children ---------------------------------------*/
-        buildModelTable: function () {
+        /*---------------------------------------- Features ---------------------------------------*/
+        buildFeaturesTable: function () {
             return new Table({
-                title: polyglot.t('task-page.children-table.title'),
+                title: polyglot.t('task-page.features-table.title'),
                 models: this.buildModels.bind(this),
                 modelRow: this.buildModelRow.bind(this),
                 modelForm: {
@@ -182,6 +179,10 @@ define([
             if (app.authentication.can('create', 'working')) {
                 items.push(this.buildMenuPopupWorkingButton());
             }
+            if (app.modules.has('extra-production')
+                && app.authentication.can('create', 'photo')) {
+                items.push(this.buildMenuPopupPhotoButton());
+            }
             if (_.contains(['seedling'], category.get('key'))
                 && app.authentication.can('create', 'seedling')) {
                 items.push(this.buildMenuPopupSeedlingButton());
@@ -191,9 +192,10 @@ define([
                 items.push(this.buildMenuPopupPlantingButton());
             }
             if (_.contains(['harvest', 'harvest_plant', 'harvest_seed'], category.get('key'))
-                    && app.authentication.can('create', 'output')) {
+                && app.authentication.can('create', 'output')) {
                 items.push(this.buildMenuPopupOutputButton());
             }
+
             return items;
         },
 
@@ -206,6 +208,20 @@ define([
                 events: {
                     click: function () {
                         this.closeCreationMenuPopup('working');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildMenuPopupPhotoButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('model.name.photo'),
+                    icon: new Icon({name: 'image'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeCreationMenuPopup('photo');
                     }.bind(this),
                 },
             });
@@ -297,6 +313,11 @@ define([
                     task_id: this.model.get('id'),
                 }));
             }
+            if (app.modules.has('extra-production')) {
+                models = _.union(models, app.collections.get('photo').where({
+                    task_id: this.model.get('id'),
+                }));
+            }
 
             return models;
         },
@@ -326,6 +347,7 @@ define([
         navigateToModelPage: function (model) {
             switch (model.collection.modelName) {
                 case 'working':
+                case 'photo':
                 case 'seedling':
                 case 'planting':
                     break;
@@ -359,6 +381,7 @@ define([
         buildModelRowData: function (model) {
             switch (model.collection.modelName) {
                 case 'working': return model.toJSON();
+                case 'photo': return model.toJSON();
                 case 'seedling':
                     var variety = model.find('variety'),
                         plant = variety.find('plant'),
@@ -404,6 +427,10 @@ define([
                     user_id: app.authentication.get('user_id'),
                     duration: '01:00:00',
                 };
+                case 'photo': return {
+                    entity_id: this.model.get('entity_id'),
+                    task_id: this.model.get('id'),
+                };
                 case 'seedling': return {
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),
@@ -424,6 +451,9 @@ define([
                 case 'working': return {
                     task_id: false,
                     user_id: false,
+                };
+                case 'photo': return {
+                    task_id: false,
                 };
                 case 'seedling': return {
                     task_id: false,

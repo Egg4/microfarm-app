@@ -10,9 +10,12 @@ define([
 
         build: function (name, dialogSchema, formSchema) {
             return function () {
-                return new dialogSchema.class({
-                    form: new formSchema.class(),
-                });
+                if (formSchema) {
+                    return new dialogSchema.class({
+                        form: new formSchema.class(),
+                    });
+                }
+                return new dialogSchema.class();
             };
         },
     });

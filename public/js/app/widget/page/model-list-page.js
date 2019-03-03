@@ -32,7 +32,7 @@ define([
                 events: {
                     swipeleft: function() {
                         app.panels.get('main-menu').open();
-                    }.bind(this),
+                    },
                 },
             }, options));
 

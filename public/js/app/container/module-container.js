@@ -7,6 +7,7 @@ define([
     'app/module/access/access-module',
     'app/module/basic-production/basic-production-module',
     'app/module/core/core-module',
+    'app/module/extra-production/extra-production-module',
     'app/module/land/land-module',
     'app/module/post-production/post-production-module',
     'app/module/taxonomy/taxonomy-module',
@@ -15,6 +16,7 @@ define([
              AccessModule,
              BasicProductionModule,
              CoreModule,
+             ExtraProductionModule,
              LandModule,
              PostProductionModule,
              TaxonomyModule,
@@ -32,7 +34,7 @@ define([
                     app.collections.set(key, collection);
                 }
                 if (schema.dialog) {
-                    var dialog = app.dialogs.build(key, schema.dialog, schema.form);
+                    var dialog = app.dialogs.build(key, schema.dialog, schema.form || null);
                     app.dialogs.set(key, dialog);
                 }
                 if (schema.page) {
@@ -75,6 +77,7 @@ define([
                 case 'access':              return new AccessModule();
                 case 'basic-production':    return new BasicProductionModule();
                 case 'core':                return new CoreModule();
+                case 'extra-production':    return new ExtraProductionModule();
                 case 'land':                return new LandModule();
                 case 'post-production':     return new PostProductionModule();
                 case 'taxonomy':            return new TaxonomyModule();

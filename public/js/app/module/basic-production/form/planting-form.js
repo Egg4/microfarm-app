@@ -208,8 +208,10 @@ define([
             });
             dialog.form.setVisible({
                 organization_id: app.modules.has('trade'),
-                category_id: false,
-                active: false,
+            });
+            dialog.form.setDisabled({
+                category_id: true,
+                active: true,
             });
             dialog.open().done(function (article) {
                 var articleSelect = this.getElement('article_id');
@@ -273,8 +275,9 @@ define([
                 entity_id: this.getElement('entity_id').getValue(),
                 active: true,
             }));
-            dialog.form.setVisible({
-                active: false,
+            dialog.form.setVisible({});
+            dialog.form.setDisabled({
+                active: true,
             });
             dialog.open().done(function (variety) {
                 var varietySelect = this.getElement('variety_id');

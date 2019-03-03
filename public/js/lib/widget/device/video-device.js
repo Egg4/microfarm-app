@@ -12,11 +12,7 @@ define([
         initialize: function (options) {
             Device.prototype.initialize.call(this, options);
 
-            $(this.el).addClass('video-device-widget');
-        },
-
-        load: function (options) {
-            options = $.extend(true, {
+            var defaults = {
                 video: {
                     width: 320,
                     height: 240,
@@ -24,6 +20,16 @@ define([
                     facingMode: 'user',
                 },
                 audio: false,
+            };
+            $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
+
+            $(this.el).addClass('video-device-widget');
+        },
+
+        load: function (options) {
+            options = $.extend(true, {
+                video: this.video,
+                audio: this.audio,
             }, options);
 
             var deferred = $.Deferred();
@@ -40,7 +46,9 @@ define([
         },
 
         unload: function () {
-            var stream = this.el.srcObject;
+            var deferred = $.Deferred(),
+                stream = this.el.srcObject;
+
             if (stream) {
                 _.each(stream.getVideoTracks(), function(videoTrack) {
                     videoTrack.stop();
@@ -50,6 +58,9 @@ define([
                 });
             }
             this.el.srcObject = null;
+            deferred.resolve();
+
+            return deferred.promise();
         },
 
         play: function () {
@@ -60,14 +71,8 @@ define([
             this.el.pause();
         },
 
-        isPaused: function () {
-            return this.el.paused;
-        },
-
-        drawTo: function (canvas) {
-            canvas.width = this.el.videoWidth;
-            canvas.height = this.el.videoHeight;
-            canvas.getContext('2d').drawImage(this.el, 0, 0);
+        isPlaying: function () {
+            return !this.el.paused;
         },
     });
 });

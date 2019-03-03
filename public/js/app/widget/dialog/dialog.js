@@ -14,6 +14,8 @@ define([
 
         initialize: function (options) {
             var defaults = {
+                header: this.buildHeader.bind(this),
+                footer: this.buildFooter.bind(this),
                 title: '',
                 icon: false,
                 buttons: [],
@@ -21,8 +23,8 @@ define([
             $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
 
             Page.prototype.initialize.call(this, $.extend(true, {
-                header: this.buildHeader(),
-                footer: this.buildFooter(),
+                header: _.isFunction(this.header) ? this.header() : this.header,
+                footer: _.isFunction(this.footer) ? this.footer() : this.footer,
             }, options));
 
             $(this.el).addClass('dialog');

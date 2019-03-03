@@ -11,16 +11,10 @@ define([
         initialize: function (options) {
             FormElement.prototype.initialize.call(this, options);
 
-            var defaults = {
-                height: 'auto',
-            };
-            $.extend(true, this, defaults, _.pick(options, _.keys(defaults)));
-
             $(this.el).addClass('photo-form-element-widget');
 
             this.container = $('<div>');
-            this.container.addClass('container');
-            this.container.css('height', this.height);
+            this.container.addClass('photo-container');
 
             this.element = $('<input>');
             this.element.attr('id', this.getElementId());

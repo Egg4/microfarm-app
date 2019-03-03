@@ -25,7 +25,7 @@ define([
                 buttons.push(this.buildCalendarButton());
             }
             if (app.modules.has('basic-production') && app.modules.has('land')) {
-                //buttons.push(this.buildPlannerButton());
+                buttons.push(this.buildPlannerButton());
             }
             if (app.modules.has('core')) {
                 buttons.push(this.buildEntityButton());

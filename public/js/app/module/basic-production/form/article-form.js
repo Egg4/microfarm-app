@@ -11,7 +11,10 @@ define([
     'lib/widget/form/element/input-number-form-element',
     'lib/widget/form/element/checkbox-form-element',
     'lib/widget/form/label/form-label',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputText, InputNumber, Checkbox, FormLabel) {
+    'lib/widget/button/button',
+    'lib/widget/label/label',
+    'lib/widget/icon/fa-icon',
+], function ($, _, Form, FormGroup, InputHidden, Select, InputText, InputNumber, Checkbox, FormLabel, Button, Label, Icon) {
 
     return Form.extend({
 
@@ -30,13 +33,27 @@ define([
                             name: 'entity_id',
                             cast: 'integer',
                         }),
-                        new Select({
-                            name: 'organization_id',
-                            placeholder: polyglot.t('form.placeholder.organization_id'),
-                            optgroup: true,
-                            nullable: true,
-                            cast: 'integer',
-                            data: this.buildOrganizationData.bind(this),
+                        new FormGroup({
+                            type: 'horizontal',
+                            items: [
+                                new Select({
+                                    name: 'organization_id',
+                                    placeholder: polyglot.t('form.placeholder.organization_id'),
+                                    optgroup: true,
+                                    nullable: true,
+                                    cast: 'integer',
+                                    css: {flex: '1'},
+                                    data: this.buildOrganizationData.bind(this),
+                                }),
+                                new Button({
+                                    label: new Label({
+                                        icon: new Icon({name: 'plus'}),
+                                    }),
+                                    events: {
+                                        click: this.openOrganizationCreationDialog.bind(this),
+                                    },
+                                }),
+                            ],
                         }),
                         new Select({
                             name: 'category_id',
@@ -114,6 +131,32 @@ define([
                 });
             });
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
+        },
+
+        openOrganizationCreationDialog: function () {
+            var dialog = app.dialogs.get('organization');
+
+            dialog.setData({
+                title: polyglot.t('model-dialog.title.create', {
+                    model: polyglot.t('model.name.organization').toLowerCase(),
+                }),
+                icon: new Icon({name: 'plus'}),
+            });
+            dialog.form.setData({
+                entity_id: this.getElement('entity_id').getValue(),
+                supplier: true,
+                client: false,
+            });
+            dialog.form.setVisible({});
+            dialog.form.setDisabled({
+                supplier: true,
+            });
+            dialog.open().done(function (organization) {
+                var organizationSelect = this.getElement('organization_id');
+                organizationSelect.setValue(organization.get('id'));
+                organizationSelect.render();
+                $(organizationSelect.el).trigger('change');
+            }.bind(this));
         },
 
         buildCategoryData: function () {

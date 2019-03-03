@@ -8,7 +8,6 @@ define([
 ], function ($, _, Container,
              MenuPanel
 ) {
-
     return Container.extend({
 
         initialize: function () {

@@ -1,8 +1,8 @@
 .idea/
 desktop.ini
 cache/
-public/img/photo
-public/build
+public/img/
+public/build/
 builder.bat
 commands.txt
 Command Prompt.lnk

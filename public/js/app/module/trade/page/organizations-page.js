@@ -67,10 +67,7 @@ define([
         },
 
         buildOrganizationFormVisible: function () {
-            return {
-                supplier: !this.filter.supplier,
-                client: !this.filter.client,
-            };
+            return {};
         },
 
         setSuppliersData: function () {

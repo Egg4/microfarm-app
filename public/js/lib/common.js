@@ -150,6 +150,10 @@ define([
         return $.datepicker.formatDate(format, date);
     };
 
+    Date.diffDays = function(startDate, endDate) {
+        return Math.round((endDate - startDate) / 864e5);
+    };
+
     Date.prototype.format = function(format) {
         return Date.format(this, format);
     };

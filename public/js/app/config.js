@@ -27,6 +27,7 @@ define([
                 'taxonomy',
                 'land',
                 'basic-production',
+                'trade',
             ],
             advanced: [
                 'access',
@@ -34,6 +35,7 @@ define([
                 'land',
                 'basic-production',
                 'post-production',
+                'extra-production',
                 'trade',
             ],
         },

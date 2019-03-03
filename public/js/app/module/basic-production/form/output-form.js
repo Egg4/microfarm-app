@@ -224,11 +224,9 @@ define([
             dialog.form.setVisible({
                 organization_id: false,
                 category_id: !category,
-                name: true,
-                quantity_unit_id: true,
-                default_unit_price: true,
-                default_tax: true,
-                active: false,
+            });
+            dialog.form.setDisabled({
+                active: true,
             });
             dialog.open().done(function (article) {
                 var articleSelect = this.getElement('article_id');
@@ -284,10 +282,9 @@ define([
                 entity_id: this.getElement('entity_id').getValue(),
                 active: true,
             });
-            dialog.form.setVisible({
-                plant_id: true,
-                name: true,
-                active: false,
+            dialog.form.setVisible({});
+            dialog.form.setDisabled({
+                active: true,
             });
             dialog.open().done(function (variety) {
                 var varietySelect = this.getElement('variety_id');

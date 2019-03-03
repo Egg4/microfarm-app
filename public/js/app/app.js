@@ -49,23 +49,27 @@ define([
         },
 
         run: function () {
-            this.modules.register('core');
+            try {
+                this.modules.register('core');
 
-            if (!this.authentication.isEntitySelected()) {
-                this.router.start();
-                this.router.navigate('login');
-            }
-            else {
-                var entityId = this.authentication.get('entity_id');
-                this.collections.get('entity').fetch({data: {
-                    id: entityId,
-                    range: '0-1',
-                }}).done(function () {
-                    this.registerModules();
-                    this.collections.fetchAll().done(function() {
-                        this.router.start();
+                if (!this.authentication.isEntitySelected()) {
+                    this.router.start();
+                    this.router.navigate('login');
+                }
+                else {
+                    var entityId = this.authentication.get('entity_id');
+                    this.collections.get('entity').fetch({data: {
+                        id: entityId,
+                        range: '0-1',
+                    }}).done(function () {
+                        this.registerModules();
+                        this.collections.fetchAll().done(function() {
+                            this.router.start();
+                        }.bind(this));
                     }.bind(this));
-                }.bind(this));
+                }
+            } catch (error) {
+                console.log(error);
             }
         },
 

@@ -169,11 +169,11 @@ td .right {
 }
 
 #calendar-page .task .title {
-    font-size: 0.6em;
+    font-size: .6em;
 }
 
 #calendar-page .task .description {
-    font-size: 0.5em;
+    font-size: .5em;
 }
 
 /********************************/
@@ -187,7 +187,57 @@ td .right {
     text-shadow: none;
 }
 
+#planner-page .table-widget tr:last-child {
+    border-bottom: none;
+}
+
+#planner-page .content {
+    padding: 0;
+}
+
 #planner-page .zone {
+    /*
     writing-mode: vertical-rl;
-    padding-right: 1em;
+    padding-right: .5em;
+    */
+}
+
+#planner-page .crops {
+    width: 50em;
+    padding: .3em 0 .3em 0;
+}
+
+#planner-page .crop {
+    background-color: #ededed;
+    padding: .5em;
+    -webkit-border-radius: .3125em;
+    border-radius: .3125em;
+    border: solid 1px #ccc;
+}
+
+#planner-page .crop:not(:last-child) {
+    margin-bottom: .5em;
+}
+
+/********************************/
+/*  Camera dialog               */
+/********************************/
+#camera-dialog {
+    background-color: black;
+}
+
+#camera-dialog video {
+    width: 100%;
+}
+
+#camera-dialog canvas {
+    display: none;
+}
+
+#camera-dialog .back-button {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: .5em;
+    font-size: 2em;
 }

@@ -7,23 +7,21 @@ define([
 ], function ($, _, Widget) {
 
     return Widget.extend({
+        infos: [],
 
         initialize: function (options) {
-            $.extend(true, this, {
-                mediaDeviceInfos: [],
-            }, _.pick(options));
-
             Widget.prototype.initialize.call(this, options);
 
-            $(this.el).addClass('media-widget');
+            $(this.el).addClass('device-widget');
 
             if (!navigator.mediaDevices) {
-                console.log('navigator.mediaDevices not supported');
+                throw new Error('Media devices not supported');
             } else {
                 navigator.mediaDevices.enumerateDevices().then(function (deviceInfos) {
-                    this.deviceInfos = deviceInfos;
+                    this.infos = deviceInfos;
                 }.bind(this)).catch(function (error) {
                     console.log(error.name + ': ' + error.message);
+                    throw new Error(error.name + ': ' + error.message);
                 });
             }
         },
