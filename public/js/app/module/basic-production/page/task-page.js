@@ -38,7 +38,9 @@ define([
             this.listenTo(app.collections.get('seedling'), 'update', this.render);
             this.listenTo(app.collections.get('planting'), 'update', this.render);
             this.listenTo(app.collections.get('output'), 'update', this.render);
-            this.listenTo(app.collections.get('photo'), 'update', this.render);
+            if (app.modules.has('extra-production')) {
+                this.listenTo(app.collections.get('photo'), 'update', this.render);
+            }
         },
 
         buildTitle: function () {
