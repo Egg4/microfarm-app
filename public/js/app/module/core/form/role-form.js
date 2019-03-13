@@ -13,7 +13,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'role-form',
                 collection: app.collections.get('role'),
                 formGroup: new FormGroup({
                     items: [

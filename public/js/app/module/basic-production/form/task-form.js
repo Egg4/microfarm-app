@@ -21,7 +21,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'task-form',
                 collection: app.collections.get('task'),
                 formGroup: new FormGroup({
                     items: [

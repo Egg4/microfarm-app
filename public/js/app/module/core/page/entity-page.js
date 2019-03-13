@@ -84,7 +84,7 @@ define([
             return new Button({
                 label: new Label({
                     text: polyglot.t('varieties-page.title'),
-                    icon: new Icon({name: 'dna'}),
+                    icon: new Icon({name: 'tag'}),
                 }),
                 iconAlign: 'top',
                 events: {

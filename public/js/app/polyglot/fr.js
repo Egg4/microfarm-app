@@ -112,6 +112,7 @@ define([], function () {
         'confirm-popup.logout.message': 'Voulez-vous vraiment vous déconnecter ?',
         'delete-popup.body.message': 'Voulez-vous vraiment supprimer "%{name}" ?',
         'delete-popup.checkbox.label': 'Confirmer la suppression',
+        'error-popup.title': 'Erreurs',
         'error-popup.button.close': 'Fermer',
         'menu-popup.title.create': 'Ajouter',
         'menu-popup.button.edit': 'Modifier',

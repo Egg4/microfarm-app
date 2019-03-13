@@ -181,13 +181,6 @@
     border-color: red !important;
 }
 
-.photo-form-element-widget .photo-container {
-    height: 100%;
-    -webkit-border-radius: .3125em;
-    border-radius: 0.3125em;
-    border: solid 1px #ddd;
-}
-
 .input-hidden-form-element-widget .ui-input-text {
     border-width: 0;
     margin: 0;

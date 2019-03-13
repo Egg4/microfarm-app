@@ -99,11 +99,13 @@ define([
             }).done(function(data) {
                 app.authentication.set(data);
                 app.registerModules();
-                app.collections.fetchAll().done(function() {
-                    app.router.navigate();
-                }).always(function() {
-                    app.loader.hide();
-                }.bind(this));
+                app.collections.fetchAll()
+                    .done(function() {
+                        app.router.navigate();
+                    })
+                    .always(function() {
+                        app.loader.hide();
+                    });
             }.bind(this));
         },
     });

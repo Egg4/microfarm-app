@@ -133,7 +133,7 @@ define([
         buildVarietyTable: function () {
             return new Table({
                 title: polyglot.t('article-page.variety-table.title'),
-                icon: new Icon({name: 'dna'}),
+                icon: new Icon({name: 'tag'}),
                 collection: app.collections.get('article_variety'),
                 models: this.buildVarieties.bind(this),
                 modelRow: {

@@ -49,27 +49,23 @@ define([
         },
 
         run: function () {
-            try {
-                this.modules.register('core');
+            this.modules.register('core');
 
-                if (!this.authentication.isEntitySelected()) {
-                    this.router.start();
-                    this.router.navigate('login');
-                }
-                else {
-                    var entityId = this.authentication.get('entity_id');
-                    this.collections.get('entity').fetch({data: {
-                        id: entityId,
-                        range: '0-1',
-                    }}).done(function () {
-                        this.registerModules();
-                        this.collections.fetchAll().done(function() {
-                            this.router.start();
-                        }.bind(this));
+            if (!this.authentication.isEntitySelected()) {
+                this.router.start();
+                this.router.navigate('login');
+            }
+            else {
+                var entityId = this.authentication.get('entity_id');
+                this.collections.get('entity').fetch({data: {
+                    id: entityId,
+                    range: '0-1',
+                }}).done(function () {
+                    this.registerModules();
+                    this.collections.fetchAll().done(function() {
+                        this.router.start();
                     }.bind(this));
-                }
-            } catch (error) {
-                console.log(error);
+                }.bind(this));
             }
         },
 
@@ -95,20 +91,25 @@ define([
             }.bind(this));
         },
 
+        error: function (errors) {
+            errors = _.isArray(errors) ? errors : [errors];
+            this.popups.closeAll().done(function() {
+                var errorPopup = app.popups.get('error');
+                errorPopup.setData({
+                    title: polyglot.t('error-popup.title'),
+                    errors: errors,
+                });
+                errorPopup.open();
+            });
+        },
+
         onClientError: function (errors) {
             if (errors[0].name == 'authentication_required') {
                 this.authentication.clear();
                 this.router.navigate('login');
             }
             else {
-                this.popups.closeAll().done(function() {
-                    var errorPopup = app.popups.get('error');
-                    errorPopup.setData({
-                        title: 'Erreurs',
-                        errors: errors,
-                    });
-                    errorPopup.open();
-                }.bind(this));
+                this.error(errors);
             }
         },
     });

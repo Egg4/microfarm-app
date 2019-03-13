@@ -138,12 +138,14 @@ define([
                         });
                         popup.open().done(function () {
                             app.loader.show();
-                            app.authentication.logout().done(function () {
-                                app.collections.resetAll();
-                                app.router.navigate('login');
-                            }).always(function () {
-                                app.loader.hide();
-                            });
+                            app.authentication.logout()
+                                .done(function () {
+                                    app.collections.resetAll();
+                                    app.router.navigate('login');
+                                })
+                                .always(function () {
+                                    app.loader.hide();
+                                });
                         });
                     }.bind(this),
                 },

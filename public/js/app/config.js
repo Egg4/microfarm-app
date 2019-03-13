@@ -13,6 +13,16 @@ define([
             },
             timeout: 25000,
         },
+        camera: {
+            video: {
+                width: 640,
+                height: 480,
+            },
+            photo: {
+                mimeType: 'image/jpeg',
+                quality: 0.60,
+            },
+        },
         demo: {
             email: 'demo.user@maraichage.org',
             password: 'tAe1DSEXKCKskaHf',

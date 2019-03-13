@@ -16,7 +16,9 @@ define([
             Schema.prototype.initialize.call(this, {
                 model: {
                     class: Model,
-                    displayName: 'id',
+                    displayName: function () {
+                        return polyglot.t('model.name.photo') + ' ' + this.get('id');
+                    },
                 },
                 collection: {
                     class: Collection,

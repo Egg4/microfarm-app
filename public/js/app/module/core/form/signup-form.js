@@ -14,7 +14,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'signup-form',
                 formGroup: new FormGroup({
                     items: [
                         new InputText({

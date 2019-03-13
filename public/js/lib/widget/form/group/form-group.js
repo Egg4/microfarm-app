@@ -35,8 +35,10 @@ define([
                 item.render();
             }.bind(this));
 
-            var visible = false;
-            _.each(this.getElements(), function(element) {
+            var elements = this.getElements();
+
+            var visible = _.keys(elements).length == 0;
+            _.each(elements, function(element) {
                 if (element.isVisible()) visible = true;
             });
             if (visible) {
@@ -45,6 +47,16 @@ define([
             } else {
                 $(this.el).addClass('hidden');
                 $(this.el).hide();
+            }
+
+            var disabled = _.keys(elements).length > 0;
+            _.each(elements, function(element) {
+                if (!element.isDisabled()) disabled = false;
+            });
+            if (disabled) {
+                $(this.el).children('.widget:not(.form-element-widget)').addClass('ui-state-disabled');
+            } else {
+                $(this.el).children('.widget:not(.form-element-widget)').removeClass('ui-state-disabled');
             }
         },
 

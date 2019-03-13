@@ -14,7 +14,7 @@ define([
             Page.prototype.initialize.call(this, {
                 id: 'varieties-page',
                 title: polyglot.t('varieties-page.title'),
-                icon: new Icon({name: 'dna'}),
+                icon: new Icon({name: 'tag'}),
                 collection: app.collections.get('variety'),
                 tableOptions: {
                     models: this.buildVarieties.bind(this),
@@ -74,11 +74,7 @@ define([
         },
 
         buildVarietyFormVisible: function () {
-            return {
-                plant_id: true,
-                name: true,
-                active: true,
-            };
+            return {};
         },
     });
 });

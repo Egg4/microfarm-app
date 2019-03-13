@@ -188,12 +188,8 @@ define([
                 crop_id: (modelName === 'crop'),
                 output_id: (modelName === 'output'),
                 organization_id: (modelName === 'organization'),
-                category_id: true,
-                date: true,
-                time: true,
-                description: true,
-                done: true,
             });
+            dialog.form.setDisabled({});
             dialog.open();
         },
 
@@ -225,11 +221,12 @@ define([
             var dateISO = date.format('yy-mm-dd'),
                 currentMondayISO = new Date().getMonday().format('yy-mm-dd'),
                 mondayISO = this.monday.format('yy-mm-dd'),
-                isCurrentWeek = (date.getDay() == 1 && mondayISO == currentMondayISO);
+                isCurrentMonday = (date.getDay() == 1 && mondayISO == currentMondayISO);
 
             var tasks = app.collections.get('task').filter(function (task) {
-                if (isCurrentWeek) {
-                    if (task.get('done') || task.get('date') > dateISO) return false;
+                if (isCurrentMonday) {
+                    if (task.get('done') && task.get('date') < dateISO) return false;
+                    if (task.get('date') > dateISO) return false;
                 }
                 else {
                     if (task.get('date') !== dateISO) return false;
@@ -351,14 +348,14 @@ define([
             });
             dialog.form.setData(task.toJSON());
             dialog.form.setVisible({
-                crop_id: false,
-                output_id: false,
-                organization_id: false,
-                category_id: true,
-                date: true,
-                time: true,
-                description: true,
-                done: true,
+                crop_id: !_.isNull(task.get('crop_id')),
+                output_id: !_.isNull(task.get('output_id')),
+                organization_id: !_.isNull(task.get('organization_id')),
+            });
+            dialog.form.setDisabled({
+                crop_id: true,
+                output_id: true,
+                organization_id: true,
             });
             dialog.open();
         },

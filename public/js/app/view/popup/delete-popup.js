@@ -98,12 +98,12 @@ define([
                     .done(function() {
                         this.deferred.resolve();
                     }.bind(this))
-                    .fail(function() {
-                        this.deferred.reject();
-                    }.bind(this))
                     .always(function() {
                         app.loader.hide();
-                    });
+                    })
+                    .fail(function() {
+                        this.deferred.reject();
+                    }.bind(this));
             }
         },
 

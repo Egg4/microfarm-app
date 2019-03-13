@@ -7,10 +7,8 @@ define([
     'lib/widget/layout/stack-layout',
     'lib/widget/device/video-device',
     'lib/widget/canvas/canvas',
-    'lib/widget/button/button',
-    'lib/widget/label/label',
     'lib/widget/icon/fa-icon',
-], function ($, _, Dialog, StackLayout, Video, Canvas, Button, Label, Icon) {
+], function ($, _, Dialog, StackLayout, Video, Canvas, Icon) {
 
     return Dialog.extend({
 
@@ -29,24 +27,21 @@ define([
                 items: [
                     this.buildVideo(),
                     this.buildCanvas(),
-                    this.buildBackButton(),
+                    this.buildCancelButton(),
+                    this.buildValidateButton(),
                 ],
             });
         },
 
         buildVideo: function () {
             return new Video({
-                video: {
-                    /*
-                    width:  { min: 640, ideal: 800, max: 1280 },
-                    height: { min: 480, ideal: 600, max: 840 },
-                    */
-                    width: 640,
-                    height: 480,
+                video: $.extend({
+                    width: 320,
+                    height: 240,
                     facingMode: 'environment',
-                },
+                }, app.config.camera.video),
                 events: {
-                    click: this.onVideoClick.bind(this),
+                    click: this.validate.bind(this),
                 },
             });
         },
@@ -56,46 +51,47 @@ define([
         },
 
         buildCanvas: function () {
-            return new Canvas({
+            return new Canvas($.extend({
                 mimeType: 'image/jpeg',
-                quality: 0.80,
-            });
+                quality: 0.75,
+            }, app.config.camera.photo));
         },
 
         getCanvas: function () {
             return this.body.items[1];
         },
 
-        buildBackButton: function () {
+        buildCancelButton: function () {
             return new Icon({
-                className: 'back-button',
-                name: 'long-arrow-alt-left',
+                className: 'button cancel-button',
                 events: {
-                    click: this.onBackButtonClick.bind(this),
+                    click: this.cancel.bind(this),
                 },
             });
         },
 
-        onVideoClick: function() {
-            var video = this.getVideo(),
-                canvas = this.getCanvas();
-
-            if (video.isPlaying()) {
-                video.pause();
-                canvas.drawImage(video.el, 0, 0, video.el.videoWidth, video.el.videoHeight);
-            }
-            else {
-                video.unload().done(function () {
-                    this.close();
-                    var data = canvas.toDataURL();
-                    this.deferred.resolve(data);
-                }.bind(this));
-            }
+        getCancelButton: function () {
+            return this.body.items[2];
         },
 
-        onBackButtonClick: function() {
+        buildValidateButton: function () {
+            return new Icon({
+                className: 'button validate-button',
+                events: {
+                    click: this.validate.bind(this),
+                },
+            });
+        },
+
+        getValidateButton: function () {
+            return this.body.items[3];
+        },
+
+        cancel: function() {
             var video = this.getVideo(),
-                canvas = this.getCanvas();
+                canvas = this.getCanvas(),
+                cancelButton = this.getCancelButton(),
+                validateButton = this.getValidateButton();
 
             if (video.isPlaying()) {
                 video.unload().done(function () {
@@ -106,6 +102,32 @@ define([
             else {
                 canvas.clear();
                 video.play();
+                cancelButton.setData({name: 'long-arrow-alt-left'});
+                cancelButton.render();
+                validateButton.setData({name: 'camera-retro'});
+                validateButton.render();
+            }
+        },
+
+        validate: function() {
+            var video = this.getVideo(),
+                canvas = this.getCanvas(),
+                cancelButton = this.getCancelButton(),
+                validateButton = this.getValidateButton();
+
+            if (video.isPlaying()) {
+                video.pause();
+                canvas.drawImage(video.el, 0, 0, video.el.videoWidth, video.el.videoHeight);
+                cancelButton.setData({name: 'times'});
+                cancelButton.render();
+                validateButton.setData({name: 'check'});
+                validateButton.render();
+            }
+            else {
+                video.unload().done(function () {
+                    this.close();
+                    this.deferred.resolve(canvas.toDataURL());
+                }.bind(this));
             }
         },
 
@@ -113,19 +135,28 @@ define([
             Dialog.prototype.render.call(this);
 
             var video = this.getVideo(),
-                canvas = this.getCanvas();
+                canvas = this.getCanvas(),
+                cancelButton = this.getCancelButton(),
+                validateButton = this.getValidateButton();
 
             canvas.clear();
+            cancelButton.setData({name: 'long-arrow-alt-left'});
+            cancelButton.render();
+            validateButton.setData({name: 'camera-retro'});
+            validateButton.render();
 
             app.loader.show();
-            video.load().done(function() {
-                video.play();
-            }.bind(this)).fail(function(error) {
-                console.log(error);
-                //throw error
-            }.bind(this)).always(function() {
-                app.loader.hide();
-            });
+            video.load()
+                .done(function() {
+                    video.play();
+                })
+                .always(function() {
+                    app.loader.hide();
+                })
+                .fail(function(error) {
+                    this.close();
+                    this.deferred.reject(error);
+                }.bind(this));
         },
 
         open: function () {

@@ -103,9 +103,22 @@ td .right {
 /********************************/
 #signup-page .body,
 #login-page .body {
-    padding: 0.5em;
+    padding: .5em;
     max-width: 600px;
     margin: auto;
+}
+
+/********************************/
+/*  Task page                   */
+/********************************/
+#task-page tr.photo td {
+    padding: .25em 0 .25em 0;
+    line-height: 0;
+}
+
+#task-page tr.photo img {
+    width: 100%;
+    height: auto;
 }
 
 /********************************/
@@ -220,6 +233,22 @@ td .right {
 }
 
 /********************************/
+/*  Photo dialog                */
+/********************************/
+#photo-dialog form {
+    padding: 0;
+}
+
+#photo-dialog form .photo-form-element-widget img {
+    width: 100%;
+    height: auto;
+}
+
+#photo-dialog form .photo-form-element-widget img:hover {
+    cursor: pointer;
+}
+
+/********************************/
 /*  Camera dialog               */
 /********************************/
 #camera-dialog {
@@ -234,10 +263,23 @@ td .right {
     display: none;
 }
 
-#camera-dialog .back-button {
+#camera-dialog i.button {
     position: fixed;
-    top: 0;
-    left: 0;
     padding: .5em;
     font-size: 2em;
+    color: #aaa;
+}
+
+#camera-dialog i.button:hover {
+    cursor: pointer;
+}
+
+#camera-dialog i.cancel-button {
+    bottom: 0;
+    left: 0;
+}
+
+#camera-dialog i.validate-button {
+    bottom: 0;
+    right: 0;
 }

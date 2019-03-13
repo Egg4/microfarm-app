@@ -141,6 +141,7 @@ define([
                 modelForm: {
                     data: this.buildTaskFormData.bind(this),
                     visible: this.buildTaskFormVisible.bind(this),
+                    disabled: this.buildTaskFormDisabled.bind(this),
                 },
             });
         },
@@ -177,14 +178,14 @@ define([
 
         buildTaskFormVisible: function () {
             return {
-                crop_id: false,
                 output_id: false,
                 organization_id: false,
-                category_id: true,
-                date: true,
-                time: true,
-                description: true,
-                done: true,
+            };
+        },
+
+        buildTaskFormDisabled: function () {
+            return {
+                crop_id: true,
             };
         },
 

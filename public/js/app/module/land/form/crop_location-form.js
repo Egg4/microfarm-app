@@ -16,7 +16,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'crop_location-form',
                 collection: app.collections.get('crop_location'),
                 formGroup: new FormGroup({
                     items: [

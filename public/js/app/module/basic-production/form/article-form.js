@@ -19,8 +19,9 @@ define([
     return Form.extend({
 
         initialize: function () {
+            this.subForms = [];
+
             Form.prototype.initialize.call(this, {
-                id: 'article-form',
                 collection: app.collections.get('article'),
                 formGroup: new FormGroup({
                     items: [
@@ -60,6 +61,13 @@ define([
                             placeholder: polyglot.t('form.placeholder.category_id'),
                             cast: 'integer',
                             data: this.buildCategoryData.bind(this),
+                            events: {
+                                change: this.onCategoryChange.bind(this),
+                            },
+                        }),
+                        new FormGroup({
+                            className: 'article-variety-form-group',
+                            items: this.buildArticleVarietyFormGroupItems(),
                         }),
                         new InputText({
                             name: 'name',
@@ -76,14 +84,18 @@ define([
                             items: [
                                 new InputNumber({
                                     name: 'default_unit_price',
-                                    css: {flex: '1'},
                                     placeholder: polyglot.t('form.placeholder.unit_price'),
                                     min: 0,
+                                    defaultValue: 0,
+                                    defaultVisible: false,
+                                    css: {flex: '1'},
                                     cast: 'float',
                                 }),
                                 new Select({
                                     name: 'default_tax',
                                     placeholder: polyglot.t('form.placeholder.tax'),
+                                    defaultValue: 0,
+                                    defaultVisible: false,
                                     css: {width: '8em'},
                                     cast: 'float',
                                     data: [
@@ -102,6 +114,8 @@ define([
                                     label: new FormLabel({
                                         text: polyglot.t('form.placeholder.active'),
                                     }),
+                                    defaultValue: true,
+                                    defaultVisible: false,
                                     cast: 'boolean',
                                 }),
                              ],
@@ -109,6 +123,10 @@ define([
                     ],
                 }),
             });
+        },
+
+        getArticleVarietyFormGroup: function() {
+            return this.formGroup.items[4];
         },
 
         buildOrganizationData: function () {
@@ -169,14 +187,158 @@ define([
             });
         },
 
+        onCategoryChange: function () {
+            var categoryId = this.getElement('category_id').getValue(),
+                category = app.collections.get('category').get(categoryId),
+                quantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
+                quantityUnitSelect = this.getElement('quantity_unit_id'),
+                keyMap = {
+                    seed: 'g',
+                    plant: 'unit',
+                    harvest: 'kg',
+                    input: 'kg',
+                    tool: 'unit',
+                    installation: 'unit',
+                    cart: 'unit',
+                };
+
+            var quantityUnit = quantityUnitRoot.findChild({
+                key: keyMap[category.get('key')],
+            });
+            quantityUnitSelect.setValue(quantityUnit.get('id'));
+            quantityUnitSelect.render();
+            $(quantityUnitSelect.el).trigger('change');
+
+            var articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
+                articleId = this.getElement('id').getValue();
+            if (articleId > 0 || !_.contains(['seed', 'plant', 'harvest'], category.get('key'))) {
+                $(articleVarietyFormGroup.el).hide();
+            } else {
+                $(articleVarietyFormGroup.el).show();
+            }
+
+            this.buildArticleName();
+        },
+
+        buildArticleVarietyFormGroupItems: function () {
+            return [
+                this.buildArticleVarietyFormGroupItem(),
+            ];
+        },
+
+        buildArticleVarietyFormGroupItem: function () {
+            var ArticleVarietyForm = app.modules.get('taxonomy').schemas.article_variety.form.class;
+            return new ArticleVarietyForm({tagName: 'div'});
+        },
+
+        buildArticleName: function () {
+            var categoryId = this.getElement('category_id').getValue(),
+                category = app.collections.get('category').get(categoryId),
+                articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
+                articleVarietyForm = articleVarietyFormGroup.items[0],
+                plantSelect = articleVarietyForm.getElement('plant_id'),
+                varietySelect = articleVarietyForm.getElement('variety_id'),
+                nameInput = this.getElement('name'),
+                name = '';
+
+            if (category && _.contains(['seed', 'plant', 'cart'], category.get('key'))) {
+                name += category.get('value') + ' ';
+            }
+            if (category && _.contains(['seed', 'plant', 'harvest'], category.get('key'))) {
+                var plantId = plantSelect.getValue(),
+                    plant = app.collections.get('plant').get(plantId);
+                if (plant) {
+                    name += plant.get('name') + ' ';
+                }
+                var varietyId = varietySelect.getValue(),
+                    variety = app.collections.get('variety').get(varietyId);
+                if (variety) {
+                    name += variety.get('name') + ' ';
+                }
+            }
+
+            nameInput.setValue(name.charAt(0).toUpperCase() + name.slice(1).toLowerCase());
+            nameInput.render();
+            $(nameInput.el).trigger('change');
+        },
+
         buildQuantityUnitData: function () {
-            var categories = app.collections.get('category').findRoot('article_quantity_unit_id').findChildren();
-            return _.map(categories, function(category) {
+            var quantityUnits = app.collections.get('category').findRoot('article_quantity_unit_id').findChildren();
+            return _.map(quantityUnits, function(quantityUnit) {
                 return {
-                    value: category.get('id'),
-                    label: category.getDisplayName(),
+                    value: quantityUnit.get('id'),
+                    label: quantityUnit.getDisplayName(),
                 };
             });
+        },
+
+        setData: function(data) {
+            Form.prototype.setData.call(this, data);
+
+            var articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
+                articleVarietyForm = articleVarietyFormGroup.items[0];
+            articleVarietyForm.setData({
+                entity_id: this.getElement('entity_id').getValue(),
+            });
+        },
+
+        render: function() {
+            Form.prototype.render.call(this);
+
+            var articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
+                articleVarietyForm = articleVarietyFormGroup.items[0],
+                articleId = this.getElement('id').getValue(),
+                categoryId = this.getElement('category_id').getValue(),
+                category = app.collections.get('category').get(categoryId);
+            articleVarietyForm.render();
+            if (articleId > 0 || (category && !_.contains(['seed', 'plant', 'harvest'], category.get('key')))) {
+                $(articleVarietyFormGroup.el).hide();
+            } else {
+                var plantSelect = articleVarietyForm.getElement('plant_id'),
+                    varietySelect = articleVarietyForm.getElement('variety_id');
+                $(plantSelect.el).on('change', this.buildArticleName.bind(this));
+                $(varietySelect.el).on('change', this.buildArticleName.bind(this));
+                $(articleVarietyFormGroup.el).show();
+            }
+        },
+
+        submit: function() {
+            var articleId = this.getElement('id').getValue();
+            if (articleId > 0) {
+                return Form.prototype.submit.call(this);
+            }
+
+            var deferred = $.Deferred(),
+                articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
+                articleVarietyForm = articleVarietyFormGroup.items[0];
+
+            articleVarietyForm.setData($.extend(articleVarietyForm.getData(), {
+                entity_id: this.getElement('entity_id').getValue(),
+                article_id: 0, // Validator bypass
+            }));
+
+            var formValidate = this.validate(),
+                articleVarietyFormValidate = articleVarietyForm.validate();
+            if (!formValidate || !articleVarietyFormValidate) return deferred.reject();
+
+            Form.prototype.submit.call(this)
+                .done(function(data) {
+                    articleVarietyForm.setData($.extend(articleVarietyForm.getData(), {
+                        article_id: data.id,
+                    }));
+                    articleVarietyForm.submit()
+                        .done(function() {
+                            deferred.resolve(data);
+                        })
+                        .fail(function() {
+                            deferred.reject();
+                        });
+                }.bind(this))
+                .fail(function() {
+                    deferred.reject();
+                });
+
+            return deferred.promise();
         },
     });
 });

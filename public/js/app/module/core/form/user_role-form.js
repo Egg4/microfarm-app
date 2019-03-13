@@ -20,7 +20,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'user_role-form',
                 collection: app.collections.get('user_role'),
                 formGroup: new FormGroup({
                     items: [

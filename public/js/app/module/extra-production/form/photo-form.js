@@ -13,7 +13,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'photo-form',
                 collection: app.collections.get('photo'),
                 formGroup: new FormGroup({
                     items: [
@@ -32,9 +31,6 @@ define([
                         }),
                         new Photo({
                             name: 'url',
-                            css: {
-                                height: '220px',
-                            },
                             events: {
                                 click: function() {
                                     this.openCameraDialog();
@@ -46,12 +42,31 @@ define([
             });
         },
 
+        render: function () {
+            var urlElement = this.getElement('url');
+
+            Form.prototype.render.call(this);
+
+            if (_.isEmpty(urlElement.getValue())) {
+                setTimeout(this.openCameraDialog.bind(this), 200);
+            }
+        },
+
         openCameraDialog: function () {
-            app.dialogs.get('camera').open().done(function (url) {
-                var urlElement = this.getElement('url');
-                urlElement.setValue(url);
-                urlElement.render();
-            }.bind(this));
+            app.dialogs.get('camera').open()
+                .done(function (url) {
+                    var urlElement = this.getElement('url');
+                    urlElement.setValue(url);
+                    urlElement.render();
+                }.bind(this))
+                .fail(function (error) {
+                    if (error) {
+                        app.error({
+                            name: error.name,
+                            description: error.message,
+                        });
+                    }
+                });
         },
     });
 });

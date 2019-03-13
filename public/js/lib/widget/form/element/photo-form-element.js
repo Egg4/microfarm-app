@@ -13,8 +13,7 @@ define([
 
             $(this.el).addClass('photo-form-element-widget');
 
-            this.container = $('<div>');
-            this.container.addClass('photo-container');
+            this.image = $('<img>');
 
             this.element = $('<input>');
             this.element.attr('id', this.getElementId());
@@ -33,9 +32,8 @@ define([
             FormElement.prototype.render.call(this);
 
             if (this.visible) {
-                this.container.css('background-size', 'cover');
-                this.container.css('background-image', 'url("' + this.value + '")');
-                $(this.el).append(this.container);
+                this.image.attr('src', this.value);
+                $(this.el).append(this.image);
                 $(this.el).append(this.element);
             }
         },

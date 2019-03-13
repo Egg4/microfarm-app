@@ -7,13 +7,15 @@ define([
     'lib/widget/form/group/form-group',
     'lib/widget/form/element/input-hidden-form-element',
     'lib/widget/form/element/select-form-element',
-], function ($, _, Form, FormGroup, InputHidden, Select) {
+    'lib/widget/button/button',
+    'lib/widget/label/label',
+    'lib/widget/icon/fa-icon',
+], function ($, _, Form, FormGroup, InputHidden, Select, Button, Label, Icon) {
 
     return Form.extend({
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'article_variety-form',
                 collection: app.collections.get('article_variety'),
                 formGroup: new FormGroup({
                     items: [
@@ -40,13 +42,27 @@ define([
                                 change: this.onChangePlant.bind(this),
                             },
                         }),
-                        new Select({
-                            name: 'variety_id',
-                            placeholder: polyglot.t('form.placeholder.variety_id'),
-                            optgroup: true,
-                            nullable: true,
-                            cast: 'integer',
-                            data: this.buildVarietyData.bind(this),
+                        new FormGroup({
+                            type: 'horizontal',
+                            items: [
+                                new Select({
+                                    name: 'variety_id',
+                                    placeholder: polyglot.t('form.placeholder.variety_id'),
+                                    optgroup: true,
+                                    nullable: true,
+                                    cast: 'integer',
+                                    css: {flex: '1'},
+                                    data: this.buildVarietyData.bind(this),
+                                }),
+                                new Button({
+                                    label: new Label({
+                                        icon: new Icon({name: 'plus'}),
+                                    }),
+                                    events: {
+                                        click: this.openVarietyCreationDialog.bind(this),
+                                    },
+                                }),
+                            ],
                         }),
                     ],
                 }),
@@ -63,6 +79,13 @@ define([
                 });
             });
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
+        },
+
+        onChangePlant: function () {
+            var varietySelect = this.getElement('variety_id');
+            varietySelect.setValue(null);
+            varietySelect.render();
+            $(varietySelect.el).trigger('change');
         },
 
         buildVarietyData: function () {
@@ -94,11 +117,35 @@ define([
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
         },
 
-        onChangePlant: function () {
-            var varietySelect = this.getElement('variety_id');
-            varietySelect.setValue(null);
-            varietySelect.render();
-            $(varietySelect.el).trigger('change');
+        openVarietyCreationDialog: function () {
+            var plantId = this.getElement('plant_id').getValue(),
+                plant = app.collections.get('plant').get(plantId),
+                dialog = app.dialogs.get('variety');
+
+            dialog.setData({
+                title: polyglot.t('model-dialog.title.create', {
+                    model: polyglot.t('model.name.variety').toLowerCase(),
+                }),
+                icon: new Icon({name: 'plus'}),
+            });
+            var formData = {};
+            if (plant) {
+                formData.plant_id = plant.get('id');
+            }
+            dialog.form.setData($.extend(formData, {
+                entity_id: this.getElement('entity_id').getValue(),
+                active: true,
+            }));
+            dialog.form.setVisible({});
+            dialog.form.setDisabled({
+                active: true,
+            });
+            dialog.open().done(function (variety) {
+                var varietySelect = this.getElement('variety_id');
+                varietySelect.setValue(variety.get('id'));
+                varietySelect.render();
+                $(varietySelect.el).trigger('change');
+            }.bind(this));
         },
     });
 });

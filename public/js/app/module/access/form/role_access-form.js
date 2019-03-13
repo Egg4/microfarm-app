@@ -17,7 +17,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'role_access-form',
                 collection: app.collections.get('role_access'),
                 formGroup: new FormGroup({
                     items: [

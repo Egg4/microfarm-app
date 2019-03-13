@@ -16,7 +16,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'variety-form',
                 collection: app.collections.get('variety'),
                 formGroup: new FormGroup({
                     items: [
@@ -47,6 +46,8 @@ define([
                                     label: new FormLabel({
                                         text: polyglot.t('form.placeholder.active'),
                                     }),
+                                    defaultValue: true,
+                                    defaultVisible: false,
                                     cast: 'boolean',
                                 }),
                             ],

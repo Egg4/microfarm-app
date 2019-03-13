@@ -125,9 +125,14 @@ define([
                     click: function () {
                         this.openEditionDialog({
                             formVisible: {
-                                crop_id: false,
-                                output_id: false,
-                                organization_id: false,
+                                crop_id: !_.isNull(this.model.get('crop_id')),
+                                output_id: !_.isNull(this.model.get('output_id')),
+                                organization_id: !_.isNull(this.model.get('organization_id')),
+                            },
+                            formDisabled: {
+                                crop_id: true,
+                                output_id: true,
+                                organization_id: true,
                             },
                         });
                     }.bind(this),
@@ -156,6 +161,7 @@ define([
         buildFeaturesTable: function () {
             return new Table({
                 title: polyglot.t('task-page.features-table.title'),
+                icon: new Icon({name: 'puzzle-piece'}),
                 models: this.buildModels.bind(this),
                 modelRow: this.buildModelRow.bind(this),
                 modelForm: {
@@ -233,7 +239,7 @@ define([
             return new Button({
                 label: new Label({
                     text: polyglot.t('model.name.seedling'),
-                    icon: new Icon({name: 'seedling'}),
+                    icon: new Icon({name: 'map-pin'}),
                 }),
                 events: {
                     click: function () {
@@ -247,7 +253,7 @@ define([
             return new Button({
                 label: new Label({
                     text: polyglot.t('model.name.planting'),
-                    icon: new Icon({name: 'screwdriver'}),
+                    icon: new Icon({name: 'seedling'}),
                 }),
                 events: {
                     click: function () {
@@ -328,6 +334,7 @@ define([
             var modelName = model.collection.modelName;
             return new Html({
                 tagName: 'tr',
+                className: modelName,
                 template: this.template[modelName],
                 data: this.buildModelRowData(model),
                 events: {
@@ -385,12 +392,18 @@ define([
                 case 'working': return model.toJSON();
                 case 'photo': return model.toJSON();
                 case 'seedling':
-                    var variety = model.find('variety'),
+                    var entity = model.find('entity'),
+                        article = model.find('article'),
+                        organization = article.find('organization'),
+                        variety = model.find('variety'),
                         plant = variety.find('plant'),
                         category = model.find('category'),
                         densityUnit = model.find('category', {selfAttribute: 'density_unit_id'}),
                         areaUnit = model.find('category', {selfAttribute: 'area_unit_id'});
                     return $.extend(model.toJSON(), {
+                        entity: entity.toJSON(),
+                        article: article.toJSON(),
+                        organization: _.isNull(organization) ? null : organization.toJSON(),
                         variety: variety.toJSON(),
                         plant: plant.toJSON(),
                         category: category.toJSON(),
@@ -398,10 +411,16 @@ define([
                         area_unit: areaUnit.toJSON(),
                 });
                 case 'planting':
-                    var variety = model.find('variety'),
+                    var entity = model.find('entity'),
+                        article = model.find('article'),
+                        organization = article.find('organization'),
+                        variety = model.find('variety'),
                         plant = variety.find('plant'),
                         category = model.find('category');
                     return $.extend(model.toJSON(), {
+                        entity: entity.toJSON(),
+                        article: article.toJSON(),
+                        organization: _.isNull(organization) ? null : organization.toJSON(),
                         variety: variety.toJSON(),
                         plant: plant.toJSON(),
                         category: category.toJSON(),
@@ -433,14 +452,33 @@ define([
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),
                 };
-                case 'seedling': return {
-                    entity_id: this.model.get('entity_id'),
-                    task_id: this.model.get('id'),
-                };
-                case 'planting': return {
-                    entity_id: this.model.get('entity_id'),
-                    task_id: this.model.get('id'),
-                };
+                case 'seedling':
+                    var category = app.collections.get('category').findRoot('seedling_category_id').findChild({
+                        key: 'pluging',
+                    }),
+                    densityUnit = app.collections.get('category').findRoot('seedling_density_unit_id').findChild({
+                        key: 'seed',
+                    }),
+                    areaUnit = app.collections.get('category').findRoot('seedling_area_unit_id').findChild({
+                        key: 'plug',
+                    });
+                    return {
+                        entity_id: this.model.get('entity_id'),
+                        task_id: this.model.get('id'),
+                        nursery: true,
+                        category_id: category.get('id'),
+                        density_unit_id: densityUnit.get('id'),
+                        area_unit_id: areaUnit.get('id'),
+                    };
+                case 'planting':
+                    var category = app.collections.get('category').findRoot('planting_category_id').findChild({
+                            key: 'inline',
+                        });
+                    return {
+                        entity_id: this.model.get('entity_id'),
+                        task_id: this.model.get('id'),
+                        category_id: category.get('id'),
+                    };
                 case 'output': return {
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),

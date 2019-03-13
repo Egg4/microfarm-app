@@ -14,7 +14,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'login-form',
                 autocomplete: 'on',
                 formGroup: new FormGroup({
                     items: [

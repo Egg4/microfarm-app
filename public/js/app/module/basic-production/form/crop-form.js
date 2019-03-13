@@ -17,7 +17,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'crop-form',
                 collection: app.collections.get('crop'),
                 formGroup: new FormGroup({
                     items: [
@@ -105,7 +104,9 @@ define([
 
         openArticleCreationDialog: function () {
             var dialog = app.dialogs.get('article'),
-                harvestCategory = this.getHarvestCategory();
+                harvestCategory = this.getHarvestCategory(),
+                quantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
+                quantityUnitKg = quantityUnitRoot.findChild({key: 'kg'});
 
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
@@ -117,16 +118,14 @@ define([
                 entity_id: this.getElement('entity_id').getValue(),
                 organization_id: null,
                 category_id: harvestCategory.get('id'),
+                quantity_unit_id: quantityUnitKg.get('id'),
                 active: true,
             });
             dialog.form.setVisible({
                 organization_id: false,
-                category_id: false,
-                name: true,
-                quantity_unit_id: true,
-                default_unit_price: true,
-                default_tax: true,
-                active: false,
+            });
+            dialog.form.setDisabled({
+                category_id: true,
             });
             dialog.open().done(function (article) {
                 var articleSelect = this.getElement('article_id');

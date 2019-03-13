@@ -17,7 +17,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'planting-form',
                 collection: app.collections.get('planting'),
                 formGroup: new FormGroup({
                     items: [
@@ -189,10 +188,12 @@ define([
         },
 
         openArticleCreationDialog: function () {
-            var plantCategory = app.collections.get('category').findRoot('article_category_id').findChild({
+            var dialog = app.dialogs.get('article'),
+                plantCategory = app.collections.get('category').findRoot('article_category_id').findChild({
                     key: 'plant',
                 }),
-                dialog = app.dialogs.get('article');
+                quantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
+                quantityUnitUnit = quantityUnitRoot.findChild({key: 'unit'});
 
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
@@ -204,6 +205,7 @@ define([
                 entity_id: this.getElement('entity_id').getValue(),
                 organization_id: app.modules.has('trade') ? undefined : null,
                 category_id: plantCategory.get('id'),
+                quantity_unit_id: quantityUnitUnit.get('id'),
                 active: true,
             });
             dialog.form.setVisible({
@@ -211,7 +213,6 @@ define([
             });
             dialog.form.setDisabled({
                 category_id: true,
-                active: true,
             });
             dialog.open().done(function (article) {
                 var articleSelect = this.getElement('article_id');

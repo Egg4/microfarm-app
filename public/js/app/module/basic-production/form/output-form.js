@@ -17,7 +17,6 @@ define([
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                id: 'output-form',
                 collection: app.collections.get('output'),
                 formGroup: new FormGroup({
                     items: [
@@ -206,8 +205,10 @@ define([
                 dialog = app.dialogs.get('article');
             if (task) {
                 var category = app.collections.get('category').findRoot('article_category_id').findChild({
-                    key: keyMap[task.find('category').get('key')],
-                });
+                        key: keyMap[task.find('category').get('key')],
+                    }),
+                    quantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
+                    quantityUnitKg = quantityUnitRoot.findChild({key: 'kg'});
             }
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
@@ -218,15 +219,15 @@ define([
             dialog.form.setData({
                 entity_id: this.getElement('entity_id').getValue(),
                 organization_id: null,
-                category_id: category ? category.get('id') : undefined,
+                category_id: task ? category.get('id') : undefined,
+                quantity_unit_id: task ? quantityUnitKg.get('id') : undefined,
                 active: true,
             });
             dialog.form.setVisible({
                 organization_id: false,
-                category_id: !category,
             });
             dialog.form.setDisabled({
-                active: true,
+                category_id: (task),
             });
             dialog.open().done(function (article) {
                 var articleSelect = this.getElement('article_id');

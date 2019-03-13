@@ -12,6 +12,7 @@ define([
             return function () {
                 if (formSchema) {
                     return new dialogSchema.class({
+                        id: name + '-dialog',
                         form: new formSchema.class(),
                     });
                 }

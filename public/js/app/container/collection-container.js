@@ -79,7 +79,7 @@ define([
                 deferred.resolve();
             }.bind(this)).always(function() {
                 app.loader.hide();
-            }.bind(this));
+            });
 
             return deferred.promise();
         },

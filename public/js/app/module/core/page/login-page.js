@@ -132,7 +132,7 @@ define([
                     loginButton.state = 'enabled';
                     loginButton.render();
                     app.loader.hide();
-                }.bind(this));
+                });
         },
     });
 });
