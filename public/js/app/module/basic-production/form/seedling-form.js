@@ -46,9 +46,7 @@ define([
                                     css: {flex: '1'},
                                     data: this.buildArticleData.bind(this),
                                     events: {
-                                        change: function () {
-                                            this.getElement('variety_id').render();
-                                        }.bind(this),
+                                        change: this.resetVarietySelect.bind(this),
                                     },
                                 }),
                                 new Button({
@@ -95,6 +93,12 @@ define([
                                         text: polyglot.t('form.placeholder.nursery'),
                                     }),
                                     cast: 'boolean',
+                                    events: {
+                                        change: function () {
+                                            this.resetDensityUnitValue();
+                                            this.resetAreaUnitValue();
+                                        }.bind(this),
+                                    },
                                 }),
                             ],
                         }),
@@ -103,6 +107,12 @@ define([
                             placeholder: polyglot.t('form.placeholder.category_id'),
                             cast: 'integer',
                             data: this.buildCategoryData.bind(this),
+                            events: {
+                                change: function () {
+                                    this.resetDensityUnitValue();
+                                    this.resetAreaUnitValue();
+                                }.bind(this),
+                            },
                         }),
                         new FormGroup({
                             type: 'horizontal',
@@ -113,6 +123,14 @@ define([
                                     min: 0,
                                     cast: 'float',
                                     css: {flex: '1'},
+                                    validator: function (value) {
+                                        if (_.isNaN(value) || value <= 0) {
+                                            return polyglot.t('form.validator.greater', {
+                                                field: polyglot.t('form.field.density'),
+                                                value: 0,
+                                            });
+                                        }
+                                    },
                                 }),
                                 new Select({
                                     name: 'density_unit_id',
@@ -122,7 +140,8 @@ define([
                                     data: this.buildDensityUnitData.bind(this),
                                 }),
                             ],
-                        }),new FormGroup({
+                        }),
+                        new FormGroup({
                             type: 'horizontal',
                             items: [
                                 new InputNumber({
@@ -131,6 +150,14 @@ define([
                                     min: 0,
                                     cast: 'float',
                                     css: {flex: '1'},
+                                    validator: function (value) {
+                                        if (_.isNaN(value) || value <= 0) {
+                                            return polyglot.t('form.validator.greater', {
+                                                field: polyglot.t('form.field.area'),
+                                                value: 0,
+                                            });
+                                        }
+                                    },
                                 }),
                                 new Select({
                                     name: 'area_unit_id',
@@ -146,6 +173,10 @@ define([
             });
         },
 
+        getVarietyFormGroup: function () {
+            return this.formGroup.items[5];
+        },
+
         buildArticleData: function () {
             var data = [],
                 entityId = app.authentication.get('entity_id'),
@@ -157,7 +188,6 @@ define([
                 }),
                 articles = app.collections.get('article').where({
                     category_id: seedCategory.get('id'),
-                    active: true,
                 }),
                 cropArticleVarieties = task.find('crop').find('article').findAll('article_variety'),
                 plantIds = _.map(cropArticleVarieties, function(cropArticleVariety) {
@@ -168,13 +198,8 @@ define([
                         plant_id: plantIds,
                     })
                     return articleVarieties.length > 0;
-                }),
-                articleId = this.getElement('article_id').getValue();
+                });
 
-            if (articleId) {
-                var article = app.collections.get('article').get(articleId);
-                if (!_.contains(articles, article)) articles.push(article);
-            }
             articles = _.sortBy(articles, function (article) {
                 return article.getDisplayName();
             });
@@ -191,11 +216,14 @@ define([
 
         openArticleCreationDialog: function () {
             var dialog = app.dialogs.get('article'),
+                taskId = this.getElement('task_id').getValue(),
+                task = app.collections.get('task').get(taskId),
                 seedCategory = app.collections.get('category').findRoot('article_category_id').findChild({
                     key: 'seed',
                 }),
                 quantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
-                quantityUnitG = quantityUnitRoot.findChild({key: 'g'});
+                quantityUnitG = quantityUnitRoot.findChild({key: 'g'}),
+                cropArticleVarieties = task.find('crop').find('article').findAll('article_variety');
 
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
@@ -215,6 +243,12 @@ define([
             });
             dialog.form.setDisabled({
                 category_id: true,
+            });
+            var articleVarietyForm = dialog.form.getArticleVarietyForm();
+            articleVarietyForm.setData({
+                entity_id: this.getElement('entity_id').getValue(),
+                plant_id: cropArticleVarieties.length > 0 ? _.first(cropArticleVarieties).get('plant_id') : undefined,
+                variety_id: null,
             });
             dialog.open().done(function (article) {
                 var articleSelect = this.getElement('article_id');
@@ -236,14 +270,8 @@ define([
                 data = [],
                 varieties = app.collections.get('variety').where({
                     plant_id: plantIds,
-                    active: true,
-                }),
-                varietyId = this.getElement('variety_id').getValue();
+                });
 
-            if (varietyId) {
-                var variety = app.collections.get('variety').get(varietyId);
-                if (!_.contains(varieties, variety)) varieties.push(variety);
-            }
             varieties = _.sortBy(varieties, function (variety) {
                 return variety.getDisplayName();
             });
@@ -254,6 +282,37 @@ define([
                 });
             });
             return data;
+        },
+
+        resetVarietySelect: function () {
+            var articleId = this.getElement('article_id').getValue(),
+                article = app.collections.get('article').get(articleId),
+                varietyFormGroup = this.getVarietyFormGroup(),
+                varietySelect = this.getElement('variety_id');
+
+            varietySelect.setNullable(false);
+            varietySelect.setValue('');
+            varietySelect.setVisible(true);
+            $(varietyFormGroup.el).show();
+
+            if (article && !_.isNull(article.get('organization_id'))) {
+                var articleVarieties = article.findAll('article_variety');
+                if (articleVarieties.length == 1) {
+                    var varietyId = _.first(articleVarieties).get('variety_id');
+                    varietySelect.setValue(varietyId);
+                    varietySelect.setVisible(false);
+                    $(varietyFormGroup.el).hide();
+                }
+                if (articleVarieties.length > 1) {
+                    varietySelect.setNullable(true);
+                    varietySelect.setValue(null);
+                    varietySelect.setVisible(false);
+                    $(varietyFormGroup.el).hide();
+                }
+            }
+
+            varietySelect.render();
+            $(varietySelect.el).trigger('change');
         },
 
         openVarietyCreationDialog: function () {
@@ -310,6 +369,27 @@ define([
             });
         },
 
+        resetDensityUnitValue: function () {
+            var nursery = this.getElement('nursery').getValue(),
+                categoryId = this.getElement('category_id').getValue(),
+                category = app.collections.get('category').get(categoryId),
+                densityUnitRoot = app.collections.get('category').findRoot('seedling_density_unit_id'),
+                densityUnitSelect = this.getElement('density_unit_id'),
+                keyMap = {
+                    pluging: 'seed',
+                    drilling: nursery ? 'seed' : 'g',
+                    dibbling: 'seed',
+                    broadcasting: 'g',
+                };
+
+            var densityUnit = densityUnitRoot.findChild({
+                key: keyMap[category.get('key')],
+            });
+            densityUnitSelect.setValue(densityUnit.get('id'));
+            densityUnitSelect.render();
+            $(densityUnitSelect.el).trigger('change');
+        },
+
         buildAreaUnitData: function () {
             var categories = app.collections.get('category').findRoot('seedling_area_unit_id').findChildren();
             return _.map(categories, function(category) {
@@ -318,6 +398,33 @@ define([
                     label: category.getDisplayName(),
                 };
             });
+        },
+
+        resetAreaUnitValue: function () {
+            var nursery = this.getElement('nursery').getValue(),
+                categoryId = this.getElement('category_id').getValue(),
+                category = app.collections.get('category').get(categoryId),
+                areaUnitRoot = app.collections.get('category').findRoot('seedling_area_unit_id'),
+                areaUnitSelect = this.getElement('area_unit_id'),
+                keyMap = {
+                    pluging: 'plug',
+                    drilling: nursery ? 'tray' : 'm²',
+                    dibbling: nursery ? 'tray' : 'm²',
+                    broadcasting: nursery ? 'tray' : 'm²',
+                };
+
+            var areaUnit = areaUnitRoot.findChild({
+                key: keyMap[category.get('key')],
+            });
+            areaUnitSelect.setValue(areaUnit.get('id'));
+            areaUnitSelect.render();
+            $(areaUnitSelect.el).trigger('change');
+        },
+
+        render: function() {
+            Form.prototype.render.call(this);
+
+            this.resetVarietySelect();
         },
     });
 });

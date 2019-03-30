@@ -18,10 +18,12 @@ define([
     return Page.extend({
         template: {
             working: _.template($('#task-page-working-table-row-template').html()),
+            photo: _.template($('#task-page-photo-table-row-template').html()),
+            tooling: _.template($('#task-page-tooling-table-row-template').html()),
             seedling: _.template($('#task-page-seedling-table-row-template').html()),
+            transplanting: _.template($('#task-page-transplanting-table-row-template').html()),
             planting: _.template($('#task-page-planting-table-row-template').html()),
             output: _.template($('#task-page-output-table-row-template').html()),
-            photo: _.template($('#task-page-photo-table-row-template').html()),
         },
 
         initialize: function () {
@@ -35,12 +37,16 @@ define([
 
             this.creationMenuPopup = this.buildCreationMenuPopup();
             this.listenTo(app.collections.get('working'), 'update', this.render);
-            this.listenTo(app.collections.get('seedling'), 'update', this.render);
-            this.listenTo(app.collections.get('planting'), 'update', this.render);
-            this.listenTo(app.collections.get('output'), 'update', this.render);
             if (app.modules.has('extra-production')) {
                 this.listenTo(app.collections.get('photo'), 'update', this.render);
             }
+            if (app.modules.has('advanced-production')) {
+                this.listenTo(app.collections.get('tooling'), 'update', this.render);
+            }
+            this.listenTo(app.collections.get('seedling'), 'update', this.render);
+            this.listenTo(app.collections.get('transplanting'), 'update', this.render);
+            this.listenTo(app.collections.get('planting'), 'update', this.render);
+            this.listenTo(app.collections.get('output'), 'update', this.render);
         },
 
         buildTitle: function () {
@@ -191,9 +197,17 @@ define([
                 && app.authentication.can('create', 'photo')) {
                 items.push(this.buildMenuPopupPhotoButton());
             }
+            if (app.modules.has('advanced-production')
+                && app.authentication.can('create', 'tooling')) {
+                items.push(this.buildMenuPopupToolingButton());
+            }
             if (_.contains(['seedling'], category.get('key'))
                 && app.authentication.can('create', 'seedling')) {
                 items.push(this.buildMenuPopupSeedlingButton());
+            }
+            if (_.contains(['transplanting'], category.get('key'))
+                && app.authentication.can('create', 'transplanting')) {
+                items.push(this.buildMenuPopupTransplantingButton());
             }
             if (_.contains(['planting'], category.get('key'))
                 && app.authentication.can('create', 'planting')) {
@@ -235,6 +249,20 @@ define([
             });
         },
 
+        buildMenuPopupToolingButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('model.name.tooling'),
+                    icon: new Icon({name: 'wrench'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeCreationMenuPopup('tooling');
+                    }.bind(this),
+                },
+            });
+        },
+
         buildMenuPopupSeedlingButton: function () {
             return new Button({
                 label: new Label({
@@ -244,6 +272,20 @@ define([
                 events: {
                     click: function () {
                         this.closeCreationMenuPopup('seedling');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildMenuPopupTransplantingButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('model.name.transplanting'),
+                    icon: new Icon({name: 'inbox'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeCreationMenuPopup('transplanting');
                     }.bind(this),
                 },
             });
@@ -311,6 +353,11 @@ define([
                     task_id: this.model.get('id'),
                 }));
             }
+            if (_.contains(['transplanting'], category.get('key'))) {
+                models = _.union(models, app.collections.get('transplanting').where({
+                    task_id: this.model.get('id'),
+                }));
+            }
             if (_.contains(['planting'], category.get('key'))) {
                 models = _.union(models, app.collections.get('planting').where({
                     task_id: this.model.get('id'),
@@ -318,6 +365,11 @@ define([
             }
             if (_.contains(['harvest', 'harvest_plant', 'harvest_seed'], category.get('key'))) {
                 models = _.union(models, app.collections.get('output').where({
+                    task_id: this.model.get('id'),
+                }));
+            }
+            if (app.modules.has('advanced-production')) {
+                models = _.union(models, app.collections.get('tooling').where({
                     task_id: this.model.get('id'),
                 }));
             }
@@ -355,11 +407,6 @@ define([
 
         navigateToModelPage: function (model) {
             switch (model.collection.modelName) {
-                case 'working':
-                case 'photo':
-                case 'seedling':
-                case 'planting':
-                    break;
                 case 'output':
                     app.router.navigate('output/' + model.get('id'));
                     break;
@@ -391,12 +438,20 @@ define([
             switch (model.collection.modelName) {
                 case 'working': return model.toJSON();
                 case 'photo': return model.toJSON();
+                case 'tooling':
+                    var entity = model.find('entity'),
+                        article = model.find('article'),
+                        organization = article.find('organization');
+                    return $.extend(model.toJSON(), {
+                        entity: entity.toJSON(),
+                        article: article.toJSON(),
+                        organization: _.isNull(organization) ? null : organization.toJSON(),
+                    });
                 case 'seedling':
                     var entity = model.find('entity'),
                         article = model.find('article'),
                         organization = article.find('organization'),
                         variety = model.find('variety'),
-                        plant = variety.find('plant'),
                         category = model.find('category'),
                         densityUnit = model.find('category', {selfAttribute: 'density_unit_id'}),
                         areaUnit = model.find('category', {selfAttribute: 'area_unit_id'});
@@ -404,25 +459,36 @@ define([
                         entity: entity.toJSON(),
                         article: article.toJSON(),
                         organization: _.isNull(organization) ? null : organization.toJSON(),
-                        variety: variety.toJSON(),
-                        plant: plant.toJSON(),
+                        variety: _.isNull(variety) ? null : variety.toJSON(),
+                        plant: _.isNull(variety) ? null : variety.find('plant').toJSON(),
                         category: category.toJSON(),
                         density_unit: densityUnit.toJSON(),
                         area_unit: areaUnit.toJSON(),
                 });
+                case 'transplanting':
+                    var entity = model.find('entity'),
+                        article = model.find('article'),
+                        organization = article.find('organization'),
+                        variety = model.find('variety');
+                    return $.extend(model.toJSON(), {
+                        entity: entity.toJSON(),
+                        article: article.toJSON(),
+                        organization: _.isNull(organization) ? null : organization.toJSON(),
+                        variety: _.isNull(variety) ? null : variety.toJSON(),
+                        plant: _.isNull(variety) ? null : variety.find('plant').toJSON(),
+                    });
                 case 'planting':
                     var entity = model.find('entity'),
                         article = model.find('article'),
                         organization = article.find('organization'),
                         variety = model.find('variety'),
-                        plant = variety.find('plant'),
                         category = model.find('category');
                     return $.extend(model.toJSON(), {
                         entity: entity.toJSON(),
                         article: article.toJSON(),
                         organization: _.isNull(organization) ? null : organization.toJSON(),
-                        variety: variety.toJSON(),
-                        plant: plant.toJSON(),
+                        variety: _.isNull(variety) ? null : variety.toJSON(),
+                        plant: _.isNull(variety) ? null : variety.find('plant').toJSON(),
                         category: category.toJSON(),
                     });
                 case 'output':
@@ -452,6 +518,10 @@ define([
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),
                 };
+                case 'tooling': return {
+                    entity_id: this.model.get('entity_id'),
+                    task_id: this.model.get('id'),
+                };
                 case 'seedling':
                     var category = app.collections.get('category').findRoot('seedling_category_id').findChild({
                         key: 'pluging',
@@ -470,10 +540,14 @@ define([
                         density_unit_id: densityUnit.get('id'),
                         area_unit_id: areaUnit.get('id'),
                     };
+                case 'transplanting': return {
+                    entity_id: this.model.get('entity_id'),
+                    task_id: this.model.get('id'),
+                };
                 case 'planting':
                     var category = app.collections.get('category').findRoot('planting_category_id').findChild({
-                            key: 'inline',
-                        });
+                        key: 'inline',
+                    });
                     return {
                         entity_id: this.model.get('entity_id'),
                         task_id: this.model.get('id'),
@@ -495,7 +569,13 @@ define([
                 case 'photo': return {
                     task_id: false,
                 };
+                case 'tooling': return {
+                    task_id: false,
+                };
                 case 'seedling': return {
+                    task_id: false,
+                };
+                case 'transplanting': return {
                     task_id: false,
                 };
                 case 'planting': return {

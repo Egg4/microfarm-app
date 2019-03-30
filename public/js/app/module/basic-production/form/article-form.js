@@ -45,6 +45,12 @@ define([
                                     cast: 'integer',
                                     css: {flex: '1'},
                                     data: this.buildOrganizationData.bind(this),
+                                    events: {
+                                        change: function () {
+                                            this.resetArticleVarietyForm();
+                                            this.resetArticleName();
+                                        }.bind(this),
+                                    },
                                 }),
                                 new Button({
                                     label: new Label({
@@ -62,7 +68,11 @@ define([
                             cast: 'integer',
                             data: this.buildCategoryData.bind(this),
                             events: {
-                                change: this.onCategoryChange.bind(this),
+                                change: function () {
+                                    this.resetArticleVarietyForm();
+                                    this.resetArticleName();
+                                    this.resetQuantityUnitValue();
+                                }.bind(this),
                             },
                         }),
                         new FormGroup({
@@ -129,6 +139,11 @@ define([
             return this.formGroup.items[4];
         },
 
+        getArticleVarietyForm: function() {
+            var articleVarietyFormGroup = this.getArticleVarietyFormGroup();
+            return articleVarietyFormGroup.items[0];
+        },
+
         buildOrganizationData: function () {
             var data = [],
                 entityId = app.authentication.get('entity_id'),
@@ -187,55 +202,62 @@ define([
             });
         },
 
-        onCategoryChange: function () {
-            var categoryId = this.getElement('category_id').getValue(),
-                category = app.collections.get('category').get(categoryId),
-                quantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
-                quantityUnitSelect = this.getElement('quantity_unit_id'),
-                keyMap = {
-                    seed: 'g',
-                    plant: 'unit',
-                    harvest: 'kg',
-                    input: 'kg',
-                    tool: 'unit',
-                    installation: 'unit',
-                    cart: 'unit',
-                };
-
-            var quantityUnit = quantityUnitRoot.findChild({
-                key: keyMap[category.get('key')],
-            });
-            quantityUnitSelect.setValue(quantityUnit.get('id'));
-            quantityUnitSelect.render();
-            $(quantityUnitSelect.el).trigger('change');
-
-            var articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
-                articleId = this.getElement('id').getValue();
-            if (articleId > 0 || !_.contains(['seed', 'plant', 'harvest'], category.get('key'))) {
-                $(articleVarietyFormGroup.el).hide();
-            } else {
-                $(articleVarietyFormGroup.el).show();
-            }
-
-            this.buildArticleName();
-        },
-
         buildArticleVarietyFormGroupItems: function () {
+            var ArticleVarietyForm = app.modules.get('taxonomy').schemas.article_variety.form.class;
             return [
-                this.buildArticleVarietyFormGroupItem(),
+                new ArticleVarietyForm({tagName: 'div'}),
             ];
         },
 
-        buildArticleVarietyFormGroupItem: function () {
-            var ArticleVarietyForm = app.modules.get('taxonomy').schemas.article_variety.form.class;
-            return new ArticleVarietyForm({tagName: 'div'});
-        },
-
-        buildArticleName: function () {
-            var categoryId = this.getElement('category_id').getValue(),
+        resetArticleVarietyForm: function () {
+            var articleId = this.getElement('id').getValue(),
+                organizationId = this.getElement('organization_id').getValue(),
+                categoryId = this.getElement('category_id').getValue(),
                 category = app.collections.get('category').get(categoryId),
                 articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
-                articleVarietyForm = articleVarietyFormGroup.items[0],
+                articleVarietyForm = this.getArticleVarietyForm();
+
+            if (articleId == 0 && category && _.contains(['seed', 'plant', 'harvest'], category.get('key'))) {
+
+                var plantSelect = articleVarietyForm.getElement('plant_id'),
+                    varietySelect = articleVarietyForm.getElement('variety_id');
+
+                if (organizationId > 0) {
+                    articleVarietyForm.setData($.extend(articleVarietyForm.getData(), {
+                        variety_id: '',
+                    }));
+                    articleVarietyForm.setVisible({
+                        variety_id: true,
+                    });
+                    articleVarietyForm.setDisabled({
+                    });
+                    varietySelect.setRequired(true);
+                }
+                else {
+                    articleVarietyForm.setData($.extend(articleVarietyForm.getData(), {
+                        variety_id: null,
+                    }));
+                    articleVarietyForm.setVisible({
+                        variety_id: false,
+                    });
+                    articleVarietyForm.setDisabled({
+                    });
+                    varietySelect.setRequired(false);
+                }
+                articleVarietyForm.render();
+
+                $(plantSelect.el).on('change', this.resetArticleName.bind(this));
+                $(varietySelect.el).on('change', this.resetArticleName.bind(this));
+                $(articleVarietyFormGroup.el).show();
+            } else {
+                $(articleVarietyFormGroup.el).hide();
+            }
+        },
+
+        resetArticleName: function () {
+            var categoryId = this.getElement('category_id').getValue(),
+                category = app.collections.get('category').get(categoryId),
+                articleVarietyForm = this.getArticleVarietyForm(),
                 plantSelect = articleVarietyForm.getElement('plant_id'),
                 varietySelect = articleVarietyForm.getElement('variety_id'),
                 nameInput = this.getElement('name'),
@@ -272,54 +294,84 @@ define([
             });
         },
 
+        resetQuantityUnitValue: function () {
+            var categoryId = this.getElement('category_id').getValue(),
+                category = app.collections.get('category').get(categoryId),
+                quantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
+                quantityUnitSelect = this.getElement('quantity_unit_id'),
+                keyMap = {
+                    seed: 'g',
+                    plant: 'unit',
+                    harvest: 'kg',
+                    input: 'kg',
+                    tool: 'unit',
+                    installation: 'unit',
+                    cart: 'unit',
+                };
+
+            var quantityUnit = quantityUnitRoot.findChild({
+                key: keyMap[category.get('key')],
+            });
+            quantityUnitSelect.setValue(quantityUnit.get('id'));
+            quantityUnitSelect.render();
+            $(quantityUnitSelect.el).trigger('change');
+        },
+
         setData: function(data) {
             Form.prototype.setData.call(this, data);
 
-            var articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
-                articleVarietyForm = articleVarietyFormGroup.items[0];
-            articleVarietyForm.setData({
-                entity_id: this.getElement('entity_id').getValue(),
-            });
+            var articleVarietyForm = this.getArticleVarietyForm();
+            articleVarietyForm.setData();
+        },
+
+        setVisible: function(visible) {
+            Form.prototype.setVisible.call(this, visible);
+
+            var articleVarietyForm = this.getArticleVarietyForm();
+            articleVarietyForm.setVisible();
+        },
+
+        setDisabled: function(disabled) {
+            Form.prototype.setDisabled.call(this, disabled);
+
+            var articleVarietyForm = this.getArticleVarietyForm();
+            articleVarietyForm.setDisabled();
         },
 
         render: function() {
             Form.prototype.render.call(this);
 
-            var articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
-                articleVarietyForm = articleVarietyFormGroup.items[0],
-                articleId = this.getElement('id').getValue(),
-                categoryId = this.getElement('category_id').getValue(),
-                category = app.collections.get('category').get(categoryId);
-            articleVarietyForm.render();
-            if (articleId > 0 || (category && !_.contains(['seed', 'plant', 'harvest'], category.get('key')))) {
-                $(articleVarietyFormGroup.el).hide();
-            } else {
-                var plantSelect = articleVarietyForm.getElement('plant_id'),
-                    varietySelect = articleVarietyForm.getElement('variety_id');
-                $(plantSelect.el).on('change', this.buildArticleName.bind(this));
-                $(varietySelect.el).on('change', this.buildArticleName.bind(this));
-                $(articleVarietyFormGroup.el).show();
-            }
+            this.resetArticleVarietyForm();
         },
 
         submit: function() {
-            var articleId = this.getElement('id').getValue();
-            if (articleId > 0) {
-                return Form.prototype.submit.call(this);
-            }
+            var articleId = this.getElement('id').getValue(),
+                categoryId = this.getElement('category_id').getValue(),
+                category = app.collections.get('category').get(categoryId);
 
+            if (articleId == 0 && category && _.contains(['seed', 'plant', 'harvest'], category.get('key'))) {
+                return this.submitArticleAndArticleVariety();
+            }
+            else {
+                return this.submitArticleOnly();
+            }
+        },
+
+        submitArticleOnly: function() {
+            return Form.prototype.submit.call(this);
+        },
+
+        submitArticleAndArticleVariety: function() {
             var deferred = $.Deferred(),
-                articleVarietyFormGroup = this.getArticleVarietyFormGroup(),
-                articleVarietyForm = articleVarietyFormGroup.items[0];
+                articleVarietyForm = this.getArticleVarietyForm();
 
             articleVarietyForm.setData($.extend(articleVarietyForm.getData(), {
                 entity_id: this.getElement('entity_id').getValue(),
                 article_id: 0, // Validator bypass
             }));
 
-            var formValidate = this.validate(),
-                articleVarietyFormValidate = articleVarietyForm.validate();
-            if (!formValidate || !articleVarietyFormValidate) return deferred.reject();
+            if (!this.validate()) return deferred.reject();
+            if (!articleVarietyForm.validate()) return deferred.reject();
 
             Form.prototype.submit.call(this)
                 .done(function(data) {

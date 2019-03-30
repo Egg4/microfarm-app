@@ -1,0 +1,19 @@
+<script id="task-page-transplanting-table-row-template" type="text/template">
+    <td>
+        <i class="fas fa-inbox fa-fw"></i>
+    </td>
+    <td>
+        <div>
+            <%- polyglot.t('model.name.transplanting') %>
+        </div>
+        <div class="description">
+            <div>
+                <%- organization ? organization.name : entity.name %> -
+                <%- variety ? plant.name + ' ' + variety.name : article.name %>
+            </div>
+        </div>
+    </td>
+    <td>
+        <div class="right"><%- quantity %> plant(s)</div>
+    </td>
+</script>

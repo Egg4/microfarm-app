@@ -7,7 +7,10 @@
             <%- polyglot.t('model.name.planting') %> <%- category.value.toLowerCase() %>
         </div>
         <div class="description">
-            <div><%- organization ? organization.name : entity.name %> - <%- plant.name %> <%- variety.name %></div>
+            <div>
+                <%- organization ? organization.name : entity.name %> -
+                <%- variety ? plant.name + ' ' + variety.name : article.name %>
+            </div>
             <div><%- intra_row_spacing %> cm x <%- inter_row_spacing %> cm - <%- area %> m²</div>
         </div>
     </td>

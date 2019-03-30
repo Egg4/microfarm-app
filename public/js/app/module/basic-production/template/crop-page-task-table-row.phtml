@@ -6,4 +6,45 @@
     <td>
         <div><%- category.value %></div>
     </td>
+    <td>
+        <div class="description right">
+            <% if (durationByMwu != '00:00:00') { %>
+            <div><%- durationByMwu.substring(0, 5) %> / <i class="fas fa-user fa-fw"></i></div>
+            <% } %>
+            <% if (photoCount > 0) { %>
+            <div><%- photoCount %> <i class="fas fa-image fa-fw"></i></div>
+            <% } %>
+            <% if (seedlingCounts.g > 0) { %>
+            <div><%- seedlingCounts.g.toFixed(2) %> <%- seedlingUnits.g %> <i class="fas fa-map-pin fa-fw"></i></div>
+            <% } %>
+            <% if (seedlingCounts.seed > 0) { %>
+            <div><%- seedlingCounts.seed %>  <%- seedlingUnits.seed %> <i class="fas fa-map-pin fa-fw"></i></div>
+            <% } %>
+            <% if (seedlingCounts.cutting > 0) { %>
+            <div><%- seedlingCounts.cutting %>  <%- seedlingUnits.cutting %> <i class="fas fa-map-pin fa-fw"></i></div>
+            <% } %>
+            <% if (transplantCount > 0) { %>
+            <div><%- Math.round(transplantCount) %> <i class="fas fa-inbox fa-fw"></i></div>
+            <% } %>
+            <% if (plantCount > 0) { %>
+            <div><%- Math.round(plantCount) %> <i class="fas fa-seedling fa-fw"></i></div>
+            <% } %>
+
+            <% if (outputCounts.g > 0) { %>
+            <div><%- outputCounts.g %>  <%- outputUnits.g %> <i class="fas fa-dolly fa-fw"></i></div>
+            <% } %>
+            <% if (outputCounts.kg > 0) { %>
+            <div><%- outputCounts.kg %>  <%- outputUnits.kg %> <i class="fas fa-dolly fa-fw"></i></div>
+            <% } %>
+            <% if (outputCounts.unit > 0) { %>
+            <div><%- outputCounts.unit %>  <%- outputUnits.unit %> <i class="fas fa-dolly fa-fw"></i></div>
+            <% } %>
+            <% if (outputCounts.bunch > 0) { %>
+            <div><%- outputCounts.bunch %>  <%- outputUnits.bunch %> <i class="fas fa-dolly fa-fw"></i></div>
+            <% } %>
+            <% if (outputCounts.bouquet > 0) { %>
+            <div><%- outputCounts.bouquet %>  <%- outputUnits.bouquet %> <i class="fas fa-dolly fa-fw"></i></div>
+            <% } %>
+        </div>
+    </td>
 </script>

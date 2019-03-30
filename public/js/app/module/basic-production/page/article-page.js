@@ -98,8 +98,8 @@ define([
                 events: {
                     click: function () {
                         this.openEditionDialog({
-                            formVisible: {
-                                organization_id: false,
+                            formDisabled: {
+                                organization_id: true,
                             },
                         });
                     }.bind(this),
@@ -181,12 +181,14 @@ define([
             return {
                 entity_id: this.model.get('entity_id'),
                 article_id: this.model.get('id'),
+                variety_id: _.isNull(this.model.get('organization_id')) ? null : undefined,
             };
         },
 
         buildVarietyFormVisible: function () {
             return {
                 article_id: false,
+                variety_id: !_.isNull(this.model.get('organization_id')),
             };
         },
     });

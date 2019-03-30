@@ -39,7 +39,7 @@ define([
                             cast: 'integer',
                             data: this.buildPlantData.bind(this),
                             events: {
-                                change: this.onChangePlant.bind(this),
+                                change: this.resetVariety.bind(this),
                             },
                         }),
                         new FormGroup({
@@ -81,7 +81,7 @@ define([
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
         },
 
-        onChangePlant: function () {
+        resetVariety: function () {
             var varietySelect = this.getElement('variety_id');
             varietySelect.setValue(null);
             varietySelect.render();
@@ -91,11 +91,7 @@ define([
         buildVarietyData: function () {
             var plantId = this.getElement('plant_id').getValue(),
                 varietyId = this.getElement('variety_id').getValue(),
-                data = [{
-                    optgroup: '-',
-                    value: null,
-                    label: polyglot.t('model.field.variety_id.null'),
-                }],
+                data = [],
                 varieties = app.collections.get('variety').where({
                     plant_id: plantId,
                     active: true,

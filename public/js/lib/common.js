@@ -142,6 +142,21 @@ define([
         return date.format(format);
     };
 
+    String.prototype.parseTimeDuration = function() {
+        var hour = parseInt(this.substring(0, 2)),
+            minute = parseInt(this.substring(3, 5)),
+            second = parseInt(this.substring(6, 8));
+        return hour * 3600 + minute * 60 + second;
+    };
+
+    Number.prototype.formatTimeDuration = function() {
+        var hour = Math.floor(this / 3600),
+            modulus = this % 3600;
+        var minute = Math.floor(modulus / 60),
+            second = modulus % 60;
+        return hour.pad(2) + ':' + minute.pad(2) + ':' + second.pad(2);
+    };
+
     Date.parse = function(string, format) {
         return $.datepicker.parseDate(format, string);
     };

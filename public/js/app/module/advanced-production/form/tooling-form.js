@@ -7,17 +7,16 @@ define([
     'lib/widget/form/group/form-group',
     'lib/widget/form/element/input-hidden-form-element',
     'lib/widget/form/element/select-form-element',
-    'lib/widget/form/element/input-number-form-element',
     'lib/widget/button/button',
     'lib/widget/label/label',
     'lib/widget/icon/fa-icon',
-], function ($, _, Form, FormGroup, InputHidden, Select, InputNumber, Button, Label, Icon) {
+], function ($, _, Form, FormGroup, InputHidden, Select, Button, Label, Icon) {
 
     return Form.extend({
 
         initialize: function () {
             Form.prototype.initialize.call(this, {
-                collection: app.collections.get('crop'),
+                collection: app.collections.get('tooling'),
                 formGroup: new FormGroup({
                     items: [
                         new InputHidden({
@@ -27,6 +26,10 @@ define([
                         }),
                         new InputHidden({
                             name: 'entity_id',
+                            cast: 'integer',
+                        }),
+                        new InputHidden({
+                            name: 'task_id',
                             cast: 'integer',
                         }),
                         new FormGroup({
@@ -39,9 +42,6 @@ define([
                                     cast: 'integer',
                                     css: {flex: '1'},
                                     data: this.buildArticleData.bind(this),
-                                    events: {
-                                        change: this.buildNumberValue.bind(this),
-                                    },
                                 }),
                                 new Button({
                                     label: new Label({
@@ -53,12 +53,6 @@ define([
                                 }),
                             ],
                         }),
-                        new InputNumber({
-                            name: 'number',
-                            placeholder: polyglot.t('form.placeholder.serial_number'),
-                            min: 1,
-                            cast: 'integer',
-                        }),
                     ],
                 }),
             });
@@ -66,21 +60,24 @@ define([
 
         buildArticleData: function () {
             var data = [],
-                articleId = this.getElement('article_id').getValue(),
-                harvestCategory = this.getHarvestCategory();
+                entityId = app.authentication.get('entity_id'),
+                entity = app.collections.get('entity').get(entityId),
+                taskId = this.getElement('task_id').getValue(),
+                task = app.collections.get('task').get(taskId),
+                toolCategory = app.collections.get('category').findRoot('article_category_id').findChild({
+                    key: 'tool',
+                }),
+                articles = app.collections.get('article').where({
+                    category_id: toolCategory.get('id'),
+                });
 
-            var articles = app.collections.get('article').where({
-                organization_id: null,
-                category_id: harvestCategory.get('id'),
-                active: true,
+            articles = _.sortBy(articles, function (article) {
+                return article.getDisplayName();
             });
-            if (articleId) {
-                var article = app.collections.get('article').get(articleId);
-                if (!_.contains(articles, article)) articles.push(article);
-            }
             _.each(articles, function(article) {
+                var organization = article.find('organization');
                 data.push({
-                    optgroup: article.getDisplayName().charAt(0).removeDiacritics().toUpperCase(),
+                    optgroup: _.isNull(organization) ? entity.getDisplayName() : organization.getDisplayName(),
                     value: article.get('id'),
                     label: article.getDisplayName(),
                 });
@@ -88,25 +85,15 @@ define([
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
         },
 
-        buildNumberValue: function () {
-            var article_id = this.getElement('article_id').getValue();
-            if (article_id) {
-                var crops = app.collections.get('crop').where({
-                    article_id: article_id,
-                });
-                var max = 0;
-                _.each(crops, function(crop) {
-                    max = Math.max(max, crop.get('number'));
-                });
-                this.getElement('number').setValue(max + 1);
-            }
-        },
-
         openArticleCreationDialog: function () {
             var dialog = app.dialogs.get('article'),
-                harvestCategory = this.getHarvestCategory(),
+                taskId = this.getElement('task_id').getValue(),
+                task = app.collections.get('task').get(taskId),
+                toolCategory = app.collections.get('category').findRoot('article_category_id').findChild({
+                    key: 'tool',
+                }),
                 quantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
-                quantityUnitKg = quantityUnitRoot.findChild({key: 'kg'});
+                quantityUnitUnit = quantityUnitRoot.findChild({key: 'unit'});
 
             dialog.setData({
                 title: polyglot.t('model-dialog.title.create', {
@@ -116,26 +103,16 @@ define([
             });
             dialog.form.setData({
                 entity_id: this.getElement('entity_id').getValue(),
-                organization_id: null,
-                category_id: harvestCategory.get('id'),
-                quantity_unit_id: quantityUnitKg.get('id'),
+                organization_id: app.modules.has('trade') ? undefined : null,
+                category_id: toolCategory.get('id'),
+                quantity_unit_id: quantityUnitUnit.get('id'),
                 active: true,
             });
             dialog.form.setVisible({
-                organization_id: false,
+                organization_id: app.modules.has('trade'),
             });
             dialog.form.setDisabled({
                 category_id: true,
-            });
-            var articleVarietyForm = dialog.form.getArticleVarietyForm();
-            articleVarietyForm.setData({
-                entity_id: this.getElement('entity_id').getValue(),
-                variety_id: null,
-            });
-            articleVarietyForm.setVisible({
-                variety_id: false,
-            });
-            articleVarietyForm.setDisabled({
             });
             dialog.open().done(function (article) {
                 var articleSelect = this.getElement('article_id');
@@ -143,17 +120,6 @@ define([
                 articleSelect.render();
                 $(articleSelect.el).trigger('change');
             }.bind(this));
-        },
-
-        getHarvestCategory: function () {
-            var rootCategory = app.collections.get('category').findWhere({
-                parent_id: null,
-                key: 'article_category_id',
-            });
-            return app.collections.get('category').findWhere({
-                parent_id: rootCategory.get('id'),
-                key: 'harvest',
-            });
         },
     });
 });

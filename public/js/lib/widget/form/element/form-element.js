@@ -54,10 +54,8 @@ define([
         },
 
         getValue: function () {
-            if (this.nullable) {
-                if (this.value === '' || this.value === 'null') {
-                    return null;
-                }
+            if (this.nullable && this.value === 'null') {
+                return null;
             }
             if (!this.required && this.value === '') {
                 return '';
@@ -83,6 +81,10 @@ define([
             return this.defaultValue;
         },
 
+        setNullable: function (nullable) {
+            this.nullable = nullable;
+        },
+
         isNullable: function () {
             return this.nullable;
         },
@@ -97,6 +99,10 @@ define([
 
         isDefaultVisible: function () {
             return this.defaultVisible;
+        },
+
+        setRequired: function (required) {
+            this.required = required;
         },
 
         isRequired: function () {

@@ -7,7 +7,9 @@ define([
     'lib/widget/form/group/form-group',
     'lib/widget/form/element/input-hidden-form-element',
     'lib/widget/form/element/select-form-element',
-], function ($, _, Form, FormGroup, InputHidden, Select) {
+    'lib/widget/button/button',
+    'lib/widget/label/label',
+], function ($, _, Form, FormGroup, InputHidden, Select, Button, Label) {
 
     return Form.extend({
 
@@ -38,6 +40,25 @@ define([
                             placeholder: polyglot.t('form.placeholder.duration'),
                             data: this.buildDurationData.bind(this),
                         }),
+                        new FormGroup({
+                            type: 'horizontal',
+                            items: [
+                                new Select({
+                                    name: 'mwu',
+                                    placeholder: polyglot.t('form.placeholder.mwu'),
+                                    defaultValue: 1,
+                                    css: {flex: '1'},
+                                    cast: 'integer',
+                                    data: this.buildMwuData.bind(this),
+                                }),
+                                new Button({
+                                    label: new Label({
+                                        text: polyglot.t('form.placeholder.mwu'),
+                                    }),
+                                    css: {width: '8em'},
+                                }),
+                            ],
+                        }),
                     ],
                 }),
             });
@@ -45,6 +66,7 @@ define([
 
         buildDurationData: function () {
             return [
+                {value: '00:05:00', label: '00:05'},
                 {value: '00:15:00', label: '00:15'},
                 {value: '00:30:00', label: '00:30'},
                 {value: '00:45:00', label: '00:45'},
@@ -58,6 +80,15 @@ define([
                 {value: '08:00:00', label: '08:00'},
                 {value: '12:00:00', label: '12:00'},
             ];
+        },
+
+        buildMwuData: function () {
+            return _.map(_.range(1, 11, 1), function (index) {
+                return {
+                    value: index,
+                    label: index,
+                };
+            });
         },
     });
 });

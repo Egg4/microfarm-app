@@ -27,6 +27,7 @@ define([
                     modelForm: {
                         data: this.buildArticleFormData.bind(this),
                         visible: this.buildArticleFormVisible.bind(this),
+                        disabled: this.buildArticleFormDisabled.bind(this),
                     },
                 },
             });
@@ -88,8 +89,12 @@ define([
         },
 
         buildArticleFormVisible: function () {
+            return {};
+        },
+
+        buildArticleFormDisabled: function () {
             return {
-                organization_id: false,
+                organization_id: true,
             };
         },
 

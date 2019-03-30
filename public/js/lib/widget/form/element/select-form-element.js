@@ -67,7 +67,7 @@ define([
                 }.bind(this));
                 this.element.selectmenu({
                     create: function() {
-                        if (this.placeholder && this.value === "") {
+                        if (this.placeholder && (this.value == '' || _.isNaN(this.value))) {
                             $(this.element).prev().html(this.placeholder);
                         }
                     }.bind(this),

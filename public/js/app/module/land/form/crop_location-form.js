@@ -43,7 +43,7 @@ define([
                                     css: {flex: '1'},
                                     data: this.buildZoneData.bind(this),
                                     events: {
-                                        change: this.onChangeZone.bind(this),
+                                        change: this.resetBlockSelect.bind(this),
                                     },
                                 }),
                                 new Button({
@@ -62,12 +62,11 @@ define([
                                 new Select({
                                     name: 'block_id',
                                     placeholder: polyglot.t('form.placeholder.block_id'),
-                                    nullable: true,
                                     cast: 'integer',
                                     css: {flex: '1'},
                                     data: this.buildBlockData.bind(this),
                                     events: {
-                                        change: this.onChangeBlock.bind(this),
+                                        change: this.resetBedSelect.bind(this),
                                     },
                                 }),
                                 new Button({
@@ -86,7 +85,6 @@ define([
                                 new Select({
                                     name: 'bed_id',
                                     placeholder: polyglot.t('form.placeholder.bed_id'),
-                                    nullable: true,
                                     cast: 'integer',
                                     css: {flex: '1'},
                                     data: this.buildBedData.bind(this),
@@ -118,13 +116,6 @@ define([
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
         },
 
-        onChangeZone: function () {
-            var blockSelect = this.getElement('block_id');
-            blockSelect.setValue(null);
-            blockSelect.render();
-            $(blockSelect.el).trigger('change');
-        },
-
         openZoneCreationDialog: function () {
             var dialog = app.dialogs.get('zone');
             dialog.setData({
@@ -150,10 +141,7 @@ define([
 
         buildBlockData: function () {
             var zoneId = this.getElement('zone_id').getValue(),
-                data = [{
-                    value: null,
-                    label: polyglot.t('model.field.block_id.null'),
-                }],
+                data = [],
                 blocks = app.collections.get('block').where({
                     zone_id: zoneId,
                 });
@@ -166,11 +154,11 @@ define([
             return data;
         },
 
-        onChangeBlock: function () {
-            var bedSelect = this.getElement('bed_id');
-            bedSelect.setValue(null);
-            bedSelect.render();
-            $(bedSelect.el).trigger('change');
+        resetBlockSelect: function () {
+            var blockSelect = this.getElement('block_id');
+            blockSelect.setValue('');
+            blockSelect.render();
+            $(blockSelect.el).trigger('change');
         },
 
         openBlockCreationDialog: function () {
@@ -199,10 +187,7 @@ define([
 
         buildBedData: function () {
             var blockId = this.getElement('block_id').getValue(),
-                data = [{
-                    value: null,
-                    label: polyglot.t('model.field.bed_id.null'),
-                }],
+                data = [],
                 beds = app.collections.get('bed').where({
                     block_id: blockId,
                 });
@@ -213,6 +198,13 @@ define([
                 });
             });
             return data;
+        },
+
+        resetBedSelect: function () {
+            var bedSelect = this.getElement('bed_id');
+            bedSelect.setValue('');
+            bedSelect.render();
+            $(bedSelect.el).trigger('change');
         },
 
         openBedCreationDialog: function () {

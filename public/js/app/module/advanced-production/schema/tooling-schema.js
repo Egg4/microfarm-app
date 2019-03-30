@@ -6,7 +6,7 @@ define([
     'lib/schema/schema',
     'lib/model/model',
     'lib/collection/collection',
-    'app/module/basic-production/form/working-form',
+    'app/module/advanced-production/form/tooling-form',
     'app/widget/dialog/model-dialog',
 ], function ($, _, Schema, Model, Collection, Form, Dialog) {
 
@@ -17,7 +17,7 @@ define([
                 model: {
                     class: Model,
                     displayName: function () {
-                        return polyglot.t('model.name.working') + ' ' + this.get('duration').substring(0, 5) + ' - ' + this.get('mwu') + polyglot.t('model.field.mwu');
+                        return this.find('article').getDisplayName();
                     },
                 },
                 collection: {
@@ -27,12 +27,12 @@ define([
                             model: 'task',
                             onDelete: 'cascade',
                         },
-                        user_id: {
-                            model: 'user',
+                        article_id: {
+                            model: 'article',
                             onDelete: 'cascade',
                         },
                     },
-                    uniqueKey: ['task_id', 'user_id'],
+                    uniqueKey: ['task_id', 'article_id'],
                     comparator: 'id',
                 },
                 form: {

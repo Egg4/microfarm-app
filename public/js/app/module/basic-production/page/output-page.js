@@ -207,9 +207,17 @@ define([
         },
 
         buildTaskRowData: function (task) {
-            var category = task.find('category');
+            var category = task.find('category'),
+                workings = task.findAll('working'),
+                photos = task.findAll('photo'),
+                secondByMwu = 0;
+            _.each(workings, function (working) {
+                secondByMwu += working.get('duration').parseTimeDuration() * working.get('mwu');
+            });
             return $.extend(task.toJSON(), {
                 category: category.toJSON(),
+                durationByMwu: secondByMwu.formatTimeDuration(),
+                photoCount: photos.length,
             });
         },
 
@@ -229,11 +237,6 @@ define([
                 crop_id: false,
                 output_id: false,
                 organization_id: false,
-                category_id: true,
-                date: true,
-                time: true,
-                description: true,
-                done: true,
             };
         },
     });

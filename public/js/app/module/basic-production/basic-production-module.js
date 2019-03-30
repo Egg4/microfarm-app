@@ -14,6 +14,7 @@ define([
     'app/module/basic-production/schema/planting-schema',
     'app/module/basic-production/schema/seedling-schema',
     'app/module/basic-production/schema/task-schema',
+    'app/module/basic-production/schema/transplanting-schema',
     'app/module/basic-production/schema/working-schema',
 ], function ($, _, Module,
              ArticleSchema,
@@ -26,6 +27,7 @@ define([
              PlantingSchema,
              SeedlingSchema,
              TaskSchema,
+             TransplantingSchema,
              WorkingSchema
 ) {
     return Module.extend({
@@ -44,6 +46,7 @@ define([
                     planting: new PlantingSchema(),
                     seedling: new SeedlingSchema(),
                     task: new TaskSchema(),
+                    transplanting: new TransplantingSchema(),
                     working: new WorkingSchema(),
                 },
             });

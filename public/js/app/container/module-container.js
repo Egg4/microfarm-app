@@ -5,6 +5,7 @@ define([
     'underscore',
     'lib/container/container',
     'app/module/access/access-module',
+    'app/module/advanced-production/advanced-production-module',
     'app/module/basic-production/basic-production-module',
     'app/module/core/core-module',
     'app/module/extra-production/extra-production-module',
@@ -14,6 +15,7 @@ define([
     'app/module/trade/trade-module',
 ], function ($, _, Container,
              AccessModule,
+             AdvancedProductionModule,
              BasicProductionModule,
              CoreModule,
              ExtraProductionModule,
@@ -75,6 +77,7 @@ define([
         build: function (name) {
             switch (name) {
                 case 'access':              return new AccessModule();
+                case 'advanced-production': return new AdvancedProductionModule();
                 case 'basic-production':    return new BasicProductionModule();
                 case 'core':                return new CoreModule();
                 case 'extra-production':    return new ExtraProductionModule();

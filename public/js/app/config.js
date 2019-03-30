@@ -44,6 +44,7 @@ define([
                 'taxonomy',
                 'land',
                 'basic-production',
+                'advanced-production',
                 'post-production',
                 'extra-production',
                 'trade',

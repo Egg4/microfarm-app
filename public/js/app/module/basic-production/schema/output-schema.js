@@ -19,8 +19,12 @@ define([
                     class: Model,
                     displayName: function () {
                         var article = this.find('article'),
-                            quantityUnit = article.find('category', {selfAttribute: 'quantity_unit_id'}).get('value');
-                        return article.getDisplayName() + ' - ' + this.get('quantity') + ' ' + quantityUnit;
+                            quantityUnit = article.find('category', {selfAttribute: 'quantity_unit_id'}).get('value'),
+                            variety = this.find('variety'),
+                            suffix = variety ? variety.getDisplayName() : article.getDisplayName(),
+                            displayname = polyglot.t('model.name.output') + ' ' + suffix  + ' - ' + this.get('quantity') + ' ' + quantityUnit;
+
+                        return displayname.charAt(0).toUpperCase() + displayname.slice(1).toLowerCase();
                     },
                 },
                 collection: {

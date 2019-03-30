@@ -92,6 +92,7 @@
 .button-widget .label-widget {
     display: inline-block;
     width: 100%;
+    vertical-align: bottom;
 }
 
 .button-widget.ui-btn-icon-top {
@@ -149,6 +150,13 @@
     left: 50%;
     margin-left: -0.625em;
     font-size: 1.2em;
+}
+
+.button-widget .label-widget .text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 .button-widget.ui-btn-icon-top .label-widget .text,

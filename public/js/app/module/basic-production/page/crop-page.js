@@ -28,6 +28,13 @@ define([
             });
 
             this.listenTo(app.collections.get('task'), 'update', this.render);
+            this.listenTo(app.collections.get('working'), 'update', this.render);
+            if (app.modules.has('extra-production')) {
+                this.listenTo(app.collections.get('photo'), 'update', this.render);
+            }
+            this.listenTo(app.collections.get('seedling'), 'update', this.render);
+            this.listenTo(app.collections.get('planting'), 'update', this.render);
+            this.listenTo(app.collections.get('output'), 'update', this.render);
             if (app.modules.has('land')) {
                 this.listenTo(app.collections.get('crop_location'), 'update', this.render);
                 this.listenTo(app.collections.get('zone'), 'update', this.render);
@@ -163,9 +170,70 @@ define([
         },
 
         buildTaskRowData: function (task) {
-            var category = task.find('category');
+            var category = task.find('category'),
+                workings = task.findAll('working'),
+                photos = task.findAll('photo'),
+                seedlings = task.findAll('seedling'),
+                transplantings = task.findAll('transplanting'),
+                plantings = task.findAll('planting'),
+                outputs = task.findAll('output'),
+                secondByMwu = 0,
+                seedlingCounts = {
+                    g: 0,
+                    seed: 0,
+                    cutting: 0,
+                },
+                seedlingDensityUnitRoot = app.collections.get('category').findRoot('seedling_density_unit_id'),
+                seedlingUnits = {
+                    g: seedlingDensityUnitRoot.findChild({key: 'g'}).get('value'),
+                    seed: seedlingDensityUnitRoot.findChild({key: 'seed'}).get('value'),
+                    cutting: seedlingDensityUnitRoot.findChild({key: 'cutting'}).get('value'),
+                },
+                transplantCount = 0,
+                plantCount = 0,
+                outputCounts = {
+                    g: 0,
+                    kg: 0,
+                    unit: 0,
+                    bunch: 0,
+                    bouquet: 0,
+                },
+                articleQuantityUnitRoot = app.collections.get('category').findRoot('article_quantity_unit_id'),
+                outputUnits = {
+                    g: articleQuantityUnitRoot.findChild({key: 'g'}).get('value'),
+                    kg: articleQuantityUnitRoot.findChild({key: 'kg'}).get('value'),
+                    unit: articleQuantityUnitRoot.findChild({key: 'unit'}).get('value'),
+                    bunch: articleQuantityUnitRoot.findChild({key: 'bunch'}).get('value'),
+                    bouquet: articleQuantityUnitRoot.findChild({key: 'bouquet'}).get('value'),
+                };
+            _.each(workings, function (working) {
+                secondByMwu += working.get('duration').parseTimeDuration() * working.get('mwu');
+            });
+            _.each(seedlings, function (seedling) {
+                var densityUnit = seedling.find('category', {selfAttribute: 'density_unit_id'});
+                seedlingCounts[densityUnit.get('key')] += seedling.get('density') * seedling.get('area');
+            });
+            _.each(transplantings, function (transplanting) {
+                transplantCount += transplanting.get('quantity');
+            });
+            _.each(plantings, function (planting) {
+                plantCount += (100 / planting.get('intra_row_spacing')) * (100 / planting.get('inter_row_spacing')) * planting.get('area');
+            });
+            _.each(outputs, function (output) {
+                var article = output.find('article'),
+                    quantityUnit = article.find('category', {selfAttribute: 'quantity_unit_id'});
+                outputCounts[quantityUnit.get('key')] += output.get('quantity');
+            });
             return $.extend(task.toJSON(), {
                 category: category.toJSON(),
+                durationByMwu: secondByMwu.formatTimeDuration(),
+                photoCount: photos.length,
+                seedlingCounts: seedlingCounts,
+                seedlingUnits: seedlingUnits,
+                transplantCount: transplantCount,
+                plantCount: plantCount,
+                outputCounts: outputCounts,
+                outputUnits: outputUnits,
             });
         },
 

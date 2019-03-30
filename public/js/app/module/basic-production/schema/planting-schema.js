@@ -17,8 +17,12 @@ define([
                 model: {
                     class: Model,
                     displayName: function () {
-                        var suffix = this.find('variety').getDisplayName().toLowerCase();
-                        return polyglot.t('model.name.planting') + ' ' + suffix;
+                        var article = this.find('article'),
+                            variety = this.find('variety'),
+                            suffix = variety ? variety.getDisplayName() : article.getDisplayName(),
+                            displayname = polyglot.t('model.name.planting') + ' ' + suffix;
+
+                        return displayname.charAt(0).toUpperCase() + displayname.slice(1).toLowerCase();
                     },
                 },
                 collection: {

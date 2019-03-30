@@ -10,7 +10,10 @@
             <% } %>
         </div>
         <div class="description">
-            <div><%- organization ? organization.name : entity.name %> - <%- plant.name %> <%- variety.name %></div>
+            <div>
+                <%- organization ? organization.name : entity.name %> -
+                <%- variety ? plant.name + ' ' + variety.name : article.name %>
+            </div>
             <div><%- density %> <%- density_unit.value %> / <%- area_unit.value %> x <%- area %> <%- area_unit.value %></div>
         </div>
     </td>

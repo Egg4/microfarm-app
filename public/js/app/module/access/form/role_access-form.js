@@ -71,8 +71,8 @@ define([
 
         buildResourceData: function () {
             var data = [];
-            data = _.union(data, this.buildEntityItems());
             data = _.union(data, this.buildCropItems());
+            data = _.union(data, this.buildEntityItems());
             data = _.union(data, this.buildZoneItems());
 
             return _.groupBy(_.sortBy(data, 'optgroup'), 'optgroup');
@@ -80,7 +80,7 @@ define([
 
         buildEntityItems: function () {
             var optGroup = polyglot.t('model.name.entity'),
-                modelNames = ['article', 'variety', 'article_variety'];
+                modelNames = ['article', 'variety', 'article_variety', 'organization'];
 
             return _.map(modelNames, function(modelName) {
                 return this.buildResourceItem(optGroup, modelName);
@@ -89,7 +89,7 @@ define([
 
         buildCropItems: function () {
             var optGroup = polyglot.t('model.name.crop'),
-                modelNames = ['crop', 'task', 'working', 'seedling', 'planting', 'output'];
+                modelNames = ['crop', 'task', 'working', 'seedling', 'transplanting', 'planting', 'output', 'photo'];
 
             return _.map(modelNames, function(modelName) {
                 return this.buildResourceItem(optGroup, modelName);
