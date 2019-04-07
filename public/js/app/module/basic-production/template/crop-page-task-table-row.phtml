@@ -1,13 +1,18 @@
 <script id="crop-page-task-table-row-template" type="text/template">
     <td>
-        <div><%- date.dateFormat('d') %> <%- polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()) %></div>
-        <div class="description"><%- time.substring(0, 5) %></div>
+        <div class="nowrap"><%- date.dateFormat('d') %> <%- polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()) %></div>
+        <div class="description nowrap"><%- time.substring(0, 5) %></div>
     </td>
     <td>
+        <% if (type == 'observation') { %>
+        <div><%- polyglot.t('crop-page.task-type.observation') %></div>
+        <div class="description"><%- category.value %></div>
+        <% } else { %>
         <div><%- category.value %></div>
+        <% } %>
     </td>
     <td>
-        <div class="description right">
+        <div class="description right nowrap">
             <% if (durationByMwu != '00:00:00') { %>
             <div><%- durationByMwu.substring(0, 5) %> / <i class="fas fa-user fa-fw"></i></div>
             <% } %>
@@ -29,7 +34,6 @@
             <% if (plantCount > 0) { %>
             <div><%- Math.round(plantCount) %> <i class="fas fa-seedling fa-fw"></i></div>
             <% } %>
-
             <% if (outputCounts.g > 0) { %>
             <div><%- outputCounts.g %>  <%- outputUnits.g %> <i class="fas fa-dolly fa-fw"></i></div>
             <% } %>
@@ -44,6 +48,9 @@
             <% } %>
             <% if (outputCounts.bouquet > 0) { %>
             <div><%- outputCounts.bouquet %>  <%- outputUnits.bouquet %> <i class="fas fa-dolly fa-fw"></i></div>
+            <% } %>
+            <% if (stageCount > 0) { %>
+            <div><%- stageCount %> <i class="fas fa-level-up-alt fa-fw"></i></div>
             <% } %>
         </div>
     </td>

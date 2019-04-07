@@ -9,10 +9,11 @@ define([
     'lib/widget/layout/grid-layout',
     'lib/widget/html/html',
     'app/widget/table/model-table',
+    'app/widget/popup/menu-popup',
     'lib/widget/button/button',
     'lib/widget/label/label',
     'lib/widget/icon/fa-icon',
-], function ($, _, Page, StackLayout, Navigation, GridLayout, Html, Table, Button, Label, Icon) {
+], function ($, _, Page, StackLayout, Navigation, GridLayout, Html, Table, MenuPopup, Button, Label, Icon) {
 
     return Page.extend({
 
@@ -27,12 +28,16 @@ define([
                 body: this.buildBody.bind(this),
             });
 
+            this.taskCreationMenuPopup = this.buildTaskCreationMenuPopup();
+
             this.listenTo(app.collections.get('task'), 'update', this.render);
             this.listenTo(app.collections.get('working'), 'update', this.render);
             if (app.modules.has('extra-production')) {
+                this.listenTo(app.collections.get('stage'), 'update', this.render);
                 this.listenTo(app.collections.get('photo'), 'update', this.render);
             }
             this.listenTo(app.collections.get('seedling'), 'update', this.render);
+            this.listenTo(app.collections.get('transplanting'), 'update', this.render);
             this.listenTo(app.collections.get('planting'), 'update', this.render);
             this.listenTo(app.collections.get('output'), 'update', this.render);
             if (app.modules.has('land')) {
@@ -150,7 +155,76 @@ define([
                     visible: this.buildTaskFormVisible.bind(this),
                     disabled: this.buildTaskFormDisabled.bind(this),
                 },
+                onCreationClick: this.openTaskCreationMenuPopup.bind(this),
             });
+        },
+
+        buildTaskCreationMenuPopup: function () {
+            return new MenuPopup({
+                title: polyglot.t('menu-popup.title.create'),
+                icon: new Icon({name: 'plus'}),
+                items: this.buildTaskCreationMenuPopupItems.bind(this),
+            });
+        },
+
+        buildTaskCreationMenuPopupItems: function () {
+            var items = [];
+            items.push(this.buildTaskCreationMenuPopupProductionButton());
+            if (app.modules.has('extra-production')) {
+                items.push(this.buildTaskCreationMenuPopupObservationButton());
+            }
+            return items;
+        },
+
+        buildTaskCreationMenuPopupProductionButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('calendar-page.task-creation-production.button'),
+                    icon: new Icon({name: 'tractor'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeTaskCreationMenuPopup('production');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildTaskCreationMenuPopupObservationButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('calendar-page.task-creation-observation.button'),
+                    icon: new Icon({name: 'eye'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeTaskCreationMenuPopup('observation');
+                    }.bind(this),
+                },
+            });
+        },
+
+        openTaskCreationMenuPopup: function () {
+            this.taskCreationMenuPopup.open();
+        },
+
+        closeTaskCreationMenuPopup: function (type) {
+            this.taskCreationMenuPopup.close();
+            this.openTaskCreationDialog(type);
+        },
+
+        openTaskCreationDialog: function (type) {
+            var dialog = app.dialogs.get('task');
+            dialog.setData({
+                title: polyglot.t('model-dialog.title.create', {
+                    model: polyglot.t('model.name.task').toLowerCase(),
+                }),
+                icon: new Icon({name: 'plus'}),
+            });
+            dialog.form.setData(this.buildTaskFormData(type));
+            dialog.form.setVisible(this.buildTaskFormVisible());
+            dialog.form.setDisabled(this.buildTaskFormDisabled());
+            dialog.open();
         },
 
         buildTasks: function () {
@@ -177,6 +251,7 @@ define([
                 transplantings = task.findAll('transplanting'),
                 plantings = task.findAll('planting'),
                 outputs = task.findAll('output'),
+                stages = task.findAll('stage'),
                 secondByMwu = 0,
                 seedlingCounts = {
                     g: 0,
@@ -205,7 +280,8 @@ define([
                     unit: articleQuantityUnitRoot.findChild({key: 'unit'}).get('value'),
                     bunch: articleQuantityUnitRoot.findChild({key: 'bunch'}).get('value'),
                     bouquet: articleQuantityUnitRoot.findChild({key: 'bouquet'}).get('value'),
-                };
+                },
+                stageLabels = [];
             _.each(workings, function (working) {
                 secondByMwu += working.get('duration').parseTimeDuration() * working.get('mwu');
             });
@@ -234,12 +310,14 @@ define([
                 plantCount: plantCount,
                 outputCounts: outputCounts,
                 outputUnits: outputUnits,
+                stageCount: stages.length,
             });
         },
 
-        buildTaskFormData: function () {
+        buildTaskFormData: function (type) {
             return {
                 entity_id: this.model.get('entity_id'),
+                type: type,
                 crop_id: this.model.get('id'),
             };
         },

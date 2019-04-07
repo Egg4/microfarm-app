@@ -12,7 +12,7 @@ define([
 
         initialize: function () {
             Module.prototype.initialize.call(this, {
-                dependencies: ['basic-production'],
+                dependencies: ['core', 'basic-production'],
                 schemas: {
                     tooling: new ToolingSchema(),
                 },

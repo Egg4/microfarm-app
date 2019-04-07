@@ -1,0 +1,14 @@
+<script id="task-page-stage-table-row-template" type="text/template">
+    <td>
+        <i class="fas fa-level-up-alt fa-fw"></i>
+    </td>
+    <td colspan="3">
+        <div>
+            <% if (variety) { %>
+            <span><%- plant.name %> <%- variety.name %></span>
+            <% } else { %>
+            <span><%- polyglot.t('model.field.variety_id.null').toLowerCase() %></span>
+            <% } %>
+        </div>
+    </td>
+</script>

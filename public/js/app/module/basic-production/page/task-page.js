@@ -24,6 +24,7 @@ define([
             transplanting: _.template($('#task-page-transplanting-table-row-template').html()),
             planting: _.template($('#task-page-planting-table-row-template').html()),
             output: _.template($('#task-page-output-table-row-template').html()),
+            stage: _.template($('#task-page-stage-table-row-template').html()),
         },
 
         initialize: function () {
@@ -38,6 +39,7 @@ define([
             this.creationMenuPopup = this.buildCreationMenuPopup();
             this.listenTo(app.collections.get('working'), 'update', this.render);
             if (app.modules.has('extra-production')) {
+                this.listenTo(app.collections.get('stage'), 'update', this.render);
                 this.listenTo(app.collections.get('photo'), 'update', this.render);
             }
             if (app.modules.has('advanced-production')) {
@@ -217,6 +219,11 @@ define([
                 && app.authentication.can('create', 'output')) {
                 items.push(this.buildMenuPopupOutputButton());
             }
+            /*
+            if (_.contains(['stage'], category.findParent().get('key'))
+                && app.authentication.can('create', 'stage')) {
+                items.push(this.buildMenuPopupStageButton());
+            }*/
 
             return items;
         },
@@ -319,6 +326,20 @@ define([
             });
         },
 
+        buildMenuPopupStageButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('model.name.stage'),
+                    icon: new Icon({name: 'level-up-alt'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeCreationMenuPopup('stage');
+                    }.bind(this),
+                },
+            });
+        },
+
         openCreationMenuPopup: function () {
             this.creationMenuPopup.open();
         },
@@ -370,6 +391,11 @@ define([
             }
             if (app.modules.has('advanced-production')) {
                 models = _.union(models, app.collections.get('tooling').where({
+                    task_id: this.model.get('id'),
+                }));
+            }
+            if (app.modules.has('extra-production')) {
+                models = _.union(models, app.collections.get('stage').where({
                     task_id: this.model.get('id'),
                 }));
             }
@@ -503,6 +529,12 @@ define([
                         variety: _.isNull(variety) ? null : variety.toJSON(),
                         plant: _.isNull(variety) ? null : variety.find('plant').toJSON(),
                     });
+                case 'stage':
+                    var variety = model.find('variety');
+                    return $.extend(model.toJSON(), {
+                        variety: _.isNull(variety) ? null : variety.toJSON(),
+                        plant: _.isNull(variety) ? null : variety.find('plant').toJSON(),
+                    });
             }
         },
 
@@ -557,6 +589,10 @@ define([
                     entity_id: this.model.get('entity_id'),
                     task_id: this.model.get('id'),
                 };
+                case 'stage': return {
+                    entity_id: this.model.get('entity_id'),
+                    task_id: this.model.get('id'),
+                };
             }
         },
 
@@ -582,6 +618,9 @@ define([
                     task_id: false,
                 };
                 case 'output': return {
+                    task_id: false,
+                };
+                case 'stage': return {
                     task_id: false,
                 };
             }

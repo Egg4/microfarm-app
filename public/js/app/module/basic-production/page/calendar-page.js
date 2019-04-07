@@ -118,40 +118,53 @@ define([
 
         buildTaskCreationMenuPopupItems: function () {
             var items = [];
-            items.push(this.buildTaskCreationMenuPopupCropButton());
+            items.push(this.buildTaskCreationMenuPopupProductionButton());
+            if (app.modules.has('extra-production')) {
+                items.push(this.buildTaskCreationMenuPopupObservationButton());
+            }
             if (app.modules.has('post-production')) {
-                items.push(this.buildTaskCreationMenuPopupOutputButton());
+                items.push(this.buildTaskCreationMenuPopupPostProductionButton());
             }
             return items;
         },
 
-        buildTaskCreationMenuPopupCropButton: function () {
+        buildTaskCreationMenuPopupProductionButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('calendar-page.task-creation.button', {
-                        type: polyglot.t('model.name.crop').toLowerCase(),
-                    }),
-                    icon: new Icon({name: 'leaf'}),
+                    text: polyglot.t('calendar-page.task-creation-production.button'),
+                    icon: new Icon({name: 'tractor'}),
                 }),
                 events: {
                     click: function () {
-                        this.closeTaskCreationMenuPopup('crop');
+                        this.closeTaskCreationMenuPopup('production');
                     }.bind(this),
                 },
             });
         },
 
-        buildTaskCreationMenuPopupOutputButton: function () {
+        buildTaskCreationMenuPopupObservationButton: function () {
             return new Button({
                 label: new Label({
-                    text: polyglot.t('calendar-page.task-creation.button', {
-                        type: polyglot.t('model.name.output').toLowerCase(),
-                    }),
+                    text: polyglot.t('calendar-page.task-creation-observation.button'),
+                    icon: new Icon({name: 'eye'}),
+                }),
+                events: {
+                    click: function () {
+                        this.closeTaskCreationMenuPopup('observation');
+                    }.bind(this),
+                },
+            });
+        },
+
+        buildTaskCreationMenuPopupPostProductionButton: function () {
+            return new Button({
+                label: new Label({
+                    text: polyglot.t('calendar-page.task-creation-post-production.button'),
                     icon: new Icon({name: 'dolly'}),
                 }),
                 events: {
                     click: function () {
-                        this.closeTaskCreationMenuPopup('output');
+                        this.closeTaskCreationMenuPopup('post_production');
                     }.bind(this),
                 },
             });
@@ -162,12 +175,12 @@ define([
             this.taskCreationMenuPopup.open();
         },
 
-        closeTaskCreationMenuPopup: function (modelName) {
+        closeTaskCreationMenuPopup: function (type) {
             this.taskCreationMenuPopup.close();
-            this.openTaskCreationDialog(this.taskCreationDate, modelName);
+            this.openTaskCreationDialog(this.taskCreationDate, type);
         },
 
-        openTaskCreationDialog: function (date, modelName) {
+        openTaskCreationDialog: function (date, type) {
             var now = new Date(),
                 dialog = app.dialogs.get('task');
             dialog.setData({
@@ -178,16 +191,17 @@ define([
             });
             dialog.form.setData({
                 entity_id: app.authentication.get('entity_id'),
-                crop_id: modelName === 'crop' ? '' : null,
-                output_id: modelName === 'output' ? '' : null,
-                organization_id: modelName === 'organization' ? '' : null,
+                type: type,
+                crop_id: type === 'production' || type === 'observation' ? '' : null,
+                output_id: type === 'post_production' ? '' : null,
+                organization_id: type === 'trade' ? '' : null,
                 date: date.format('yy-mm-dd'),
                 time: (now.getHours() + now.getTimezoneOffset() / 60).pad(2) + ':00:00',
             });
             dialog.form.setVisible({
-                crop_id: (modelName === 'crop'),
-                output_id: (modelName === 'output'),
-                organization_id: (modelName === 'organization'),
+                crop_id: (type === 'production' || type === 'observation'),
+                output_id: (type === 'post_production'),
+                organization_id: (type === 'trade'),
             });
             dialog.form.setDisabled({});
             dialog.open();

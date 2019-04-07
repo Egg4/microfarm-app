@@ -33,9 +33,12 @@ define([
                             name: 'entity_id',
                             cast: 'integer',
                         }),
+                        new InputHidden({
+                            name: 'type',
+                        }),
                         new Select({
                             name: 'category_id',
-                            placeholder: polyglot.t('form.placeholder.category_id'),
+                            placeholder: polyglot.t('model.name.task'),
                             optgroup: true,
                             cast: 'integer',
                             data: this.buildCategoryData.bind(this),
@@ -130,22 +133,23 @@ define([
         },
 
         buildCategoryData: function () {
-            var cropId = this.getElement('crop_id').getRawValue(),
-                outputId = this.getElement('output_id').getRawValue(),
-                organizationId = this.getElement('organization_id').getRawValue();
+            var type = this.getElement('type').getValue();
 
-            if (cropId !== 'null') return this.buildCropCategoryData();
-            if (outputId !== 'null') return this.buildOutputCategoryData();
-            if (organizationId !== 'null') return this.buildOrganizationCategoryData();
+            switch (type) {
+                case 'production': return this.buildProductionCategoryData();
+                case 'post_production': return this.buildPostProductionCategoryData();
+                case 'observation': return this.buildObservationCategoryData();
+                case 'trade': return this.buildOrganizationCategoryData();
+            }
         },
 
-        buildCropCategoryData: function () {
-            var cropProductionCategory = app.collections.get('category').findRoot('task_category_id').findChild({
-                key: 'crop_production',
+        buildProductionCategoryData: function () {
+            var productionCategory = app.collections.get('category').findRoot('task_category_id').findChild({
+                key: 'production',
             });
 
             var data = [];
-            _.each(cropProductionCategory.findChildren(), function(parentCategory) {
+            _.each(productionCategory.findChildren(), function(parentCategory) {
                 _.each(parentCategory.findChildren(), function(category) {
                     if (_.contains(['primary', 'maintenance', 'destruction'], parentCategory.get('key'))) {
                         data.push({
@@ -159,7 +163,7 @@ define([
             return _.groupBy(data, 'optgroup');
         },
 
-        buildOutputCategoryData: function () {
+        buildPostProductionCategoryData: function () {
             var postProductionCategory = app.collections.get('category').findRoot('task_category_id').findChild({
                 key: 'post_production',
             });
@@ -170,6 +174,24 @@ define([
                     optgroup: '',
                     value: category.get('id'),
                     label: category.getDisplayName(),
+                });
+            });
+            return _.groupBy(data, 'optgroup');
+        },
+
+        buildObservationCategoryData: function () {
+            var observationCategory = app.collections.get('category').findRoot('task_category_id').findChild({
+                key: 'observation',
+            });
+
+            var data = [];
+            _.each(observationCategory.findChildren(), function(parentCategory) {
+                _.each(parentCategory.findChildren(), function(category) {
+                    data.push({
+                        optgroup: parentCategory.getDisplayName(),
+                        value: category.get('id'),
+                        label: category.getDisplayName(),
+                    });
                 });
             });
             return _.groupBy(data, 'optgroup');
@@ -288,27 +310,30 @@ define([
                 });
             }
 
-            // crop-production task must be anterior to post-production task
-            if (!_.isNull(data.output_id)) {
+            // production task must be anterior to post-production task
+            if (data.type == 'post_production') {
                 var outputId = this.getElement('output_id').getValue(),
-                    output = app.collections.get('output').get(outputId),
-                    outputTask = output.find('task'),
-                    outputTaskDateTime = outputTask.get('date') + outputTask.get('time'),
-                    thisTaskDateTime = this.getElement('date').getValue() + this.getElement('time').getValue();
+                    output = app.collections.get('output').get(outputId);
 
-                if (outputTaskDateTime >= thisTaskDateTime) {
-                    var date = outputTask.get('date'),
-                        day = date.dateFormat('d'),
-                        month = polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()),
-                        time = outputTask.get('time').substring(0, 5);
+                if (output) {
+                    var outputTask = output.find('task'),
+                        outputTaskDateTime = outputTask.get('date') + outputTask.get('time'),
+                        thisTaskDateTime = this.getElement('date').getValue() + this.getElement('time').getValue();
 
-                    errors.push({
-                        attributes: ['date', 'time'],
-                        message: polyglot.t('form.validator.datetime-greater-than-x', {
-                            field: polyglot.t('form.field.date') + ', ' + polyglot.t('form.field.time'),
-                            datetime: day + ' ' + month + ' ' + time,
-                        }),
-                    });
+                    if (outputTaskDateTime >= thisTaskDateTime) {
+                        var date = outputTask.get('date'),
+                            day = date.dateFormat('d'),
+                            month = polyglot.t('date.month.' + date.dateFormat('M').toLowerCase()),
+                            time = outputTask.get('time').substring(0, 5);
+
+                        errors.push({
+                            attributes: ['date', 'time'],
+                            message: polyglot.t('form.validator.datetime-greater-than-x', {
+                                field: polyglot.t('form.field.date') + ', ' + polyglot.t('form.field.time'),
+                                datetime: day + ' ' + month + ' ' + time,
+                            }),
+                        });
+                    }
                 }
             }
 

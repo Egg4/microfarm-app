@@ -120,7 +120,7 @@ define([
         buildTaskData: function () {
             var data = [];
             var categories = app.collections.get('category').findRoot('task_category_id').findChild({
-                key: 'crop_production',
+                key: 'production',
             }).findChild({
                 key: 'primary',
             }).findChildren({

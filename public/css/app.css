@@ -53,17 +53,6 @@ table {
     width: 100%;
 }
 
-td .image {
-    background-size: cover;
-    width: 2.5em;
-}
-
-td .photo {
-    background-size: cover;
-    width: 64px;
-    height: 48px;
-}
-
 td .description {
     font-size: 0.8em;
     line-height: normal;
@@ -75,6 +64,10 @@ td .center {
 
 td .right {
     text-align: right;
+}
+
+td .nowrap {
+    white-space: nowrap;
 }
 
 /********************************/
