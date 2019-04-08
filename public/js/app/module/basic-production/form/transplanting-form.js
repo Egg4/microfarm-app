@@ -208,14 +208,15 @@ define([
             return data;
         },
 
-        resetVarietySelect: function () {
-            var articleId = this.getElement('article_id').getValue(),
+        resetVarietySelect: function (option) {
+            var resetValue = !_.isUndefined(option.resetValue) ? option.resetValue : true,
+                articleId = this.getElement('article_id').getValue(),
                 article = app.collections.get('article').get(articleId),
                 varietyFormGroup = this.getVarietyFormGroup(),
                 varietySelect = this.getElement('variety_id');
 
             varietySelect.setNullable(false);
-            varietySelect.setValue('');
+            if (resetValue) varietySelect.setValue('');
             varietySelect.setVisible(true);
             $(varietyFormGroup.el).show();
 
@@ -223,13 +224,13 @@ define([
                 var articleVarieties = article.findAll('article_variety');
                 if (articleVarieties.length == 1) {
                     var varietyId = _.first(articleVarieties).get('variety_id');
-                    varietySelect.setValue(varietyId);
+                    if (resetValue) varietySelect.setValue(varietyId);
                     varietySelect.setVisible(false);
                     $(varietyFormGroup.el).hide();
                 }
                 if (articleVarieties.length > 1) {
                     varietySelect.setNullable(true);
-                    varietySelect.setValue(null);
+                    if (resetValue) varietySelect.setValue(null);
                     varietySelect.setVisible(false);
                     $(varietyFormGroup.el).hide();
                 }
@@ -276,7 +277,7 @@ define([
         render: function() {
             Form.prototype.render.call(this);
 
-            this.resetVarietySelect();
+            this.resetVarietySelect({resetValue: false});
         },
     });
 });

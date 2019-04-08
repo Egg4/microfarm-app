@@ -136,9 +136,6 @@ define([
                         this.openEditionDialog({
                             formVisible: {
                                 task_id: false,
-                                article_id: true,
-                                variety_id: true,
-                                quantity: true,
                             },
                         });
                     }.bind(this),
@@ -186,6 +183,7 @@ define([
                 modelForm: {
                     data: this.buildTaskFormData.bind(this),
                     visible: this.buildTaskFormVisible.bind(this),
+                    disabled: this.buildTaskFormDisabled.bind(this),
                 },
             });
         },
@@ -225,6 +223,7 @@ define([
             var task = this.model.find('task');
             return {
                 entity_id: this.model.get('entity_id'),
+                type: 'post_production',
                 output_id: this.model.get('id'),
                 date: task.get('date'),
                 time: (parseInt(task.get('time').substring(0, 2)) + 1).pad(2) + ':00:00',
@@ -235,8 +234,13 @@ define([
         buildTaskFormVisible: function () {
             return {
                 crop_id: false,
-                output_id: false,
                 organization_id: false,
+            };
+        },
+
+        buildTaskFormDisabled: function () {
+            return {
+                output_id: true,
             };
         },
     });
