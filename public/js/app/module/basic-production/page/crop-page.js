@@ -246,12 +246,12 @@ define([
         buildTaskRowData: function (task) {
             var category = task.find('category'),
                 workings = task.findAll('working'),
-                photos = task.findAll('photo'),
                 seedlings = task.findAll('seedling'),
                 transplantings = task.findAll('transplanting'),
                 plantings = task.findAll('planting'),
                 outputs = task.findAll('output'),
-                stages = task.findAll('stage'),
+                photos = app.modules.has('extra-production') ? task.findAll('photo') : [],
+                stages = app.modules.has('extra-production') ? task.findAll('stage') : [],
                 secondByMwu = 0,
                 seedlingCounts = {
                     g: 0,
@@ -280,8 +280,7 @@ define([
                     unit: articleQuantityUnitRoot.findChild({key: 'unit'}).get('value'),
                     bunch: articleQuantityUnitRoot.findChild({key: 'bunch'}).get('value'),
                     bouquet: articleQuantityUnitRoot.findChild({key: 'bouquet'}).get('value'),
-                },
-                stageLabels = [];
+                };
             _.each(workings, function (working) {
                 secondByMwu += working.get('duration').parseTimeDuration() * working.get('mwu');
             });
@@ -303,13 +302,13 @@ define([
             return $.extend(task.toJSON(), {
                 category: category.toJSON(),
                 durationByMwu: secondByMwu.formatTimeDuration(),
-                photoCount: photos.length,
                 seedlingCounts: seedlingCounts,
                 seedlingUnits: seedlingUnits,
                 transplantCount: transplantCount,
                 plantCount: plantCount,
                 outputCounts: outputCounts,
                 outputUnits: outputUnits,
+                photoCount: photos.length,
                 stageCount: stages.length,
             });
         },

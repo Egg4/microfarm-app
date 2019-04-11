@@ -127,10 +127,10 @@ define([
 
         buildNavigationRow2Buttons: function () {
             var buttons = [];
-            if (app.modules.has('basic-production') && app.authentication.can('crop', 'article')) {
+            if (app.modules.has('basic-production') && app.authentication.can('read', 'crop')) {
                 buttons.push(this.buildCropsButton());
             }
-            if (app.modules.has('post-production') && app.authentication.can('output', 'article')) {
+            if (app.modules.has('post-production') && app.authentication.can('read', 'output')) {
                 buttons.push(this.buildOutputsButton());
             }
             return buttons;
