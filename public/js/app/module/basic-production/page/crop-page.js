@@ -314,10 +314,14 @@ define([
         },
 
         buildTaskFormData: function (type) {
+            var now = new Date();
             return {
                 entity_id: this.model.get('entity_id'),
                 type: type,
                 crop_id: this.model.get('id'),
+                date: now.format('yy-mm-dd'),
+                time: now.getHours().pad(2) + ':00:00',
+                done: true,
             };
         },
 

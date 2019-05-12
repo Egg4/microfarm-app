@@ -196,7 +196,8 @@ define([
                 output_id: type === 'post_production' ? '' : null,
                 organization_id: type === 'trade' ? '' : null,
                 date: date.format('yy-mm-dd'),
-                time: (now.getHours() + now.getTimezoneOffset() / 60).pad(2) + ':00:00',
+                time: now.getHours().pad(2) + ':00:00',
+                done: true,
             });
             dialog.form.setVisible({
                 crop_id: (type === 'production' || type === 'observation'),
